@@ -17,7 +17,7 @@ export function Header() {
 }
 
 export function Footer() {
-  return <footer><div className="footer-top"><div><Link href="/" className="brand footer-brand"><span className="brand-mark">AG</span><span>ARUN <b>GUINNESS</b><small>STAGE PROGRAMS</small></span></Link><p>കേരളത്തിലുടനീളം ലൈവ് സ്റ്റേജ് എന്റർടെയിൻമെന്റ്.</p></div><div><h3>Explore</h3><Link href="/about">About</Link><Link href="/programs">Programs</Link><Link href="/gallery">Gallery</Link><Link href="/videos">Videos</Link></div><div><h3>Booking</h3><Link href="/contact">Contact</Link><a href="tel:+919656712941">+91 96567 12941</a><a href="mailto:booking@arunguinness.com">booking@arunguinness.com</a></div><SocialLinks /></div><div className="footer-bottom"><span>© 2026 Arun Guinness</span><span>Made for the stage.</span></div></footer>;
+  return <footer><div className="footer-top"><div><Link href="/" className="brand footer-brand"><span className="brand-mark">AG</span><span>ARUN <b>GUINNESS</b><small>STAGE PROGRAMS</small></span></Link><p>കേരളത്തിലുടനീളം ലൈവ് സ്റ്റേജ് എന്റർടെയിൻമെന്റ്.</p></div><div><h3>Explore</h3><Link href="/about">About</Link><Link href="/programs">Programs</Link><Link href="/gallery">Gallery</Link><Link href="/videos">Videos</Link></div><div><h3>Booking</h3><Link href="/contact">Contact</Link><a href="tel:+919656712941">+91 96567 12941</a><a href="mailto:arunguinnes@gmail.com">arunguinnes@gmail.com</a></div><SocialLinks /></div><div className="footer-bottom"><span>© 2026 Arun Guinness</span><span>Made for the stage.</span></div></footer>;
 }
 
 export function SocialLinks({ compact = false }: { compact?: boolean }) {
