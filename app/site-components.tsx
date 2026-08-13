@@ -21,7 +21,7 @@ export function Footer() {
 }
 
 export function SocialLinks({ compact = false }: { compact?: boolean }) {
-  return <div className={`social-links ${compact ? "compact" : ""}`}><a href="https://wa.me/919656712941" aria-label="WhatsApp">WA</a><a href="tel:+919656712941" aria-label="Call Arun Guinness">CALL</a><a href="https://www.youtube.com/results?search_query=Arun+Guinness" aria-label="YouTube">YT</a><a href="https://www.instagram.com/" aria-label="Instagram">IG</a></div>;
+  return <div className={`social-links ${compact ? "compact" : ""}`}><a href="https://wa.me/919656712941" aria-label="WhatsApp">WA</a><a href="tel:+919656712941" aria-label="Call Arun Guinness">CALL</a><a href="https://youtube.com/@arunguinnes?si=JR5d98Nho6-gKlAH" target="_blank" rel="noreferrer" aria-label="Arun Guinness YouTube channel">YT</a><a href="https://www.instagram.com/" aria-label="Instagram">IG</a></div>;
 }
 
 export function HeroStage() {
