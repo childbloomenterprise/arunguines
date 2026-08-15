@@ -7,9 +7,9 @@
 ---
 
 **Project:** Arun Guinness Stage Programs
-**Generated:** 2026-08-13 20:52:23
-**Category:** Marketing Agency
-**Design Dials:** Variance 7/10 (Balanced / Modern) | Motion 5/10 (Standard) | Density 4/10 (Standard)
+**Generated:** 2026-08-15 10:39:39
+**Category:** Portfolio/Personal
+**Design Dials:** Variance 8/10 (Bold / Asymmetric) | Motion 8/10 (Complex) | Density 4/10 (Standard)
 
 ---
 
@@ -161,13 +161,13 @@
 
 ## Style Guidelines
 
-**Style:** Modern Dark (Cinema Mobile)
+**Style:** Bento Grids
 
-**Keywords:** dark mode, cinematic, ambient light, glassmorphism, deep black, indigo, glow, blur, atmospheric, reanimated, haptic, premium, layered, frosted glass, linear gradient
+**Keywords:** Apple-style, modular, cards, organized, clean, hierarchy, grid, rounded, soft
 
-**Best For:** Developer tools, pro productivity apps, fintech/trading dashboards, media/streaming platforms, AI tool interfaces, high-end gaming companion apps
+**Best For:** Product features, dashboards, personal sites, marketing summaries, galleries
 
-**Key Effects:** Expo.out Bezier(0.16,1,0.3,1) easing; spring modals (damping:20 stiffness:90); haptic-linked press (Impact Light/Medium); animated ambient light blobs (Reanimated translateX/Y slow oscillation); BlurView glassmorphism headers/nav (intensity 20); scale press 0.97 → 1.0; avoid pure #000000 (OLED smear)
+**Key Effects:** Hover scale (1.02), soft shadow expansion, smooth layout shifts, content reveal
 
 ### Page Pattern
 
@@ -181,24 +181,24 @@
 
 ## Motion
 
-**Stagger List** (Standard) — Trigger: load or scroll | Duration: 300-450ms | Easing: `back.out(1.4)`
+**Page Transition** (Complex) — Trigger: route change | Duration: 500-800ms | Easing: `expo.inOut`
 
 ```js
-gsap.from('.grid-item', { opacity: 0, scale: 0.92, y: 16, duration: 0.4, stagger: { each: 0.06, from: 'start', grid: 'auto' }, ease: 'back.out(1.4)' });
+const state = Flip.getState('.hero-image'); navigate(); Flip.from(state, { duration: 0.6, ease: 'expo.inOut', absolute: true, zIndex: 100 });
 ```
 
-**Framework notes:** grid: 'auto' lets GSAP infer rows/columns from a CSS grid layout for a natural wave stagger
+**Framework notes:** Requires the GSAP Flip plugin; the 'from' and 'to' route must render the same element with a shared data-flip-id
 
-- ✅ Combine with from: 'center' for a bento-grid layout to draw the eye inward first
-- ❌ Don't use back.out on dense data tables; the overshoot reads as sloppy on informational UI
-- ⚡ Group DOM writes; avoid interleaving layout reads (getBoundingClientRect) between staggered tweens
+- ✅ Verify the shared element exists in both DOM states before calling Flip.from to avoid a silent no-op
+- ❌ Don't use shared-element transitions across more than one element pair per navigation; compounding Flips are hard to time correctly
+- ⚡ Flip recalculates layout (FLIP technique) so test on low-end devices for jank
 
 ---
 
 ## Anti-Patterns (Do NOT Use)
 
-- ❌ Boring design
-- ❌ Hidden work
+- ❌ Corporate templates
+- ❌ Generic layouts
 
 ### Additional Forbidden Patterns
 

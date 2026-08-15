@@ -1,5 +1,41 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHero } from "../site-components";
-export const metadata: Metadata = { title: "About" };
-export default function About(){return <main><PageHero eyebrow="THE STORY SO FAR" title="വേദിയോട്" accent="പ്രണയം."><p>ശബ്ദങ്ങളിൽ നിന്ന് കഥാപാത്രങ്ങളിലേക്ക്; ചെറിയ വേദികളിൽ നിന്ന് വലിയ ആഘോഷങ്ങളിലേക്ക്.</p></PageHero><section className="section story-grid"><div className="story-visual"><div className="portrait-placeholder"><span>ARUN</span><strong>GUINNESS</strong><small>Official portrait</small></div></div><div className="story-copy"><span className="eyebrow">ജീവിതവിവരണം</span><h2>പ്രേക്ഷകരോടൊപ്പം<br/><em>ജീവിക്കുന്ന കലാകാരൻ.</em></h2><p className="lead">മിമിക്രി, കോമഡി, സംഗീതം, അവതരണം എന്നിവ ചേർത്ത് ഓരോ പ്രേക്ഷകർക്കും അനുയോജ്യമായ പരിപാടി ഒരുക്കുകയാണ് Arun Guinness.</p><p>കലാജീവിതത്തിന്റെ തുടക്കം, പരിശീലനം, ടെലിവിഷൻ/വേദി അനുഭവങ്ങൾ, പ്രധാന നേട്ടങ്ങൾ എന്നിവയുടെ കൃത്യമായ വിവരങ്ങൾ ഇവിടെ ചേർക്കാം. യഥാർത്ഥ ജീവിതവിവരം ലഭിക്കുന്നതുവരെ സൈറ്റ് തെറ്റായ അവകാശവാദങ്ങൾ പ്രദർശിപ്പിക്കുന്നില്ല.</p><div className="stat-row"><div><strong>01</strong><span>One-man energy</span></div><div><strong>09</strong><span>Show formats</span></div><div><strong>∞</strong><span>Memorable laughs</span></div></div><Link href="/contact" className="button dark-button">ഒരു പരിപാടി ബുക്ക് ചെയ്യുക</Link></div></section><section className="section milestones"><span className="eyebrow">പ്രധാന പരിപാടികൾ</span><h2>വേദിയിലെ <em>നാഴികക്കല്ലുകൾ</em></h2><div className="timeline"><article><span>01</span><h3>ആദ്യ പ്രധാന വേദി</h3><p>വേദി, വർഷം, സംഘാടകർ എന്നിവ ചേർക്കുക.</p></article><article><span>02</span><h3>പ്രശസ്ത പരിപാടി</h3><p>പ്രേക്ഷക പ്രതികരണവും പ്രത്യേകതയും ചേർക്കുക.</p></article><article><span>03</span><h3>പുതിയ അധ്യായം</h3><p>പുതിയ ഷോ/ടൂർ സംബന്ധിച്ച വിവരം ചേർക്കുക.</p></article></div></section></main>}
+import { ArrowUpRight } from "../icons";
+import { Eyebrow, MediaRail, PageHero, StatsStrip } from "../site-components";
+import { artistModes, milestones } from "../site-data";
+import { VideoPlayer } from "../video-player";
+
+export const metadata: Metadata = { title: "The Artist", description: "Discover Arun Guinness—Kerala singer, voice-imitation performer, mimicry artist, actor, sound engineer and live entertainer." };
+
+export default function About() {
+  return (
+    <main id="main-content">
+      <PageHero label="The artist" title="Built by sound." accent="Driven by stage." description="From electronics and sound engineering to thousands of live performances—Arun's craft combines technical listening with fearless entertainment." />
+      <section className="artist-story section-shell">
+        <div className="artist-portrait" data-reveal>
+          <VideoPlayer id="a0BScpW4hkA" title="The Arun Guinness story" alt="Arun Guinness profile and award video" className="artist-profile-player" sizes="(max-width: 800px) 100vw, 48vw" badge="Watch profile here" variant="portrait" />
+        </div>
+        <div className="artist-copy" data-reveal>
+          <Eyebrow>Kothamangalam · Kerala</Eyebrow>
+          <h2>A singer who<br /><em>became the voices.</em></h2>
+          <p className="lead">Arun Guinness is known for something rarer than mimicry: recreating playback singers while actually singing—including transformations between male and female voices in one performance.</p>
+          <p>His path moved through electronics, sound-engineering studies, music, television and live entertainment. That technical ear now powers shows combining voice artistry, characters, comedy and direct audience connection.</p>
+          <p>From cultural festivals and institutions to Kuwait, Oman and the UAE, every stage becomes a space for surprise.</p>
+          <Link className="button button-dark" href="/contact">Bring Arun to your stage <ArrowUpRight /></Link>
+        </div>
+      </section>
+      <section className="artist-modes section-shell">
+        <div className="section-intro" data-reveal><Eyebrow>The whole artist</Eyebrow><h2>Four crafts.<br /><em>One instinct.</em></h2></div>
+        <div className="mode-orbit">{artistModes.map((mode) => <article key={mode.number} data-reveal><span>{mode.number}</span><h3>{mode.title}</h3><p>{mode.text}</p></article>)}<div className="mode-core" aria-hidden="true">AG</div></div>
+      </section>
+      <section className="about-stats section-shell"><StatsStrip /><p className="source-note">*Career figures originate from Arun&apos;s published 2023 profile and require final reconfirmation before public launch.</p></section>
+      <section className="timeline-section section-shell">
+        <div className="section-intro" data-reveal><Eyebrow>The journey</Eyebrow><h2>Every stage<br /><em>changed the voice.</em></h2></div>
+        <div className="timeline-list">
+          {milestones.map((item, index) => <article key={item.year} data-reveal style={{ "--delay": `${index * 80}ms` } as React.CSSProperties}><span>{item.year}</span><h3>{item.title}</h3><p>{item.text}</p><i /></article>)}
+        </div>
+      </section>
+      <section className="media-proof section-shell"><MediaRail /></section>
+    </main>
+  );
+}

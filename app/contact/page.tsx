@@ -1,3 +1,20 @@
-import type { Metadata } from "next";import { BookingForm } from "./booking-form";import { PageHero, SocialLinks } from "../site-components";
-export const metadata:Metadata={title:"Contact & Booking"};
-export default function Contact(){return <main><PageHero eyebrow="LET'S MAKE IT HAPPEN" title="Contact &" accent="Booking."><p>തീയതി, വേദി, പരിപാടിയുടെ സ്വഭാവം — വിശദാംശങ്ങൾ അയക്കൂ.</p></PageHero><section className="contact-grid section"><div className="contact-details"><span className="eyebrow">DIRECT CONTACT</span><h2>വേഗത്തിൽ<br/><em>ബന്ധപ്പെടാം.</em></h2><div className="contact-card"><small>CALL / WHATSAPP</small><a href="tel:+919656712941">+91 96567 12941</a><p>ബുക്കിംഗിനായി നേരിട്ട് ബന്ധപ്പെടാം</p></div><div className="contact-card"><small>EMAIL</small><a href="mailto:arunguinnes@gmail.com">arunguinnes@gmail.com</a><p>Booking enquiries സ്വാഗതം</p></div><SocialLinks/></div><BookingForm/></section></main>}
+import type { Metadata } from "next";
+import { ArrowUpRight, Instagram, Mail, MapPin, Message, Phone, Youtube } from "../icons";
+import { Eyebrow, PageHero } from "../site-components";
+import { contact } from "../site-data";
+import { BookingForm } from "./booking-form";
+
+export const metadata: Metadata = { title: "Book Arun", description: "Check Arun Guinness's availability for one-man shows, corporate events, festivals, international programs and guest appearances." };
+
+export default async function Contact({ searchParams }: { searchParams: Promise<{ show?: string }> }) {
+  const params = await searchParams;
+  return (
+    <main id="main-content">
+      <PageHero label="Direct booking" title="Your date." accent="His stage." description="Share date, city and audience. Your enquiry opens directly in WhatsApp—no account, no database and no unnecessary steps." />
+      <section className="contact-layout section-shell">
+        <div className="contact-panel" data-reveal><Eyebrow>Talk directly</Eyebrow><h2>Fastest route<br /><em>to availability.</em></h2><a className="contact-line" href={contact.whatsapp} target="_blank" rel="noreferrer"><Message /><span><small>WhatsApp enquiry</small><strong>{contact.phoneDisplay}</strong></span><ArrowUpRight /></a><a className="contact-line" href={`tel:${contact.phone}`}><Phone /><span><small>Call bookings</small><strong>{contact.phoneDisplay}</strong></span><ArrowUpRight /></a><a className="contact-line" href={`mailto:${contact.email}?subject=${encodeURIComponent("Booking enquiry for Arun Guinness")}`}><Mail /><span><small>Gmail enquiries</small><strong>{contact.email}</strong></span><ArrowUpRight /></a><a className="contact-line" href={contact.officeMap} target="_blank" rel="noreferrer"><MapPin /><span><small>Office / base</small><strong>{contact.office}</strong></span><ArrowUpRight /></a><div className="contact-social"><a href={contact.instagram} target="_blank" rel="noreferrer"><Instagram />Instagram</a><a href={contact.youtube} target="_blank" rel="noreferrer"><Youtube />YouTube</a></div><p>Available for domestic and international programs.</p></div>
+        <BookingForm initialShow={params.show ?? ""} />
+      </section>
+    </main>
+  );
+}

@@ -1,21 +1,54 @@
-import type { Metadata } from "next";
-import { Noto_Sans_Malayalam, Oswald } from "next/font/google";
-import { Footer, Header } from "./site-components";
+import type { Metadata, Viewport } from "next";
+import { Cormorant_Garamond, Manrope } from "next/font/google";
+import { MotionController } from "./motion-controller";
+import { Header } from "./navigation";
+import { Footer, MobileBookingBar } from "./site-components";
+import { contact } from "./site-data";
 import "./globals.css";
 
-const malayalam = Noto_Sans_Malayalam({ variable: "--font-body", subsets: ["malayalam", "latin"], display: "swap" });
-const display = Oswald({ variable: "--font-display", subsets: ["latin"], display: "swap" });
+const body = Manrope({ variable: "--font-body", subsets: ["latin"], display: "swap" });
+const display = Cormorant_Garamond({ variable: "--font-display", subsets: ["latin"], display: "swap", weight: ["400", "500", "600", "700"] });
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://arunguinness.com";
+
+export const viewport: Viewport = { themeColor: "#f7f4ee", colorScheme: "light" };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://arun-guinness.example.com"),
-  title: { default: "Arun Guinness – Stage Programs", template: "%s | Arun Guinness" },
-  description: "Arun Guinness അവതരിപ്പിക്കുന്ന One Man Show, Mimicry, Comedy, Musical & Variety Shows — Kerala മുഴുവൻ ബുക്കിംഗിന്.",
-  keywords: ["Arun Guinness", "Arun Guinness Stage Show", "Mimicry Artist Kerala", "One Man Show Kerala", "Malayalam Stage Programs", "Corporate Entertainment Kerala"],
-  icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
-  openGraph: { title: "Arun Guinness – Stage Programs", description: "ചിരിയും മിമിക്രിയും സംഗീതവും നിറഞ്ഞ മലയാളം സ്റ്റേജ് പ്രോഗ്രാമുകൾ.", type: "website", locale: "ml_IN", images: [{ url: "/og.png", width: 1200, height: 630, alt: "Arun Guinness Stage Programs" }] },
-  twitter: { card: "summary_large_image", title: "Arun Guinness – Stage Programs", description: "ചിരിയുടെ വേദി. ഓർമ്മകളുടെ രാത്രി.", images: ["/og.png"] },
+  metadataBase: new URL(siteUrl),
+  title: { default: "Arun Guinness | One Man. Many Voices.", template: "%s | Arun Guinness" },
+  description: "Book Arun Guinness—Kerala singer, voice-imitation artist, mimicry performer and live entertainer—for one-man shows, festivals, corporate events and international programs.",
+  keywords: ["Arun Guinness", "mimicry artist Kerala", "one man show Kerala", "voice artist Kerala", "live singer Kerala", "Gulf stage show", "male female voice singer"],
+  alternates: { canonical: "/" },
+  icons: { icon: "/favicon.svg" },
+  openGraph: { title: "Arun Guinness | One Man. Many Voices.", description: "Singer. Voice artist. Mimicry performer. One unforgettable live show.", type: "website", locale: "en_IN", url: siteUrl, images: [{ url: "/og.png", width: 1200, height: 630, alt: "Arun Guinness live entertainer" }] },
+  twitter: { card: "summary_large_image", title: "Arun Guinness | One Man. Many Voices.", description: "Dozens of voices. One unforgettable performer.", images: ["/og.png"] },
+};
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Arun Guinness",
+  jobTitle: "Singer, voice artist and live entertainer",
+  description: "Kerala-based singer and mimicry performer known for singing in the voices of male and female playback singers.",
+  url: siteUrl,
+  telephone: contact.phone,
+  email: contact.email,
+  homeLocation: { "@type": "Place", name: "Kothamangalam, Kerala, India" },
+  sameAs: [contact.instagram, contact.youtube, contact.facebook],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="ml"><body className={`${malayalam.variable} ${display.variable}`}><Header />{children}<Footer /></body></html>;
+  return (
+    <html lang="en" data-scroll-behavior="smooth">
+      <body className={`${body.variable} ${display.variable}`}>
+        <a className="skip-link" href="#main-content">Skip to content</a>
+        <div className="site-progress" aria-hidden="true" />
+        <MotionController />
+        <Header />
+        {children}
+        <Footer />
+        <MobileBookingBar />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
+      </body>
+    </html>
+  );
 }

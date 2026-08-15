@@ -1,39 +1,114 @@
 import Link from "next/link";
+import { ArrowRight, ArrowUpRight, Instagram, Mail, MapPin, Message, Phone, Youtube } from "./icons";
+import { contact, mediaLogos, programs, stats } from "./site-data";
+import { VideoPlayer } from "./video-player";
 
-export const programs = [
-  ["01", "One Man Show", "കഥാപാത്രങ്ങളും ശബ്ദങ്ങളും കഥകളും ചേർന്ന signature performance."],
-  ["02", "Mimicry", "പ്രിയപ്പെട്ട ശബ്ദങ്ങളും കഥാപാത്രങ്ങളും തത്സമയം വേദിയിൽ."],
-  ["03", "Comedy Show", "എല്ലാ പ്രായക്കാർക്കും ആസ്വദിക്കാവുന്ന മലയാളം കോമഡി."],
-  ["04", "Musical & Variety", "സംഗീതം, കോമഡി, interaction — പൂർണ്ണ വിനോദ പാക്കേജ്."],
-  ["05", "College Events", "ക്യാംപസിന്റെ energy-ക്ക് ചേരുന്ന high-engagement show."],
-  ["06", "Corporate Events", "Annual day, awards night, team celebrations എന്നിവയ്ക്ക്."],
-  ["07", "School Programs", "കുട്ടികൾക്കും കുടുംബങ്ങൾക്കും സുരക്ഷിതവും രസകരവുമായ പരിപാടി."],
-  ["08", "Association & Club", "ക്ലബ്, റെസിഡന്റ്സ് അസോസിയേഷൻ, community gatherings."],
-  ["09", "Festival & Cultural", "ഉത്സവങ്ങൾക്കും സാംസ്കാരിക വേദികൾക്കും വലിയ ആഘോഷം."],
-];
+export function Eyebrow({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
+  return <span className={`eyebrow ${light ? "eyebrow-light" : ""}`}><i />{children}</span>;
+}
 
-export function Header() {
-  return <header className="site-header"><Link href="/" className="brand" aria-label="Arun Guinness home"><span className="brand-mark">AG</span><span>ARUN <b>GUINNESS</b><small>STAGE PROGRAMS</small></span></Link><nav aria-label="Main navigation"><Link href="/about">About</Link><Link href="/programs">Programs</Link><Link href="/gallery">Gallery</Link><Link href="/videos">Videos</Link><Link href="/testimonials">Testimonials</Link></nav><Link href="/contact" className="header-cta">BOOK NOW <span>↗</span></Link></header>;
+export function StatsStrip() {
+  return (
+    <div className="stats-strip" data-reveal>
+      {stats.map((stat) => <div key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></div>)}
+    </div>
+  );
+}
+
+export function MediaRail() {
+  return (
+    <div className="media-rail" aria-label="Television and media appearances">
+      <span>Seen on</span>
+      <div>{mediaLogos.map((logo) => <strong key={logo}>{logo}</strong>)}</div>
+    </div>
+  );
+}
+
+export function VideoCard({ video, index, feature = false }: {
+  video: { id: string; title: string; subtitle: string; category: string };
+  index: number;
+  feature?: boolean;
+}) {
+  return (
+    <article className={`video-card ${feature ? "video-card-feature" : ""}`} data-reveal style={{ "--delay": `${Math.min(index, 5) * 70}ms` } as React.CSSProperties}>
+      <VideoPlayer id={video.id} title={video.title} alt={`${video.title} performance thumbnail`} className="video-poster" sizes={feature ? "(max-width: 800px) 100vw, 66vw" : "(max-width: 800px) 100vw, 33vw"} eager={feature} index={`0${index + 1}`} category={video.category} />
+      <div className="video-copy"><h3>{video.title}</h3><p>{video.subtitle}</p><span>Watch here</span></div>
+    </article>
+  );
+}
+
+export function ProgramGrid({ compact = false }: { compact?: boolean }) {
+  const items = compact ? programs.slice(0, 4) : programs;
+  return (
+    <div className="program-grid">
+      {items.map((program, index) => (
+        <article className="program-card" key={program.title} data-reveal style={{ "--delay": `${index * 70}ms` } as React.CSSProperties}>
+          <div className="program-top"><span>{program.number}</span><small>{program.duration}</small></div>
+          <h3>{program.title}</h3>
+          <p>{program.description}</p>
+          <div className="program-fit">{program.bestFor}</div>
+          <Link href={`/contact?show=${encodeURIComponent(program.title)}`}>Plan this show <ArrowRight /></Link>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+export function PageHero({ label, title, accent, description }: { label: string; title: string; accent: string; description: string }) {
+  return (
+    <section className="page-hero">
+      <div className="page-orbit orbit-one" /><div className="page-orbit orbit-two" />
+      <div className="page-hero-copy" data-reveal>
+        <Eyebrow light>{label}</Eyebrow>
+        <h1>{title}<em>{accent}</em></h1>
+        <p>{description}</p>
+      </div>
+      <span className="page-counter" aria-hidden="true">AG / LIVE</span>
+    </section>
+  );
 }
 
 export function Footer() {
-  return <footer><div className="footer-top"><div><Link href="/" className="brand footer-brand"><span className="brand-mark">AG</span><span>ARUN <b>GUINNESS</b><small>STAGE PROGRAMS</small></span></Link><p>കേരളത്തിലുടനീളം ലൈവ് സ്റ്റേജ് എന്റർടെയിൻമെന്റ്.</p></div><div><h3>Explore</h3><Link href="/about">About</Link><Link href="/programs">Programs</Link><Link href="/gallery">Gallery</Link><Link href="/videos">Videos</Link></div><div><h3>Booking</h3><Link href="/contact">Contact</Link><a href="tel:+919656712941">+91 96567 12941</a><a href="mailto:arunguinnes@gmail.com">arunguinnes@gmail.com</a></div><SocialLinks /></div><div className="footer-bottom"><span>© 2026 Arun Guinness</span><span>Made for the stage.</span></div></footer>;
+  return (
+    <footer className="site-footer">
+      <div className="footer-head">
+        <div><Eyebrow light>Available worldwide</Eyebrow><h2>Bring every voice<br />to your stage.</h2></div>
+        <Link className="round-cta" href="/contact" aria-label="Book Arun Guinness"><span>Book<br />Arun</span><ArrowUpRight /></Link>
+      </div>
+      <div className="footer-contact">
+        <div className="footer-contact-intro"><small>Booking &amp; enquiries</small><strong>Choose your quickest route.</strong></div>
+        <a href={`tel:${contact.phone}`}><Phone /><span><small>Call for bookings</small><strong>{contact.phoneDisplay}</strong></span><ArrowUpRight /></a>
+        <a href={`${contact.whatsapp}?text=${encodeURIComponent("Hello Arun, I would like to enquire about booking a show.")}`} target="_blank" rel="noreferrer"><Message /><span><small>WhatsApp enquiry</small><strong>Message directly</strong></span><ArrowUpRight /></a>
+        <a href={`mailto:${contact.email}?subject=${encodeURIComponent("Booking enquiry for Arun Guinness")}`}><Mail /><span><small>Gmail enquiries</small><strong>{contact.email}</strong></span><ArrowUpRight /></a>
+        <a href={contact.instagram} target="_blank" rel="noreferrer"><Instagram /><span><small>Official Instagram</small><strong>@arun_guinness</strong></span><ArrowUpRight /></a>
+        <a href={contact.youtube} target="_blank" rel="noreferrer"><Youtube /><span><small>Official YouTube</small><strong>@arunguinnes</strong></span><ArrowUpRight /></a>
+        <a className="footer-office" href={contact.officeMap} target="_blank" rel="noreferrer"><MapPin /><span><small>Office / base</small><strong>{contact.office}</strong></span><ArrowUpRight /></a>
+      </div>
+      <div className="footer-grid">
+        <div className="footer-brand"><strong>ARUN<br /><i>GUINNESS</i></strong><p>Singer · Voice artist · Mimicry performer · Live entertainer</p></div>
+        <div><small>Navigate</small><Link href="/programs">Live shows</Link><Link href="/videos">The voices</Link><Link href="/about">The artist</Link><Link href="/contact">Book Arun</Link></div>
+        <div><small>Explore</small><Link href="/gallery">Gallery</Link><Link href="/testimonials">Media proof</Link><a href={contact.facebook} target="_blank" rel="noreferrer">Facebook</a></div>
+        <div><small>Response</small><p>For dates, fees and production requirements, send event date, city and audience size.</p><Link href="/contact">Start booking enquiry</Link></div>
+      </div>
+      <div className="footer-base"><span>© {new Date().getFullYear()} Arun Guinness</span><span>Performance claims marked * originate from Arun&apos;s published 2023 profile.</span></div>
+    </footer>
+  );
 }
 
-export function SocialLinks({ compact = false }: { compact?: boolean }) {
-  return <div className={`social-links ${compact ? "compact" : ""}`}><a href="https://wa.me/919656712941" aria-label="WhatsApp">WA</a><a href="tel:+919656712941" aria-label="Call Arun Guinness">CALL</a><a href="https://youtube.com/@arunguinnes?si=JR5d98Nho6-gKlAH" target="_blank" rel="noreferrer" aria-label="Arun Guinness YouTube channel">YT</a><a href="https://www.instagram.com/" aria-label="Instagram">IG</a></div>;
+export function MobileBookingBar() {
+  return (
+    <div className="mobile-booking" aria-label="Quick booking actions">
+      <a href={`tel:${contact.phone}`}><Phone />Call</a>
+      <a href={contact.whatsapp} target="_blank" rel="noreferrer"><Message />WhatsApp</a>
+    </div>
+  );
 }
 
-export function HeroStage() {
-  return <section className="hero"><div className="spotlight spotlight-one"/><div className="spotlight spotlight-two"/><div className="hero-noise"/><div className="hero-content"><div className="hero-kicker"><span /> LIVE • LAUGH • CELEBRATE</div><h1><span>ARUN</span><strong>GUINNESS</strong></h1><p className="hero-malayalam">ചിരിയുടെ വേദി.<br />ഓർമ്മകളുടെ രാത്രി.</p><div className="hero-buttons"><Link href="/contact" className="button">BOOK NOW <span>↗</span></Link><a href="https://wa.me/919656712941" className="button button-ghost">WHATSAPP</a></div></div><div className="stage-figure" aria-hidden="true"><div className="figure-head"/><div className="figure-body"/><div className="mic"><i/><b/></div></div><div className="hero-social"><SocialLinks /></div><div className="scroll-cue"><span /> SCROLL TO EXPLORE</div></section>;
+export function SocialButtons() {
+  return (
+    <div className="social-buttons">
+      <a href={contact.instagram} target="_blank" rel="noreferrer"><Instagram />Instagram <ArrowUpRight /></a>
+      <a href={contact.youtube} target="_blank" rel="noreferrer"><Youtube />YouTube <ArrowUpRight /></a>
+    </div>
+  );
 }
-
-export function ProgramGrid({ limit }: { limit?: number }) {
-  return <div className="program-grid">{programs.slice(0, limit).map(([num,title,text])=><article className="program-card" key={title}><span className="program-num">{num}</span><div className="program-icon" aria-hidden="true">✦</div><h3>{title}</h3><p>{text}</p><Link href="/contact" aria-label={`Book ${title}`}>BOOK THIS SHOW <span>↗</span></Link></article>)}</div>;
-}
-
-export function PageHero({ eyebrow, title, accent, children }: { eyebrow:string; title:string; accent:string; children?:React.ReactNode }) {
-  return <section className="page-hero"><span className="eyebrow light">{eyebrow}</span><h1>{title} <em>{accent}</em></h1>{children}</section>;
-}
-
-export function QuoteMark() { return <div className="quote-mark" aria-hidden="true">“</div>; }
