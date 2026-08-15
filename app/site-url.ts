@@ -1,6 +1,6 @@
 const DEFAULT_SITE_URL = "https://arunguinness.com";
 
-export function resolveSiteUrl(value = process.env.NEXT_PUBLIC_SITE_URL): string {
+export function resolveSiteUrl(value?: string): string {
   const candidate = value?.trim();
 
   if (!candidate) return DEFAULT_SITE_URL;
@@ -13,4 +13,4 @@ export function resolveSiteUrl(value = process.env.NEXT_PUBLIC_SITE_URL): string
   }
 }
 
-export const siteUrl = resolveSiteUrl();
+export const siteUrl = resolveSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
