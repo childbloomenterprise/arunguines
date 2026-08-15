@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { resolveSiteUrl } from "../app/site-url.ts";
 
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
@@ -35,6 +36,14 @@ test("site includes accessibility, SEO, and reduced-motion safeguards", async ()
   assert.match(layout, /application\/ld\+json/);
   assert.match(css, /prefers-reduced-motion/);
   assert.match(css, /:focus-visible/);
+});
+
+test("canonical site URL survives empty or invalid deployment configuration", () => {
+  assert.equal(resolveSiteUrl(undefined), "https://arunguinness.com");
+  assert.equal(resolveSiteUrl(""), "https://arunguinness.com");
+  assert.equal(resolveSiteUrl("not a URL"), "https://arunguinness.com");
+  assert.equal(resolveSiteUrl("ftp://example.com"), "https://arunguinness.com");
+  assert.equal(resolveSiteUrl(" https://example.com/path/ "), "https://example.com");
 });
 
 test("footer exposes every booking and enquiry channel", async () => {

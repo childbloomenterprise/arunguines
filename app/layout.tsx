@@ -4,12 +4,11 @@ import { MotionController } from "./motion-controller";
 import { Header } from "./navigation";
 import { Footer, MobileBookingBar } from "./site-components";
 import { contact } from "./site-data";
+import { siteUrl } from "./site-url";
 import "./globals.css";
 
 const body = Manrope({ variable: "--font-body", subsets: ["latin"], display: "swap" });
 const display = Cormorant_Garamond({ variable: "--font-display", subsets: ["latin"], display: "swap", weight: ["400", "500", "600", "700"] });
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://arunguinness.com";
-
 export const viewport: Viewport = { themeColor: "#f7f4ee", colorScheme: "light" };
 
 export const metadata: Metadata = {
