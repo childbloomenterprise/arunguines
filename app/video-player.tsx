@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
-import { Close, Play } from "./icons";
-import { youtubeThumbnail } from "./site-data";
+import { useEffect, useRef, useState } from "react";
+import { ArrowUpRight, Close, Play } from "./icons";
+import { youtubeThumbnail, youtubeUrl } from "./site-data";
 
 type VideoPlayerProps = {
   id: string;
@@ -31,17 +31,53 @@ export function VideoPlayer({
   variant = "card",
 }: VideoPlayerProps) {
   const [playing, setPlaying] = useState(false);
+  const [unavailable, setUnavailable] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    if (!playing) return;
+
+    const listenForPlayerErrors = (event: MessageEvent) => {
+      if (!event.origin.includes("youtube.com") && !event.origin.includes("youtube-nocookie.com")) return;
+      try {
+        const payload = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
+        if (payload?.event === "onError" && [100, 101, 150].includes(Number(payload.info))) setUnavailable(true);
+      } catch {
+        // YouTube sends non-JSON player messages alongside API events.
+      }
+    };
+    const connect = () => iframeRef.current?.contentWindow?.postMessage(JSON.stringify({ event: "listening", id: `video-${id}` }), "*");
+    window.addEventListener("message", listenForPlayerErrors);
+    const timer = window.setInterval(connect, 500);
+    connect();
+    return () => {
+      window.removeEventListener("message", listenForPlayerErrors);
+      window.clearInterval(timer);
+    };
+  }, [id, playing]);
+
+  const closePlayer = () => {
+    setPlaying(false);
+    setUnavailable(false);
+  };
 
   if (playing) {
     return (
       <div className={`embedded-video embedded-video-${variant} is-playing ${className}`}>
-        <iframe
-          src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`}
-          title={title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-        />
-        <button className="video-close" type="button" onClick={() => setPlaying(false)} aria-label={`Close ${title}`}>
+        {unavailable ? (
+          <div className="video-fallback" role="status"><span>Playback moved to YouTube</span><strong>This performance cannot play inside this browser.</strong><a href={youtubeUrl(id)} target="_blank" rel="noreferrer">Watch the original <ArrowUpRight /></a></div>
+        ) : (
+          <iframe
+            ref={iframeRef}
+            id={`video-${id}`}
+            src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1`}
+            title={title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            onError={() => setUnavailable(true)}
+          />
+        )}
+        <button className="video-close" type="button" onClick={closePlayer} aria-label={`Close ${title}`}>
           <Close />
         </button>
       </div>

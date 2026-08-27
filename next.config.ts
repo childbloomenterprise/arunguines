@@ -14,6 +14,16 @@ const nextConfig: NextConfig = {
     ],
   },
   poweredByHeader: false,
+  async redirects() {
+    return [
+      { source: "/programs", destination: "/shows", permanent: true },
+      { source: "/about", destination: "/artist", permanent: true },
+      { source: "/videos", destination: "/proof#performances", permanent: true },
+      { source: "/gallery", destination: "/proof#performances", permanent: true },
+      { source: "/testimonials", destination: "/proof#evidence", permanent: true },
+      { source: "/contact", destination: "/book", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

@@ -1,0 +1,14 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowUpRight } from "../icons";
+import { InteractiveTimeline } from "../experience";
+import { ActHeading, PageFrame, PageHero, StatsStrip } from "../site-components";
+import { artistModes, milestones, voiceRoster } from "../site-data";
+import { VideoPlayer } from "../video-player";
+
+export const metadata: Metadata = { title: "The Artist", description: "Discover Arun Guinness—Kerala singer, voice-imitation performer, mimicry artist, actor, sound engineer and live entertainer." };
+
+export default function ArtistPage() {
+  return <PageFrame><PageHero label="Act / Artist" title="Built by sound." accent="Driven by stage." description="Technical listening, fearless performance and nearly two decades of learning what makes a room come alive." highlights={["Singer + voice artist", "Sound-engineering roots", "Kerala · Worldwide"]} /><section className="artist-profile section-shell"><div data-reveal><VideoPlayer id="a0BScpW4hkA" title="The Arun Guinness story" alt="Arun Guinness profile and award video" className="profile-player" sizes="(max-width: 850px) 100vw, 48vw" badge="Artist profile" variant="portrait" /></div><div data-reveal><ActHeading act="01" label="Kothamangalam · Kerala" title="A singer who" accent="became the voices." /><p className="lead">Arun is known for something rarer than speaking mimicry: recreating playback singers while actually singing—including transformations between male and female voices in one performance.</p><p>Electronics and sound-engineering studies developed the technical ear. Television, international programmes and thousands of live appearances developed the timing.</p><Link className="button button-dark" href="/book">Bring Arun to your stage <ArrowUpRight /></Link></div></section><section className="craft-section section-shell"><ActHeading act="02" label="The whole artist" title="Four crafts." accent="One instinct." /><div className="craft-grid">{artistModes.map((mode) => <article key={mode.number} data-reveal><span>{mode.number}</span><h3>{mode.title}</h3><p>{mode.text}</p></article>)}</div></section><section className="voice-library section-shell"><ActHeading act="03" label="Reported repertoire" title="Recognisable voices." accent="Live control." /><div className="voice-grid">{voiceRoster.map((voice) => <article key={voice.name}><div><Image src={voice.photo} alt={`${voice.name}, playback singer`} fill sizes="(max-width: 600px) 45vw, 22vw" style={{ objectPosition: voice.position }} /></div><h3>{voice.name}</h3><p>{voice.register}</p><small>{voice.language}</small></article>)}</div></section><section className="timeline-section section-shell"><ActHeading act="04" label="Journey" title="Every stage" accent="changed the voice." /><InteractiveTimeline items={milestones} /><StatsStrip /></section></PageFrame>;
+}

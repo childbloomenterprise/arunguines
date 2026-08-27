@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ArrowUpRight, Close, Menu } from "./icons";
+import { ArrowUpRight, Close, Menu, Replay, VoiceMark } from "./icons";
 import { navItems } from "./site-data";
 
 export function Header() {
@@ -16,15 +16,16 @@ export function Header() {
   }, [open]);
 
   return (
-    <header className="site-header">
+    <header className="site-header" style={{ viewTransitionName: "site-header" }}>
       <Link href="/" className="brand" aria-label="Arun Guinness home">
-        <span className="brand-disc">AG</span>
-        <span className="brand-copy"><strong>Arun Guinness</strong><small>The voice of impressions</small></span>
+        <span className="brand-disc"><VoiceMark /></span>
+        <span className="brand-copy"><strong>Arun Guinness</strong><small>One man · Many voices</small></span>
       </Link>
       <nav className="desktop-nav" aria-label="Main navigation">
         {navItems.map((item) => <Link key={item.href} href={item.href} aria-current={pathname === item.href ? "page" : undefined}>{item.label}</Link>)}
       </nav>
-      <Link href="/contact" className="header-book">Book Arun <ArrowUpRight /></Link>
+      <button className="header-replay" type="button" aria-label="Replay stage opening" onClick={() => window.dispatchEvent(new Event("arun:replay-intro"))}><Replay /></button>
+      <Link href="/book" className="header-book">Book Arun <ArrowUpRight /></Link>
       <button className="menu-toggle" type="button" aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen((value) => !value)}>
         {open ? <Close /> : <Menu />}
       </button>
@@ -33,7 +34,7 @@ export function Header() {
           <Link href="/" onClick={() => setOpen(false)}>Home</Link>
           {navItems.map((item) => <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>{item.label}</Link>)}
         </nav>
-        <p>Music · mimicry · characters · live entertainment</p>
+        <p>Music · mimicry · character · live entertainment</p>
       </div>
     </header>
   );

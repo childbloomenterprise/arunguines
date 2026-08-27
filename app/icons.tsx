@@ -10,6 +10,16 @@ function IconBase({ children, ...props }: IconProps & { children: ReactNode }) {
   );
 }
 
+export function VoiceMark(props: IconProps) {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true" {...props}>
+      <circle cx="16" cy="16" r="15" stroke="currentColor" strokeOpacity=".28" />
+      <path d="M7 17h2.5l1.6-5.5 2.8 10 3.2-14 2.6 11.5 1.8-5.2 1.5 3.2H25" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="25" cy="17" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}
+
 export function ArrowUpRight(props: IconProps) { return <IconBase {...props}><path d="M7 17 17 7M7 7h10v10" /></IconBase>; }
 export function ArrowRight(props: IconProps) { return <IconBase {...props}><path d="M5 12h14M13 6l6 6-6 6" /></IconBase>; }
 export function Play(props: IconProps) { return <IconBase {...props}><path d="m9 7 8 5-8 5V7Z" /></IconBase>; }
@@ -22,3 +32,9 @@ export function Youtube(props: IconProps) { return <IconBase {...props}><path d=
 export function Mail(props: IconProps) { return <IconBase {...props}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></IconBase>; }
 export function MapPin(props: IconProps) { return <IconBase {...props}><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></IconBase>; }
 export function Check(props: IconProps) { return <IconBase {...props}><path d="m5 12 4 4L19 6" /></IconBase>; }
+export function ChevronLeft(props: IconProps) { return <IconBase {...props}><path d="m15 18-6-6 6-6" /></IconBase>; }
+export function ChevronRight(props: IconProps) { return <IconBase {...props}><path d="m9 18 6-6-6-6" /></IconBase>; }
+export function Replay(props: IconProps) { return <IconBase {...props}><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></IconBase>; }
+export function Copy(props: IconProps) { return <IconBase {...props}><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></IconBase>; }
+export function Plus(props: IconProps) { return <IconBase {...props}><path d="M12 5v14M5 12h14" /></IconBase>; }
+export function Minus(props: IconProps) { return <IconBase {...props}><path d="M5 12h14" /></IconBase>; }
