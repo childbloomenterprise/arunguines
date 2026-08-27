@@ -21,7 +21,9 @@ test("homepage delivers the complete five-act experience", async () => {
 test("intro plays once per session, stays under budget, and remains replayable", async () => {
   const [experience, navigation, css] = await Promise.all([read("app/experience.tsx"), read("app/navigation.tsx"), read("app/globals.css")]);
   assert.match(experience, /sessionStorage\.getItem\(INTRO_KEY\)/);
-  assert.match(experience, /1180/);
+  assert.match(experience, /innerWidth >= 700/);
+  assert.match(experience, /saveData/);
+  assert.match(experience, /980/);
   assert.match(experience, /Escape/);
   assert.match(experience, /arun:replay-intro/);
   assert.match(navigation, /arun:replay-intro/);
@@ -89,6 +91,28 @@ test("site includes accessibility, SEO, and responsive safeguards", async () => 
   assert.match(css, /100dvh/);
   assert.match(css, /orientation: landscape/);
   assert.match(frame, /ViewTransition/);
+});
+
+test("mobile navigation, booking actions, and performance map respond to context", async () => {
+  const [navigation, motion, map, css, page] = await Promise.all([
+    read("app/navigation.tsx"),
+    read("app/motion-controller.tsx"),
+    read("app/performance-map.tsx"),
+    read("app/globals.css"),
+    read("app/page.tsx"),
+  ]);
+  for (const section of ["home", "act-two", "build-show", "act-four", "book-home"]) {
+    assert.match(navigation, new RegExp(section));
+    assert.match(page, new RegExp(`id="${section}"`));
+  }
+  assert.match(navigation, /aria-current=.*location/);
+  assert.match(motion, /scrolling-down/);
+  assert.match(motion, /near-booking/);
+  assert.match(css, /\.scrolling-down \.mobile-booking/);
+  assert.match(css, /\.near-booking \.mobile-booking/);
+  assert.match(map, /aria-pressed/);
+  assert.match(map, /onPointerMove/);
+  assert.match(map, /aria-live="polite"/);
 });
 
 test("canonical site URL survives empty or invalid deployment configuration", () => {

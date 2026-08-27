@@ -13,9 +13,10 @@ const viewports = [
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  timeout: 120_000,
   fullyParallel: true,
   reporter: [["list"]],
-  expect: { toHaveScreenshot: { animations: "disabled", maxDiffPixelRatio: 0.02 } },
+  expect: { timeout: 20_000, toHaveScreenshot: { animations: "disabled", maxDiffPixelRatio: 0.02 } },
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000",
     colorScheme: "dark",

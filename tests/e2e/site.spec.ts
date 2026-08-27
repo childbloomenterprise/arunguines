@@ -18,15 +18,16 @@ for (const route of routes) {
   });
 }
 
-test("opening runs once, skips by keyboard, and replays from header", async ({ page }, testInfo) => {
+test("opening stays out of the mobile critical path and remains replayable", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "phone-390x844");
   await page.goto("/", { waitUntil: "domcontentloaded" });
   const intro = page.getByRole("dialog", { name: "Opening stage sequence" });
-  await intro.waitFor({ state: "visible", timeout: 5_000 });
-  await page.keyboard.press("Escape");
   await expect(intro).toBeHidden();
+  await expect(page.locator("html")).toHaveClass(/motion-ready/);
   await page.getByRole("button", { name: "Replay stage opening" }).click();
   await expect(intro).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(intro).toBeHidden();
 });
 
 test("performance filters, controls, and click-to-load media work", async ({ page }) => {
@@ -62,6 +63,26 @@ test("mobile navigation and keyboard focus remain operable", async ({ page }) =>
   await page.keyboard.press("Home");
   await page.keyboard.press("Tab");
   await expect(page.getByText("Skip to content")).toBeFocused();
+});
+
+test("mobile section rail, map, and booking bar react to scrolling", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "phone-390x844");
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveClass(/motion-ready/);
+  const rail = page.getByRole("navigation", { name: "Homepage sections" });
+  await page.locator("#act-two").scrollIntoViewIfNeeded();
+  await expect(rail).toBeVisible();
+  await expect(rail.getByRole("link", { name: /Watch/ })).toHaveAttribute("aria-current", "location");
+  await expect(page.locator(".mobile-booking")).toHaveCSS("opacity", "0");
+
+  await rail.getByRole("link", { name: /Journey/ }).click();
+  await expect(rail.getByRole("link", { name: /Journey/ })).toHaveAttribute("aria-current", "location");
+  await page.locator(".performance-map").scrollIntoViewIfNeeded();
+  await page.locator(".map-point.uae").click();
+  await expect(page.locator(".map-caption strong")).toHaveText("UAE");
+
+  await rail.getByRole("link", { name: /Book/ }).click();
+  await expect(page.locator(".mobile-booking")).toHaveCSS("opacity", "0");
 });
 
 test("legacy route redirect preserves query", async ({ page }) => {

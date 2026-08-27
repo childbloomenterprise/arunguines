@@ -6,17 +6,42 @@ import { useEffect, useState } from "react";
 import { ArrowUpRight, Close, Menu, Replay, VoiceMark } from "./icons";
 import { navItems } from "./site-data";
 
+const homeSections = [
+  { id: "home", label: "Intro", number: "01" },
+  { id: "act-two", label: "Watch", number: "02" },
+  { id: "build-show", label: "Build", number: "03" },
+  { id: "act-four", label: "Journey", number: "04" },
+  { id: "book-home", label: "Book", number: "05" },
+] as const;
+
 export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
     document.body.classList.toggle("menu-open", open);
     return () => document.body.classList.remove("menu-open");
   }, [open]);
 
+  useEffect(() => {
+    if (pathname !== "/") return;
+    const sections = homeSections
+      .map(({ id }) => document.getElementById(id))
+      .filter((section): section is HTMLElement => Boolean(section));
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      const current = visible.at(-1)?.target.id;
+      if (current) setActiveSection(current);
+    }, { rootMargin: "-26% 0px -62%", threshold: 0 });
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, [pathname]);
+
   return (
-    <header className="site-header" style={{ viewTransitionName: "site-header" }}>
+    <header className={`site-header ${pathname === "/" ? "has-section-nav" : ""}`} style={{ viewTransitionName: "site-header" }}>
       <Link href="/" className="brand" aria-label="Arun Guinness home">
         <span className="brand-disc"><VoiceMark /></span>
         <span className="brand-copy"><strong>Arun Guinness</strong><small>One man · Many voices</small></span>
@@ -36,6 +61,20 @@ export function Header() {
         </nav>
         <p>Music · mimicry · character · live entertainment</p>
       </div>
+      {pathname === "/" ? (
+        <nav className="mobile-section-nav" aria-label="Homepage sections">
+          {homeSections.map((section) => (
+            <a
+              key={section.id}
+              href={`#${section.id}`}
+              aria-current={activeSection === section.id ? "location" : undefined}
+              onClick={() => setActiveSection(section.id)}
+            >
+              <span>{section.number}</span>{section.label}
+            </a>
+          ))}
+        </nav>
+      ) : null}
     </header>
   );
 }

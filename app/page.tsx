@@ -9,7 +9,7 @@ import { BookingForm } from "./contact/booking-form";
 export default function Home() {
   return (
     <PageFrame>
-      <section className="home-hero">
+      <section className="home-hero" id="home">
         <div className="hero-spotlight" aria-hidden="true" />
         <div className="hero-frame" aria-hidden="true"><i /><i /></div>
         <div className="hero-copy" data-reveal>
@@ -39,8 +39,8 @@ export default function Home() {
         <ShowBuilder />
       </section>
 
-      <section className="act-section act-four section-shell">
-        <ActHeading act="Act IV" label="Trust the Stage" title="A career built" accent="in public." description="Explore the journey, international reach and evidence behind the claims." />
+      <section className="act-section act-four section-shell" id="act-four">
+        <ActHeading act="Act IV" label="Trust the Stage" title="From Kerala" accent="to Gulf stages." description="Follow the milestones, then select a location to explore the documented live trail." />
         <div className="trust-grid"><InteractiveTimeline items={milestones} /><PerformanceMap /></div>
         <MediaRail />
         <EvidenceDeck items={proofItems} />

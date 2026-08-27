@@ -3,6 +3,7 @@ import { ViewTransition } from "react";
 import { ArrowRight, ArrowUpRight, Instagram, Mail, MapPin, Message, Phone, VoiceMark, Youtube } from "./icons";
 import { ReplayIntroButton } from "./experience";
 import { contact, mediaLogos, programs, stats } from "./site-data";
+export { PerformanceMap } from "./performance-map";
 
 export function PageFrame({ children }: { children: React.ReactNode }) {
   return <ViewTransition enter="page-enter" exit="page-exit" default="none"><main id="main-content">{children}</main></ViewTransition>;
@@ -13,7 +14,7 @@ export function Eyebrow({ children, light = false }: { children: React.ReactNode
 }
 
 export function ActHeading({ act, label, title, accent, description, light = false }: { act: string; label: string; title: string; accent: string; description?: string; light?: boolean }) {
-  return <div className={`act-heading ${light ? "is-light" : ""}`} data-reveal><div><span>{act}</span><Eyebrow light={light}>{label}</Eyebrow></div><h2>{title}<em>{accent}</em></h2>{description ? <p>{description}</p> : null}</div>;
+  return <div className={`act-heading ${light ? "is-light" : ""}`} data-reveal><div><span>{act}</span><Eyebrow light={light}>{label}</Eyebrow></div><h2>{title} <em>{accent}</em></h2>{description ? <p>{description}</p> : null}</div>;
 }
 
 export function StatsStrip() {
@@ -29,11 +30,7 @@ export function ProgramCards() {
 }
 
 export function PageHero({ label, title, accent, description, highlights }: { label: string; title: string; accent: string; description: string; highlights: readonly string[] }) {
-  return <section className="page-hero"><div className="page-curtain" aria-hidden="true" /><div className="page-hero-copy" data-reveal><Eyebrow light>{label}</Eyebrow><h1>{title}<em>{accent}</em></h1><p>{description}</p><div className="page-highlights">{highlights.map((item, index) => <span key={item}><i>0{index + 1}</i>{item}</span>)}</div></div><div className="page-stage-mark" aria-hidden="true"><VoiceMark /><span>Arun / Live</span></div></section>;
-}
-
-export function PerformanceMap() {
-  return <div className="performance-map" data-reveal><div className="map-grid" aria-hidden="true" /><div className="map-route" aria-hidden="true"><i /><i /><i /><i /></div><span className="map-point kerala"><i />Kerala<small>Origin</small></span><span className="map-point kuwait"><i />Kuwait<small>Live archive</small></span><span className="map-point uae"><i />UAE<small>Live archive</small></span><span className="map-point oman"><i />Oman<small>Live archive</small></span><div className="map-caption"><span>Documented reach</span><strong>Kerala ↔ Gulf</strong><small>Performance regions, not flight paths.</small></div></div>;
+  return <section className="page-hero"><div className="page-curtain" aria-hidden="true" /><div className="page-hero-copy" data-reveal><Eyebrow light>{label}</Eyebrow><h1>{title} <em>{accent}</em></h1><p>{description}</p><div className="page-highlights">{highlights.map((item, index) => <span key={item}><i>0{index + 1}</i>{item}</span>)}</div></div><div className="page-stage-mark" aria-hidden="true"><VoiceMark /><span>Arun / Live</span></div></section>;
 }
 
 export function Footer() {

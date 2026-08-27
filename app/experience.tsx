@@ -22,7 +22,7 @@ export function StageIntro() {
     closeTimer.current = window.setTimeout(() => {
       setVisible(false);
       sessionStorage.setItem(INTRO_KEY, "seen");
-    }, 1180);
+    }, 980);
   }, []);
 
   const skip = useCallback(() => {
@@ -32,7 +32,15 @@ export function StageIntro() {
   }, []);
 
   useEffect(() => {
-    const opening = window.setTimeout(() => { if (sessionStorage.getItem(INTRO_KEY) !== "seen") play(); }, 0);
+    const opening = window.setTimeout(() => {
+      if (sessionStorage.getItem(INTRO_KEY) === "seen") return;
+      const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+      const allowAutomaticIntro = window.innerWidth >= 700
+        && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        && !connection?.saveData;
+      if (allowAutomaticIntro) play();
+      else sessionStorage.setItem(INTRO_KEY, "seen");
+    }, 0);
     const replay = () => play();
     const escape = (event: KeyboardEvent) => { if (event.key === "Escape") skip(); };
     window.addEventListener("arun:replay-intro", replay);
