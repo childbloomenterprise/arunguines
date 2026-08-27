@@ -36,33 +36,32 @@ export const contact = {
 } as const;
 
 export const navItems: readonly NavItem[] = [
+  { href: "/", label: "Home" },
+  { href: "/proof", label: "Performances" },
   { href: "/shows", label: "Shows" },
-  { href: "/artist", label: "Artist" },
-  { href: "/proof", label: "Proof" },
-  { href: "/book", label: "Book" },
+  { href: "/artist", label: "About" },
 ];
 
 export const stats = [
-  { value: "~20", label: "Years on stage", source: "Published 2023 professional profile" },
-  { value: "3,000+", label: "Live performances*", source: "Published 2023 professional profile; final reconfirmation pending" },
-  { value: "50+", label: "Countries reached*", source: "Published 2023 professional profile; final reconfirmation pending" },
-  { value: "35+", label: "Singer voices*", source: "Published repertoire and official performance archive" },
+  { value: "6", label: "Official videos", source: "Arun Guinness official video archive" },
+  { value: "4", label: "Regions", source: "Kerala · Kuwait · UAE · Oman" },
+  { value: "2+", label: "TV stages", source: "Flowers TV · Kairali TV" },
 ] as const;
 
 export const programs: readonly ShowFormat[] = [
-  { number: "01", slug: "one-man-show", title: "One Man Show", duration: "90 min", description: "Dozens of voices, singing, mimicry, characters, comedy and audience interaction—performed live by one artist.", bestFor: "Festivals · Associations · Ticketed events", inclusions: ["Male and female playback voices", "Music, mimicry and clean comedy", "Audience interaction", "Flexible language mix"], production: "A complete headline experience with adaptable running order and technical plan.", proofVideoId: "e66PF3ImXIQ" },
-  { number: "02", slug: "variety-musical", title: "Variety Musical", duration: "Flexible", description: "A high-energy blend of music, rapid voice transformations and live entertainment shaped around your audience.", bestFor: "Corporate · Campus · Cultural programs", inclusions: ["Custom running time", "Music-led voice transformations", "Event-specific comedy", "Audience-aware pacing"], production: "A modular format built around event agenda, audience profile and available stage time.", proofVideoId: "7FufHDMK8Xw" },
-  { number: "03", slug: "mega-show", title: "Mega Show", duration: "2–3 hours", description: "Large-format production featuring Arun with additional singers, musicians and supporting performers.", bestFor: "Public festivals · Gulf events · Celebrations", inclusions: ["Expanded performance cast", "Full-show arc", "Large-stage energy", "Custom production planning"], production: "Best for large audiences where production scale, variety and a longer programme matter.", proofVideoId: "LcwIFf_3A34" },
-  { number: "04", slug: "guest-performance", title: "Guest Performance", duration: "Custom", description: "Compact featured appearance for inaugurations, annual days, award nights and special occasions.", bestFor: "Schools · Institutions · Brand events", inclusions: ["Signature voice segment", "Compact stage setup", "Agenda-friendly timing", "Featured guest moment"], production: "Designed to enter an existing programme cleanly without taking over the full schedule.", proofVideoId: "CJiPfOPfbBY" },
+  { number: "01", slug: "one-man-show", title: "One Man Show", duration: "90 min", description: "Voices, music, mimicry—one artist.", bestFor: "Festivals · Associations", inclusions: ["Male + female voices", "Music + comedy", "Audience interaction", "Flexible languages"], production: "Headline show. Adaptable running order.", proofVideoId: "e66PF3ImXIQ" },
+  { number: "02", slug: "variety-musical", title: "Variety Musical", duration: "Flexible", description: "A flexible, music-led set.", bestFor: "Corporate · Campus", inclusions: ["Flexible time", "Voice transformations", "Event comedy", "Adaptive pace"], production: "Built around audience and stage time.", proofVideoId: "7FufHDMK8Xw" },
+  { number: "03", slug: "mega-show", title: "Mega Show", duration: "2–3 hours", description: "Full cast. Festival energy.", bestFor: "Festivals · Gulf events", inclusions: ["Expanded cast", "Full-show arc", "Large-stage energy", "Custom production"], production: "Scale, variety, long-form energy.", proofVideoId: "LcwIFf_3A34" },
+  { number: "04", slug: "guest-performance", title: "Guest Performance", duration: "Custom", description: "A compact signature appearance.", bestFor: "Schools · Brands", inclusions: ["Signature voices", "Compact setup", "Agenda-friendly", "Guest moment"], production: "Fits cleanly into an existing programme.", proofVideoId: "CJiPfOPfbBY" },
 ] as const;
 
 export const videos: readonly Performance[] = [
-  { id: "e66PF3ImXIQ", title: "Two voices. One performer.", subtitle: "Male ↔ female voice transformation", category: "Signature" },
-  { id: "P1jg8u0ldbs", title: "S. Janaki voice", subtitle: "Playback-singer voice impression", category: "Voice" },
-  { id: "7FufHDMK8Xw", title: "On the Flowers stage", subtitle: "Television performance · live voice craft", category: "Television" },
-  { id: "LcwIFf_3A34", title: "Kuwait live stage", subtitle: "International show · full-room energy", category: "International" },
-  { id: "CJiPfOPfbBY", title: "Malayali association live", subtitle: "Community stage · audience connection", category: "Live" },
-  { id: "V-n8_vxB0yc", title: "Onam in Kuwait", subtitle: "Festival performance · Kerala to the Gulf", category: "International" },
+  { id: "e66PF3ImXIQ", title: "Two voices. One performer.", subtitle: "Male ↔ female", category: "Signature" },
+  { id: "P1jg8u0ldbs", title: "S. Janaki voice", subtitle: "Playback voice", category: "Voice" },
+  { id: "7FufHDMK8Xw", title: "Flowers stage", subtitle: "Television", category: "Television" },
+  { id: "LcwIFf_3A34", title: "Kuwait live", subtitle: "International", category: "International" },
+  { id: "CJiPfOPfbBY", title: "Association live", subtitle: "Community", category: "Live" },
+  { id: "V-n8_vxB0yc", title: "Onam · Kuwait", subtitle: "Festival", category: "International" },
 ] as const;
 
 export const voiceRoster = [
@@ -77,32 +76,38 @@ export const voiceRoster = [
 ] as const;
 
 export const artistModes = [
-  { number: "01", title: "Melody", text: "Live singing that moves naturally between male and female registers." },
-  { number: "02", title: "Voice", text: "Playback signatures recreated through listening, control and character." },
-  { number: "03", title: "Timing", text: "Mimicry, clean comedy and audience instinct shaped for each room." },
-  { number: "04", title: "Sound", text: "Electronics and audio-engineering discipline behind every performance." },
+  { number: "01", title: "Melody", text: "Male ↔ female." },
+  { number: "02", title: "Voice", text: "Listen. Control. Transform." },
+  { number: "03", title: "Timing", text: "Comedy + audience instinct." },
+  { number: "04", title: "Sound", text: "Engineering precision." },
 ] as const;
 
-export const mediaLogos = ["Flowers TV", "Kairali TV", "Asianet", "Surya TV", "Mazhavil Manorama", "Reporter Live"] as const;
+export const mediaLogos = ["Flowers TV", "Kairali TV"] as const;
 
 export const milestones: readonly Milestone[] = [
-  { year: "2000s", title: "Sound becomes foundation", text: "Electronics and sound-engineering training formed the technical base for a life in music." },
-  { year: "2014", title: "Best Mimicry Artist", text: "Rotary recognition reported in Arun's published professional profile.", source: "Certificate wording pending final verification" },
-  { year: "2019", title: "Record milestone", text: "A voice-imitation record achievement publicly documented by Arun.", source: "Guinness certificate verification pending" },
-  { year: "Now", title: "Across borders", text: "Documented performances across Kerala, Kuwait, Oman and the UAE." },
+  { year: "2000s", title: "Sound foundation", text: "Engineering sharpened the ear." },
+  { year: "Television", title: "Broadcast stages", text: "Flowers TV. Kairali TV." },
+  { year: "2024–25", title: "International stages", text: "Kuwait + Kerala records." },
+  { year: "Today", title: "Kerala → Gulf", text: "Kerala. Kuwait. Oman. UAE." },
 ] as const;
 
 export const proofItems: readonly ProofItem[] = [
-  { title: "Kuwait · Onavesham 2024", text: "Independent event coverage documented Arun's voice range, medleys and live vocals.", href: "https://www.indiansinkuwait.com/news/70618-IAK-Onavesham-2024-A-Grand-Celebration-of-Onam-at-ICSK-School-Salmiya", label: "Independent event coverage" },
-  { title: "SFS Public School", text: "Arun inaugurated Carpe Diem and delivered a featured live performance for students and families.", href: "https://sfspublicschool.com/carpe-diem-a-celebration-of-talent-and-spirit/", label: "Institutional record" },
-  { title: "Flowers · Comedy Utsavam", text: "Indexed television performances connect Arun directly with Kerala's live entertainment stage.", href: "https://www.youtube.com/watch?v=3vXZZvHX208", label: "Official performance source" },
+  { title: "Kuwait · Onavesham 2024", text: "Female register. Medleys. Live vocals.", href: "https://www.indiansinkuwait.com/news/70618-IAK-Onavesham-2024-A-Grand-Celebration-of-Onam-at-ICSK-School-Salmiya", label: "Public coverage" },
+  { title: "SFS Public School", text: "Featured 30-minute performance · 2025.", href: "https://sfspublicschool.com/carpe-diem-a-celebration-of-talent-and-spirit/", label: "Institutional record" },
+  { title: "Flowers · Comedy Utsavam", text: "Official television performance.", href: "https://www.youtube.com/watch?v=3vXZZvHX208", label: "Official source" },
+] as const;
+
+export const stageNotes = [
+  { quote: "Captivating the audience with a spectacular 30-minute performance.", source: "SFS Public School · Carpe Diem 2025", href: "https://sfspublicschool.com/carpe-diem-a-celebration-of-talent-and-spirit/" },
+  { quote: "From melodic femininity to dynamic medleys and powerful vocals.", source: "Indians in Kuwait · Onavesham 2024", href: "https://www.indiansinkuwait.com/news/70618-IAK-Onavesham-2024-A-Grand-Celebration-of-Onam-at-ICSK-School-Salmiya" },
+  { quote: "Well-known artist Arun Guinness.", source: "Times Kuwait · Onavesham 2024", href: "https://timeskuwait.com/idukki-association-kuwait-gears-up-for-onam-2024-celebration/" },
 ] as const;
 
 export const faqs = [
-  { question: "What makes Arun's show different?", answer: "He sings in the styles and voices of male and female playback singers, then combines that craft with comedy, characters and audience interaction." },
-  { question: "Which events can he perform at?", answer: "Corporate events, festivals, colleges, schools, associations, annual days, inaugurations, private celebrations and international programmes." },
-  { question: "Can the show be customized?", answer: "Yes. Duration, supporting artists, language mix and tone can be adjusted around venue, audience and production schedule." },
-  { question: "How do we check availability?", answer: "Send event date, city, audience type and preferred format through WhatsApp. Arun's team can then confirm availability and requirements." },
+  { question: "What is different?", answer: "Male + female playback voices, sung live—with music, mimicry and interaction." },
+  { question: "Which events?", answer: "Corporate, festivals, campuses, associations, celebrations and international stages." },
+  { question: "Customizable?", answer: "Yes—time, cast, languages and tone." },
+  { question: "Check availability?", answer: "WhatsApp date, city, audience and format." },
 ] as const;
 
 const standardDefinitionThumbnails = new Set(["7FufHDMK8Xw", "LcwIFf_3A34"]);

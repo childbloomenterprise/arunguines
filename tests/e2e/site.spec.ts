@@ -18,14 +18,14 @@ for (const route of routes) {
   });
 }
 
-test("opening runs once, skips by keyboard, and replays from header", async ({ page }, testInfo) => {
+test("opening runs once, skips by keyboard, and replays from footer", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "phone-390x844");
   await page.goto("/", { waitUntil: "domcontentloaded" });
   const intro = page.getByRole("dialog", { name: "Opening stage sequence" });
   await intro.waitFor({ state: "visible", timeout: 5_000 });
   await page.keyboard.press("Escape");
   await expect(intro).toBeHidden();
-  await page.getByRole("button", { name: "Replay stage opening" }).click();
+  await page.getByRole("button", { name: "Replay opening" }).click();
   await expect(intro).toBeVisible();
 });
 
@@ -45,7 +45,7 @@ test("configurator recommendation reaches prefilled booking", async ({ page }) =
   await page.getByLabel("Event type").selectOption("public-festival");
   await page.getByLabel("Audience size").selectOption("1000-plus");
   await expect(page.locator(".show-result")).toContainText("Mega Show");
-  await page.getByRole("link", { name: "Check this format" }).click();
+  await page.getByRole("link", { name: "Choose" }).click();
   await expect(page).toHaveURL(/\/book\?show=Mega(?:%20|\+)Show/);
   await expect(page.getByLabel("Preferred show")).toHaveValue("Mega Show");
 });
@@ -64,6 +64,22 @@ test("mobile navigation and keyboard focus remain operable", async ({ page }) =>
   await expect(page.getByText("Skip to content")).toBeFocused();
 });
 
+test("internal navigation uses the stage curtain and reduced motion skips it", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-1440x900");
+  await page.goto("/");
+  const curtain = page.locator(".route-curtain");
+  const transitionClick = page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Performances" }).click();
+  await expect(curtain).toHaveAttribute("data-state", /closing|covered|opening/);
+  await transitionClick;
+  await expect(page).toHaveURL(/\/proof$/);
+  await expect(curtain).toHaveAttribute("data-state", "idle");
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Home" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(curtain).toHaveAttribute("data-state", "idle");
+});
+
 test("legacy route redirect preserves query", async ({ page }) => {
   const response = await page.goto("/programs?show=One%20Man%20Show");
   expect(response?.status()).toBe(200);
@@ -77,8 +93,10 @@ test("responsive homepage visual", async ({ page }) => {
 
 test("desktop canonical routes and interaction states remain visually stable", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-1440x900");
+  test.setTimeout(60_000);
   for (const route of routes) {
     await page.goto(route);
+    await page.mouse.move(0, 0);
     await expect(page.locator("main")).toHaveScreenshot(`route-${route === "/" ? "home" : route.slice(1)}.png`);
   }
   await page.goto("/shows");

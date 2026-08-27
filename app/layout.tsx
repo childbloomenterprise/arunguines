@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Bodoni_Moda, Manrope } from "next/font/google";
-import { StageIntro } from "./experience";
+import { Manrope } from "next/font/google";
+import { RouteCurtain, StageIntro } from "./experience";
 import { MotionController } from "./motion-controller";
 import { Header } from "./navigation";
 import { Footer, MobileBookingBar } from "./site-components";
@@ -8,13 +8,12 @@ import { contact } from "./site-data";
 import { siteUrl } from "./site-url";
 import "./globals.css";
 
-const body = Manrope({ variable: "--font-body", subsets: ["latin"], display: "swap" });
-const display = Bodoni_Moda({ variable: "--font-display", subsets: ["latin"], display: "swap", weight: ["400", "500", "600", "700"], style: ["normal", "italic"] });
-export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0b0a0f", colorScheme: "dark light" };
+const manrope = Manrope({ variable: "--font-manrope", subsets: ["latin"], display: "swap" });
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0A0A0D", colorScheme: "dark light" };
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: "Arun Guinness | One Man. Many Voices.", template: "%s | Arun Guinness" },
+  title: { default: "Arun Guinness — Singer, Voice Artist & Live Entertainer", template: "%s | Arun Guinness" },
   description: "Book Arun Guinness—Kerala singer, voice-imitation artist, mimicry performer and live entertainer—for one-man shows, festivals, corporate events and international programs.",
   keywords: ["Arun Guinness", "mimicry artist Kerala", "one man show Kerala", "voice artist Kerala", "live singer Kerala", "Gulf stage show", "male female voice singer"],
   alternates: { canonical: "/" },
@@ -39,10 +38,11 @@ const structuredData = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
-      <body className={`${body.variable} ${display.variable}`}>
+      <body className={manrope.variable}>
         <a className="skip-link" href="#main-content">Skip to content</a>
         <div className="site-progress" aria-hidden="true" />
         <StageIntro />
+        <RouteCurtain />
         <MotionController />
         <Header />
         {children}
