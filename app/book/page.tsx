@@ -4,7 +4,8 @@ import { PageFrame, PageHero } from "../site-components";
 import { contact } from "../site-data";
 import { BookingForm } from "../contact/booking-form";
 
-export const metadata: Metadata = { title: "Book Arun", description: "Check Arun Guinness availability for one-man shows, corporate events, festivals, international programmes and guest appearances." };
+const description = "Check Arun Guinness availability for one-man shows, corporate events, festivals, international programmes and guest appearances.";
+export const metadata: Metadata = { title: "Book Arun", description, alternates: { canonical: "/book" }, openGraph: { title: "Book Arun | Arun Guinness", description, url: "/book" } };
 
 type BookPageProps = { searchParams: Promise<{ show?: string; event?: string; location?: string }> };
 

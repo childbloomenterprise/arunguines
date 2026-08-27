@@ -60,6 +60,14 @@ test("canonical routes and permanent redirects replace legacy structure", async 
   for (const route of ["/programs", "/about", "/videos", "/gallery", "/testimonials", "/contact"]) assert.ok(config.includes(`source: "${route}"`));
 });
 
+test("supporting pages emit route-specific canonical metadata", async () => {
+  for (const route of ["shows", "artist", "proof", "book"]) {
+    const page = await read(`app/${route}/page.tsx`);
+    assert.ok(page.includes(`canonical: "/${route}"`));
+    assert.ok(page.includes(`url: "/${route}"`));
+  }
+});
+
 test("performance deck uses verified media and click-to-load embeds", async () => {
   const [data, player, experience] = await Promise.all([read("app/site-data.ts"), read("app/video-player.tsx"), read("app/experience.tsx")]);
   for (const id of ["e66PF3ImXIQ", "7FufHDMK8Xw", "LcwIFf_3A34"]) assert.match(data, new RegExp(id));
