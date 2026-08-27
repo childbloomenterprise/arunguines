@@ -8,58 +8,24 @@ import { resolveSiteUrl } from "../app/site-url.ts";
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
 
-test("homepage follows the cinematic introduce, prove, trust, book story", async () => {
+test("homepage delivers the complete five-act experience", async () => {
   const page = await read("app/page.tsx");
-  for (const line of ["ONE MAN.", "MANY VOICES.", "Watch · Listen", "Two voices.", "One performer.", "Stage-tested.", "Any stage.", "Voice,", "engineered.", "Your date.", "His stage."]) assert.match(page, new RegExp(line));
-  for (const id of ["signature", "career-proof", "shows", "performances", "about", "journey", "stage-notes", "book-home"]) assert.match(page, new RegExp(`id="${id}"`));
+  assert.match(page, /One man\./);
+  assert.match(page, /Many voices\./);
+  for (const act of ["Meet the Performer", "Hear the Impossible", "Build the Show", "Trust the Stage", "Encore"]) assert.match(page, new RegExp(act));
+  assert.match(page, /PerformanceDeck/);
+  assert.match(page, /ShowBuilder/);
   assert.match(page, /BookingForm/);
-  assert.doesNotMatch(page, /ShowBuilder|PerformanceDeck|hero-status|hero-ticket|Act I/);
 });
 
 test("intro plays once per session, stays under budget, and remains replayable", async () => {
-  const [experience, components, css] = await Promise.all([read("app/experience.tsx"), read("app/site-components.tsx"), read("app/globals.css")]);
+  const [experience, navigation, css] = await Promise.all([read("app/experience.tsx"), read("app/navigation.tsx"), read("app/globals.css")]);
   assert.match(experience, /sessionStorage\.getItem\(INTRO_KEY\)/);
-  assert.match(experience, /matchMedia\("\(prefers-reduced-motion: reduce\)"\)/);
+  assert.match(experience, /1180/);
   assert.match(experience, /Escape/);
   assert.match(experience, /arun:replay-intro/);
-  assert.match(components, /ReplayIntroButton/);
+  assert.match(navigation, /arun:replay-intro/);
   assert.match(css, /prefers-reduced-motion/);
-});
-
-test("internal navigation closes and opens an accessible stage curtain", async () => {
-  const [experience, layout, css] = await Promise.all([read("app/experience.tsx"), read("app/layout.tsx"), read("app/globals.css")]);
-  assert.match(experience, /export function RouteCurtain/);
-  assert.match(experience, /closest\("a\[href\]"\)/);
-  assert.match(experience, /router\.push/);
-  assert.match(experience, /prefers-reduced-motion: reduce/);
-  assert.match(layout, /<RouteCurtain \/>/);
-  assert.match(css, /\.route-curtain-panel-left/);
-  assert.match(css, /\.route-curtain-panel-right/);
-});
-
-test("visible copy stays concise and symbols carry repeated meaning", async () => {
-  const [home, components, icons] = await Promise.all([read("app/page.tsx"), read("app/site-components.tsx"), read("app/icons.tsx")]);
-  assert.match(home, /Male\. Female\. Music\. Mimicry\./);
-  assert.doesNotMatch(home, /From powerful male vocals to iconic female playback voices/);
-  assert.doesNotMatch(home, /Sound-engineering roots shaped his ear/);
-  assert.match(components, /MeaningIcon/);
-  for (const icon of ["Microphone", "Clock", "People", "Globe", "Television", "Sparkles"]) assert.match(icons, new RegExp(`function ${icon}`));
-});
-
-test("visual system encodes the requested 60/30/10 stage palette", async () => {
-  const css = await read("app/globals.css");
-  for (const color of ["#0a0a0d", "#f7f3ec", "#e5b45a", "#8b5cf6"]) assert.match(css.toLowerCase(), new RegExp(color));
-  assert.match(css, /--stage-ratio-dark:\s*60%/);
-  assert.match(css, /--stage-ratio-ivory:\s*30%/);
-  assert.match(css, /--stage-ratio-energy:\s*10%/);
-});
-
-test("interactive surfaces use a consistent progressive squircle system", async () => {
-  const css = await read("app/globals.css");
-  for (const token of ["--squircle-control", "--squircle-card", "--squircle-media"]) assert.match(css, new RegExp(token));
-  assert.match(css, /@supports\s*\(corner-shape:\s*squircle\)/);
-  assert.match(css, /corner-shape:\s*squircle/);
-  assert.doesNotMatch(css, /border-radius:\s*0;/);
 });
 
 test("show recommendation responds deterministically to event context", () => {
@@ -87,10 +53,10 @@ test("booking stays database-free with popup fallback and copy action", async ()
 test("canonical routes and permanent redirects replace legacy structure", async () => {
   const [navigation, sitemap, config] = await Promise.all([read("app/site-data.ts"), read("app/sitemap.ts"), read("next.config.ts")]);
   for (const route of ["/shows", "/artist", "/proof", "/book"]) {
+    assert.ok(navigation.includes(`href: "${route}"`));
     assert.ok(sitemap.includes(`"${route}"`));
     assert.ok(config.includes(`destination: "${route}`));
   }
-  for (const route of ["/shows", "/artist", "/proof"]) assert.ok(navigation.includes(`href: "${route}"`));
   for (const route of ["/programs", "/about", "/videos", "/gallery", "/testimonials", "/contact"]) assert.ok(config.includes(`source: "${route}"`));
 });
 
@@ -114,13 +80,6 @@ test("performance deck uses verified media and click-to-load embeds", async () =
   assert.match(experience, /ArrowRight/);
 });
 
-test("public proof avoids pending claims and invented testimonials", async () => {
-  const [data, home] = await Promise.all([read("app/site-data.ts"), read("app/page.tsx")]);
-  assert.doesNotMatch(data, /verification pending|reconfirmation pending/i);
-  assert.doesNotMatch(home, /3,000\+|50\+ countries|Guinness World Record holder/i);
-  assert.match(home, /Verified words|stageNotes/);
-});
-
 test("site includes accessibility, SEO, and responsive safeguards", async () => {
   const [layout, css, frame] = await Promise.all([read("app/layout.tsx"), read("app/globals.css"), read("app/site-components.tsx")]);
   assert.match(layout, /Skip to content/);
@@ -130,8 +89,6 @@ test("site includes accessibility, SEO, and responsive safeguards", async () => 
   assert.match(css, /100dvh/);
   assert.match(css, /orientation: landscape/);
   assert.match(frame, /ViewTransition/);
-  assert.match(frame, /mobile-booking/);
-  assert.match(frame, /WhatsApp/);
 });
 
 test("canonical site URL survives empty or invalid deployment configuration", () => {

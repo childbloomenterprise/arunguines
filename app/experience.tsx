@@ -1,82 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, Close, Replay, VoiceMark } from "./icons";
+import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, Close, Replay } from "./icons";
 import { programs, type Milestone, type Performance, type ProofItem, type ShowFormat } from "./site-data";
 import { recommendShow } from "./site-logic";
 import { VideoPlayer } from "./video-player";
 
 const INTRO_KEY = "arun-curtain-intro-v1";
-const ROUTE_CLOSE_MS = 520;
-const ROUTE_OPEN_MS = 620;
-
-type CurtainPhase = "idle" | "closing" | "covered" | "opening";
-
-export function RouteCurtain() {
-  const pathname = usePathname();
-  const router = useRouter();
-  const [phase, setPhase] = useState<CurtainPhase>("idle");
-  const sourcePath = useRef(pathname);
-  const navigateTimer = useRef<number | null>(null);
-  const openTimer = useRef<number | null>(null);
-  const safetyTimer = useRef<number | null>(null);
-
-  const reset = useCallback(() => {
-    setPhase("idle");
-    document.body.classList.remove("route-changing");
-  }, []);
-
-  useEffect(() => {
-    if (phase !== "covered" || pathname === sourcePath.current) return;
-    sourcePath.current = pathname;
-    window.requestAnimationFrame(() => setPhase("opening"));
-    openTimer.current = window.setTimeout(reset, ROUTE_OPEN_MS);
-  }, [pathname, phase, reset]);
-
-  useEffect(() => {
-    const handleClick = (event: MouseEvent) => {
-      if (phase !== "idle" || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      const origin = event.target instanceof Element ? event.target.closest("a[href]") : null;
-      if (!(origin instanceof HTMLAnchorElement) || origin.target || origin.download || origin.dataset.noCurtain !== undefined) return;
-
-      const destination = new URL(origin.href, window.location.href);
-      if (destination.origin !== window.location.origin) return;
-      const sameDocument = destination.pathname === window.location.pathname && destination.search === window.location.search;
-      if (sameDocument) return;
-
-      event.preventDefault();
-      sourcePath.current = pathname;
-      document.body.classList.add("route-changing");
-      setPhase("closing");
-      navigateTimer.current = window.setTimeout(() => {
-        setPhase("covered");
-        router.push(`${destination.pathname}${destination.search}${destination.hash}`);
-      }, ROUTE_CLOSE_MS);
-      safetyTimer.current = window.setTimeout(reset, 4_000);
-    };
-
-    document.addEventListener("click", handleClick, true);
-    return () => document.removeEventListener("click", handleClick, true);
-  }, [pathname, phase, reset, router]);
-
-  useEffect(() => () => {
-    if (navigateTimer.current) window.clearTimeout(navigateTimer.current);
-    if (openTimer.current) window.clearTimeout(openTimer.current);
-    if (safetyTimer.current) window.clearTimeout(safetyTimer.current);
-    document.body.classList.remove("route-changing");
-  }, []);
-
-  return (
-    <div className={`route-curtain is-${phase}`} data-state={phase} aria-hidden="true">
-      <div className="route-curtain-panel route-curtain-panel-left"><i /><i /><i /></div>
-      <div className="route-curtain-panel route-curtain-panel-right"><i /><i /><i /></div>
-      <div className="route-curtain-mark"><VoiceMark /></div>
-    </div>
-  );
-}
 
 export function StageIntro() {
   const [visible, setVisible] = useState(false);
@@ -84,11 +15,6 @@ export function StageIntro() {
   const closeTimer = useRef<number | null>(null);
 
   const play = useCallback(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      sessionStorage.setItem(INTRO_KEY, "seen");
-      setVisible(false);
-      return;
-    }
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
     setVisible(true);
     setPlaying(false);
@@ -96,7 +22,7 @@ export function StageIntro() {
     closeTimer.current = window.setTimeout(() => {
       setVisible(false);
       sessionStorage.setItem(INTRO_KEY, "seen");
-    }, 1450);
+    }, 1180);
   }, []);
 
   const skip = useCallback(() => {
@@ -125,7 +51,7 @@ export function StageIntro() {
       <div className="intro-light" aria-hidden="true" />
       <div className="intro-panel intro-panel-left" aria-hidden="true" />
       <div className="intro-panel intro-panel-right" aria-hidden="true" />
-      <div className="intro-title"><strong>Arun Guinness</strong><small>One Man. Many Voices.</small></div>
+      <div className="intro-title"><span>Now presenting</span><strong>Arun<br /><i>Guinness</i></strong><small>One man · Many voices</small></div>
       <button type="button" className="intro-skip" onClick={(event) => { event.stopPropagation(); skip(); }}>Skip intro <Close /></button>
     </div>
   );
@@ -159,7 +85,7 @@ export function PerformanceDeck({ performances, compact = false }: { performance
         </div>
         <div className="performance-caption" aria-live="polite">
           <span>0{activeIndex + 1} / 0{filtered.length}</span><small>{active.category}</small>
-          <h3>{active.title}</h3>
+          <h3>{active.title}</h3><p>{active.subtitle}</p>
           <div><button type="button" onClick={() => move(-1)} aria-label="Previous performance"><ChevronLeft /></button><button type="button" onClick={() => move(1)} aria-label="Next performance"><ChevronRight /></button></div>
         </div>
       </div>
@@ -186,20 +112,20 @@ export function ShowBuilder({ formats = programs }: { formats?: readonly ShowFor
   return (
     <div className="show-builder">
       <form className="show-controls" onSubmit={(event) => event.preventDefault()}>
-        <span className="act-label">Match</span><h3>Shape stage.</h3>
+        <span className="act-label">Live recommendation</span><h3>Shape your stage.</h3>
         <label>Event type<select value={event} onChange={(e) => setEvent(e.target.value)}>{eventOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
         <label>Audience size<select value={audience} onChange={(e) => setAudience(e.target.value)}><option value="under-250">Under 250</option><option value="250-1000">250–1,000</option><option value="1000-plus">1,000+</option></select></label>
         <label>Stage time<select value={duration} onChange={(e) => setDuration(e.target.value)}><option value="under-30">Under 30 minutes</option><option value="60-120">60–120 minutes</option><option value="over-120">Over 2 hours</option></select></label>
         <label>City / country<input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Kochi, Muscat, Kuwait..." /></label>
       </form>
       <div className="show-result" aria-live="polite">
-        <span>Best fit</span><small>{recommendation.duration}</small><h3>{recommendation.title}</h3><p>{recommendation.description}</p><strong>{recommendation.bestFor}</strong>
-        <Link className="button button-brass" href={bookingHref}>Choose <ArrowUpRight /></Link>
+        <span>Recommended format</span><small>{recommendation.duration}</small><h3>{recommendation.title}</h3><p>{recommendation.description}</p><strong>{recommendation.bestFor}</strong>
+        <Link className="button button-brass" href={bookingHref}>Check this format <ArrowUpRight /></Link>
       </div>
       <div className="format-compare">
         {formats.map((format) => {
           const open = openSlug === format.slug;
-          return <article key={format.slug} className={format.slug === recommendation.slug ? "is-recommended" : ""}><button type="button" aria-expanded={open} aria-label={`${open ? "Close" : "Open"} ${format.title} details`} onClick={() => setOpenSlug(open ? "" : format.slug)}><span>{format.number}</span><strong>{format.title}</strong><small>{format.duration}</small><i className={open ? "is-open" : ""}><ChevronRight /></i></button>{open ? <div className="format-details"><p>{format.production}</p><ul>{format.inclusions.map((item) => <li key={item}>{item}</li>)}</ul><Link href={`/book?show=${encodeURIComponent(format.title)}`}>Choose <ArrowRight /></Link></div> : null}</article>;
+          return <article key={format.slug} className={format.slug === recommendation.slug ? "is-recommended" : ""}><button type="button" aria-expanded={open} onClick={() => setOpenSlug(open ? "" : format.slug)}><span>{format.number}</span><strong>{format.title}</strong><small>{format.duration}</small><i>{open ? "Close" : "Details"}</i></button>{open ? <div className="format-details"><p>{format.production}</p><ul>{format.inclusions.map((item) => <li key={item}>{item}</li>)}</ul><Link href={`/book?show=${encodeURIComponent(format.title)}`}>Plan this show <ArrowRight /></Link></div> : null}</article>;
         })}
       </div>
     </div>
