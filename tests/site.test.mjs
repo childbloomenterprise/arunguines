@@ -131,12 +131,12 @@ test("mobile navigation, booking actions, and performance map respond to context
     read("app/page.tsx"),
   ]);
   for (const section of ["home", "act-two", "build-show", "act-four", "book-home"]) {
-    assert.match(navigation, new RegExp(section));
     assert.match(page, new RegExp(`id="${section}"`));
   }
-  assert.match(navigation, /aria-current=.*location/);
+  assert.doesNotMatch(navigation, /Homepage sections/);
   assert.match(motion, /scrolling-down/);
   assert.match(motion, /near-booking/);
+  assert.match(css, /scrolling-down body:not\(\.menu-open\) \.site-header/);
   assert.match(css, /\.scrolling-down \.mobile-booking/);
   assert.match(css, /\.near-booking \.mobile-booking/);
   assert.match(map, /aria-pressed/);

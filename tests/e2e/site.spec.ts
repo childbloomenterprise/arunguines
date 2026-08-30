@@ -86,24 +86,19 @@ test("mobile navigation and keyboard focus remain operable", async ({ page }) =>
   await expect(page.getByText("Skip to content")).toBeFocused();
 });
 
-test("mobile section rail, map, and booking bar react to scrolling", async ({ page }, testInfo) => {
+test("mobile header follows scroll direction", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "phone-390x844");
   await page.goto("/");
   await expect(page.locator("html")).toHaveClass(/motion-ready/);
-  const rail = page.getByRole("navigation", { name: "Homepage sections" });
-  await page.locator("#act-two").scrollIntoViewIfNeeded();
-  await expect(rail).toBeVisible();
-  await expect(rail.getByRole("link", { name: /Watch/ })).toHaveAttribute("aria-current", "location");
-  await expect(page.locator(".mobile-booking")).toHaveCSS("opacity", "0");
-
-  await rail.getByRole("link", { name: /Journey/ }).click();
-  await expect(rail.getByRole("link", { name: /Journey/ })).toHaveAttribute("aria-current", "location");
-  await page.locator(".performance-map").scrollIntoViewIfNeeded();
-  await page.locator(".map-point.uae").click();
-  await expect(page.locator(".map-caption strong")).toHaveText("UAE");
-
-  await rail.getByRole("link", { name: /Book/ }).click();
-  await expect(page.locator(".mobile-booking")).toHaveCSS("opacity", "0");
+  const header = page.locator(".site-header");
+  await expect(header).toBeVisible();
+  await expect(page.getByRole("button", { name: "Replay stage opening" })).toBeHidden();
+  await page.evaluate(() => window.scrollTo(0, 900));
+  await expect(page.locator("html")).toHaveClass(/scrolling-down/);
+  await expect(header).toHaveCSS("opacity", "0");
+  await page.evaluate(() => window.scrollBy(0, -180));
+  await expect(page.locator("html")).not.toHaveClass(/scrolling-down/);
+  await expect(header).toHaveCSS("opacity", "1");
 });
 
 test("legacy route redirect preserves query", async ({ page }) => {
