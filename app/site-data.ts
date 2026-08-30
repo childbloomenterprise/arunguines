@@ -20,13 +20,12 @@ export type ShowFormat = {
 };
 
 export type ProofItem = { title: string; text: string; href: string; label: string };
-export type Milestone = { year: string; title: string; text: string; source?: string };
+export type Milestone = { year: string; title: string; text: string; source: string; sourceUrl: string };
 export type BookingDraft = { name: string; phone: string; show: string; date: string; location: string; event: string; audience: string; notes: string };
 
 export const contact = {
   phoneDisplay: "+91 96567 12941",
   phone: "+919656712941",
-  email: "arunguinnes@gmail.com",
   whatsapp: "https://wa.me/919656712941",
   instagram: "https://www.instagram.com/arun_guinness/",
   youtube: "https://www.youtube.com/@arunguinnes",
@@ -43,10 +42,10 @@ export const navItems: readonly NavItem[] = [
 ];
 
 export const stats = [
-  { value: "~20", label: "Years on stage", source: "Published 2023 professional profile" },
-  { value: "3,000+", label: "Live performances*", source: "Published 2023 professional profile; final reconfirmation pending" },
-  { value: "50+", label: "Countries reached*", source: "Published 2023 professional profile; final reconfirmation pending" },
-  { value: "35+", label: "Singer voices*", source: "Published repertoire and official performance archive" },
+  { value: "Voice shift", label: "Male ↔ female playback styles", source: "Official performance: Mere Dholna", sourceUrl: "https://www.youtube.com/watch?v=e66PF3ImXIQ" },
+  { value: "Live craft", label: "Singing + mimicry", source: "Porukara school annual report", sourceUrl: "https://porukarajc.ac.in/cbse/ANNUALREPORT23.pdf" },
+  { value: "TV stage", label: "Flowers performance archive", source: "Official channel recording", sourceUrl: "https://www.youtube.com/watch?v=7FufHDMK8Xw" },
+  { value: "Gulf stage", label: "Kuwait event coverage", source: "Indians in Kuwait · Onavesham 2024", sourceUrl: "https://www.indiansinkuwait.com/news/70618-IAK-Onavesham-2024-A-Grand-Celebration-of-Onam-at-ICSK-School-Salmiya" },
 ] as const;
 
 export const programs: readonly ShowFormat[] = [
@@ -83,13 +82,17 @@ export const artistModes = [
   { number: "04", title: "Sound", text: "Electronics and audio-engineering discipline behind every performance." },
 ] as const;
 
-export const mediaLogos = ["Flowers TV", "Kairali TV", "Asianet", "Surya TV", "Mazhavil Manorama", "Reporter Live"] as const;
+export const mediaEvidence = [
+  { label: "Flowers TV", href: "https://www.youtube.com/watch?v=7FufHDMK8Xw" },
+  { label: "SFS Public School", href: "https://sfspublicschool.com/carpe-diem-a-celebration-of-talent-and-spirit/" },
+  { label: "Indians in Kuwait", href: "https://www.indiansinkuwait.com/news/70618-IAK-Onavesham-2024-A-Grand-Celebration-of-Onam-at-ICSK-School-Salmiya" },
+] as const;
 
 export const milestones: readonly Milestone[] = [
-  { year: "2000s", title: "Sound becomes foundation", text: "Electronics and sound-engineering training formed the technical base for a life in music." },
-  { year: "2014", title: "Best Mimicry Artist", text: "Rotary recognition reported in Arun's published professional profile.", source: "Certificate wording pending final verification" },
-  { year: "2019", title: "Record milestone", text: "A voice-imitation record achievement publicly documented by Arun.", source: "Guinness certificate verification pending" },
-  { year: "Now", title: "Across borders", text: "Documented performances across Kerala, Kuwait, Oman and the UAE." },
+  { year: "Foundation", title: "A technical ear", text: "Electronics and sound-engineering study became the listening discipline behind Arun's live voice work.", source: "Published first-person profile", sourceUrl: "https://www.examchoices.in/2023/10/special-person-3-arun-guiness.html" },
+  { year: "Television", title: "The voice reaches TV", text: "An official channel recording documents Arun performing his voice craft on the Flowers stage.", source: "Official Flowers performance recording", sourceUrl: "https://www.youtube.com/watch?v=7FufHDMK8Xw" },
+  { year: "2024", title: "Kuwait stage documented", text: "Independent event coverage records Arun's featured Onavesham performance in Salmiya, Kuwait.", source: "Indians in Kuwait event coverage", sourceUrl: "https://www.indiansinkuwait.com/news/70618-IAK-Onavesham-2024-A-Grand-Celebration-of-Onam-at-ICSK-School-Salmiya" },
+  { year: "2025", title: "A musical feast for students", text: "A school annual report records Arun Guinness appearing as a mimicry artist and presenting a musical performance.", source: "Martha Mariyam Public School annual report", sourceUrl: "https://marthamariyamschool.org/images/annual-report.pdf" },
 ] as const;
 
 export const proofItems: readonly ProofItem[] = [

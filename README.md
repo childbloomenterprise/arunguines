@@ -45,9 +45,11 @@ GitHub Actions runs lint, TypeScript, tests, and a production build for every pu
 
 ## Content still needed before final public launch
 
+- Owner-approved booking email
 - Guinness World Records certificate and exact record title
 - Rotary award certificates/official wording
 - Final career/show/country counts
 - Professional portrait and original stage photographs
 - Five verified organizer testimonials
-- Final booking numbers and official spelling confirmation
+
+Public pages currently omit every unresolved claim. Verified phone, stage spelling, location, performance links and social URLs are recorded in `CONTENT-VERIFICATION.md`.

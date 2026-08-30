@@ -32,6 +32,7 @@ export function VideoPlayer({
 }: VideoPlayerProps) {
   const [playing, setPlaying] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
+  const [thumbnailFailed, setThumbnailFailed] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
@@ -80,6 +81,7 @@ export function VideoPlayer({
         <button className="video-close" type="button" onClick={closePlayer} aria-label={`Close ${title}`}>
           <Close />
         </button>
+        {!unavailable ? <a className="video-external" href={youtubeUrl(id)} target="_blank" rel="noreferrer">Open on YouTube <ArrowUpRight /></a> : null}
       </div>
     );
   }
@@ -91,13 +93,7 @@ export function VideoPlayer({
       onClick={() => setPlaying(true)}
       aria-label={`Play ${title} on this page`}
     >
-      <Image
-        src={youtubeThumbnail(id)}
-        alt={alt}
-        fill
-        preload={eager}
-        sizes={sizes}
-      />
+      {thumbnailFailed ? <span className="thumbnail-fallback" role="img" aria-label={alt}><strong>{title}</strong><small>Official performance · poster unavailable</small></span> : <Image src={youtubeThumbnail(id)} alt={alt} fill preload={eager} sizes={sizes} onError={() => setThumbnailFailed(true)} />}
       <span className="video-wash" />
       {badge ? <span className="video-badge">{badge}</span> : null}
       {index ? <span className="video-index">{index}</span> : null}

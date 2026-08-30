@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { ViewTransition } from "react";
-import { ArrowRight, ArrowUpRight, Instagram, Mail, MapPin, Message, Phone, VoiceMark, Youtube } from "./icons";
+import { ArrowRight, ArrowUpRight, Instagram, MapPin, Message, Phone, VoiceMark, Youtube } from "./icons";
 import { ReplayIntroButton } from "./experience";
-import { contact, mediaLogos, programs, stats } from "./site-data";
+import { contact, mediaEvidence, programs, stats } from "./site-data";
 export { PerformanceMap } from "./performance-map";
 
 export function PageFrame({ children }: { children: React.ReactNode }) {
@@ -18,23 +18,23 @@ export function ActHeading({ act, label, title, accent, description, light = fal
 }
 
 export function StatsStrip() {
-  return <div className="stats-strip">{stats.map((stat, index) => <details key={stat.label} data-reveal><summary><span>0{index + 1}</span><strong>{stat.value}</strong><small>{stat.label}</small></summary><p>{stat.source}</p></details>)}</div>;
+  return <div className="stats-strip">{stats.map((stat, index) => <details key={stat.label} data-reveal><summary><span>0{index + 1}</span><strong>{stat.value}</strong><small>{stat.label}</small></summary><p><a href={stat.sourceUrl} target="_blank" rel="noreferrer">{stat.source} <ArrowUpRight /></a></p></details>)}</div>;
 }
 
 export function MediaRail() {
-  return <div className="media-rail" aria-label="Television and media appearances"><span>Seen on</span><div>{mediaLogos.map((logo) => <strong key={logo}>{logo}</strong>)}</div></div>;
+  return <div className="media-rail" aria-label="Documented media and event evidence"><span>Documented by</span><div>{mediaEvidence.map((item) => <a key={item.label} href={item.href} target="_blank" rel="noreferrer"><strong>{item.label}</strong><ArrowUpRight /></a>)}</div></div>;
 }
 
 export function ProgramCards() {
   return <div className="program-cards">{programs.map((program) => <article key={program.slug} data-reveal><div><span>{program.number}</span><small>{program.duration}</small></div><h3>{program.title}</h3><p>{program.description}</p><strong>{program.bestFor}</strong><Link href={`/book?show=${encodeURIComponent(program.title)}`}>Plan this show <ArrowRight /></Link></article>)}</div>;
 }
 
-export function PageHero({ label, title, accent, description, highlights }: { label: string; title: string; accent: string; description: string; highlights: readonly string[] }) {
-  return <section className="page-hero"><div className="page-curtain" aria-hidden="true" /><div className="page-hero-copy" data-reveal><Eyebrow light>{label}</Eyebrow><h1>{title} <em>{accent}</em></h1><p>{description}</p><div className="page-highlights">{highlights.map((item, index) => <span key={item}><i>0{index + 1}</i>{item}</span>)}</div></div><div className="page-stage-mark" aria-hidden="true"><VoiceMark /><span>Arun / Live</span></div></section>;
+export function PageHero({ label, title, accent, description, highlights, media, variant = "default" }: { label: string; title: string; accent: string; description: string; highlights: readonly string[]; media?: React.ReactNode; variant?: "default" | "shows" | "artist" | "proof" | "book" }) {
+  return <section className={`page-hero page-hero-${variant}`}><div className="page-curtain" aria-hidden="true" /><div className="page-hero-copy" data-reveal><Eyebrow light>{label}</Eyebrow><h1>{title} <em>{accent}</em></h1><p>{description}</p><div className="page-highlights">{highlights.map((item, index) => <span key={item}><i>0{index + 1}</i>{item}</span>)}</div></div>{media ? <div className="page-hero-media" data-reveal="scale">{media}</div> : <div className="page-stage-mark" aria-hidden="true"><VoiceMark /><span>Arun / Live</span></div>}</section>;
 }
 
 export function Footer() {
-  return <footer className="site-footer"><div className="footer-marquee" aria-hidden="true"><span>One man · Many voices · One unforgettable stage · </span></div><div className="footer-cta"><div><Eyebrow light>Encore</Eyebrow><h2>Bring every voice<br /><em>to your stage.</em></h2></div><Link className="button button-brass" href="/book">Start booking <ArrowUpRight /></Link></div><div className="footer-links"><div className="footer-brand"><VoiceMark /><strong>Arun Guinness</strong><p>Singer · voice artist · mimicry performer · live entertainer</p><ReplayIntroButton /></div><div><small>Explore</small><Link href="/shows">Shows</Link><Link href="/artist">Artist</Link><Link href="/proof">Proof</Link><Link href="/book">Book</Link></div><div><small>Direct</small><a href={`tel:${contact.phone}`}><Phone />{contact.phoneDisplay}</a><a href={contact.whatsapp} target="_blank" rel="noreferrer"><Message />WhatsApp</a><a href={`mailto:${contact.email}`}><Mail />Email</a></div><div><small>Follow</small><a href={contact.instagram} target="_blank" rel="noreferrer"><Instagram />Instagram</a><a href={contact.youtube} target="_blank" rel="noreferrer"><Youtube />YouTube</a><a href={contact.officeMap} target="_blank" rel="noreferrer"><MapPin />Kothamangalam</a></div></div><div className="footer-base"><span>© {new Date().getFullYear()} Arun Guinness</span><span>*Selected career figures require final reconfirmation before public launch.</span></div></footer>;
+  return <footer className="site-footer"><div className="footer-marquee" aria-hidden="true"><span>One man · Many voices · One unforgettable stage · </span></div><div className="footer-cta"><div><Eyebrow light>Encore</Eyebrow><h2>Bring every voice<br /><em>to your stage.</em></h2></div><Link className="button button-brass" href="/book">Start booking <ArrowUpRight /></Link></div><div className="footer-links"><div className="footer-brand"><VoiceMark /><strong>Arun Guinness</strong><p>Singer · voice artist · mimicry performer · live entertainer</p><ReplayIntroButton /></div><div><small>Explore</small><Link href="/shows">Shows</Link><Link href="/artist">Artist</Link><Link href="/proof">Proof</Link><Link href="/book">Book</Link></div><div><small>Direct</small><a href={`tel:${contact.phone}`}><Phone />{contact.phoneDisplay}</a><a href={contact.whatsapp} target="_blank" rel="noreferrer"><Message />WhatsApp</a></div><div><small>Follow</small><a href={contact.instagram} target="_blank" rel="noreferrer"><Instagram />Instagram</a><a href={contact.youtube} target="_blank" rel="noreferrer"><Youtube />YouTube</a><a href={contact.officeMap} target="_blank" rel="noreferrer"><MapPin />Kothamangalam</a></div></div><div className="footer-base"><span>© {new Date().getFullYear()} Arun Guinness</span><span>Official performance portfolio · Kothamangalam, Kerala</span></div></footer>;
 }
 
 export function MobileBookingBar() {

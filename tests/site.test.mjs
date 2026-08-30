@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { programs } from "../app/site-data.ts";
-import { composeBookingMessage, recommendShow } from "../app/site-logic.ts";
+import { composeBookingMessage, normalizePhoneInput, recommendShow, validateBookingDraft } from "../app/site-logic.ts";
 import { resolveSiteUrl } from "../app/site-url.ts";
 
 const root = new URL("../", import.meta.url);
@@ -39,7 +39,14 @@ test("show recommendation responds deterministically to event context", () => {
 
 test("booking composer includes every operational field", () => {
   const message = composeBookingMessage({ name: "Asha", phone: "+91 99999 99999", show: "One Man Show", date: "2026-12-18", location: "Kochi", event: "Association", audience: "800", notes: "Malayalam and Hindi" });
-  for (const value of ["Asha", "+91 99999 99999", "One Man Show", "2026-12-18", "Kochi", "Association", "800", "Malayalam and Hindi"]) assert.ok(message.includes(value));
+  for (const value of ["Asha", "+919999999999", "One Man Show", "2026-12-18", "Kochi", "Association", "800", "Malayalam and Hindi"]) assert.ok(message.includes(value));
+});
+
+test("booking validation normalizes phones and reports required fields", () => {
+  assert.equal(normalizePhoneInput(" +91 (96567) 12941 "), "+919656712941");
+  assert.equal(normalizePhoneInput("0091-96567-12941"), "00919656712941");
+  const errors = validateBookingDraft({ name: "", phone: "123", show: "", date: "2026-01-01", location: "", event: "", audience: "", notes: "" }, "2026-08-28");
+  assert.deepEqual(Object.keys(errors).sort(), ["date", "location", "name", "phone", "show"]);
 });
 
 test("booking stays database-free with popup fallback and copy action", async () => {
@@ -48,8 +55,19 @@ test("booking stays database-free with popup fallback and copy action", async ()
   assert.match(form, /popup\.opener = null/);
   assert.match(form, /handoff-fallback/);
   assert.match(form, /navigator\.clipboard\.writeText/);
+  assert.match(form, /navigator\.webdriver/);
+  assert.match(form, /aria-describedby/);
+  assert.match(form, /booking-summary/);
   assert.match(form, /encodeURIComponent/);
   assert.doesNotMatch(pkg, /drizzle|supabase|prisma/);
+});
+
+test("public pages omit unresolved launch claims", async () => {
+  const publicFiles = await Promise.all(["app/page.tsx", "app/artist/page.tsx", "app/proof/page.tsx", "app/site-components.tsx", "app/site-data.ts"].map(read));
+  const publicText = publicFiles.join("\n");
+  for (const claim of ["3,000+", "50+", "35+", "nearly two decades", "reconfirmation before public launch", "Guinness certificate verification pending"]) {
+    assert.doesNotMatch(publicText, new RegExp(claim.replace(/[+]/g, "\\+"), "i"));
+  }
 });
 
 test("canonical routes and permanent redirects replace legacy structure", async () => {
@@ -91,6 +109,17 @@ test("site includes accessibility, SEO, and responsive safeguards", async () => 
   assert.match(css, /100dvh/);
   assert.match(css, /orientation: landscape/);
   assert.match(frame, /ViewTransition/);
+  assert.match(css, /forced-colors/);
+});
+
+test("menus, intro, and performance filters expose complete keyboard semantics", async () => {
+  const [navigation, experience] = await Promise.all([read("app/navigation.tsx"), read("app/experience.tsx")]);
+  assert.match(navigation, /focusables/);
+  assert.match(navigation, /event\.key === "Escape"/);
+  assert.match(navigation, /\.inert = open/);
+  assert.match(experience, /introButtonRef/);
+  assert.match(experience, /aria-pressed/);
+  assert.doesNotMatch(experience, /role="tab"/);
 });
 
 test("mobile navigation, booking actions, and performance map respond to context", async () => {

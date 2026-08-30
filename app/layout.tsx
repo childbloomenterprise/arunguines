@@ -31,7 +31,6 @@ const structuredData = {
   description: "Kerala-based singer and mimicry performer known for singing in the voices of male and female playback singers.",
   url: siteUrl,
   telephone: contact.phone,
-  email: contact.email,
   homeLocation: { "@type": "Place", name: "Kothamangalam, Kerala, India" },
   sameAs: [contact.instagram, contact.youtube, contact.facebook],
 };

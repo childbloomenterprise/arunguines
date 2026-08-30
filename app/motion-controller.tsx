@@ -29,6 +29,7 @@ export function MotionController() {
     let lastY = window.scrollY;
     const bookingSection = document.getElementById("book-home");
     const footer = document.querySelector<HTMLElement>(".site-footer");
+    const hero = document.querySelector<HTMLElement>(".home-hero,.page-hero");
     const updateScroll = () => {
       if (frame) return;
       frame = window.requestAnimationFrame(() => {
@@ -36,6 +37,7 @@ export function MotionController() {
         const scrollable = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
         const delta = y - lastY;
         root.classList.toggle("has-scrolled", y > 24);
+        root.classList.toggle("past-hero", Boolean(hero && hero.getBoundingClientRect().bottom < window.innerHeight * .72));
         root.style.setProperty("--page-progress", String(Math.min(y / scrollable, 1)));
         if (Math.abs(delta) > 6) {
           root.classList.toggle("scrolling-down", delta > 0 && y > 120);
@@ -51,7 +53,6 @@ export function MotionController() {
     updateScroll();
     window.addEventListener("scroll", updateScroll, { passive: true });
 
-    const hero = document.querySelector<HTMLElement>(".home-hero");
     let pointerFrame = 0;
     const updatePointer = (event: PointerEvent) => {
       if (!hero || event.pointerType === "touch" || pointerFrame) return;
@@ -71,7 +72,7 @@ export function MotionController() {
       if (frame) window.cancelAnimationFrame(frame);
       if (pointerFrame) window.cancelAnimationFrame(pointerFrame);
       root.style.removeProperty("--page-progress");
-      root.classList.remove("motion-ready", "has-scrolled", "scrolling-down", "near-booking");
+      root.classList.remove("motion-ready", "has-scrolled", "past-hero", "scrolling-down", "near-booking");
     };
   }, [pathname]);
 

@@ -13,9 +13,12 @@ export function StageIntro() {
   const [visible, setVisible] = useState(false);
   const [playing, setPlaying] = useState(false);
   const closeTimer = useRef<number | null>(null);
+  const introButtonRef = useRef<HTMLButtonElement>(null);
+  const previousFocus = useRef<HTMLElement | null>(null);
 
   const play = useCallback(() => {
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    previousFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setVisible(true);
     setPlaying(false);
     window.requestAnimationFrame(() => setPlaying(true));
@@ -42,16 +45,36 @@ export function StageIntro() {
       else sessionStorage.setItem(INTRO_KEY, "seen");
     }, 0);
     const replay = () => play();
-    const escape = (event: KeyboardEvent) => { if (event.key === "Escape") skip(); };
     window.addEventListener("arun:replay-intro", replay);
-    window.addEventListener("keydown", escape);
     return () => {
       window.removeEventListener("arun:replay-intro", replay);
-      window.removeEventListener("keydown", escape);
       window.clearTimeout(opening);
       if (closeTimer.current) window.clearTimeout(closeTimer.current);
     };
   }, [play, skip]);
+
+  useEffect(() => {
+    if (!visible) return;
+    const background = Array.from(document.querySelectorAll<HTMLElement>(".skip-link,.site-header,main,.site-footer,.mobile-booking"));
+    background.forEach((element) => { element.inert = true; });
+    const focusFrame = window.requestAnimationFrame(() => introButtonRef.current?.focus());
+    const containFocus = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        skip();
+      } else if (event.key === "Tab") {
+        event.preventDefault();
+        introButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", containFocus);
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      document.removeEventListener("keydown", containFocus);
+      background.forEach((element) => { element.inert = false; });
+      if (previousFocus.current?.isConnected) previousFocus.current.focus();
+    };
+  }, [skip, visible]);
 
   if (!visible) return null;
   return (
@@ -60,7 +83,7 @@ export function StageIntro() {
       <div className="intro-panel intro-panel-left" aria-hidden="true" />
       <div className="intro-panel intro-panel-right" aria-hidden="true" />
       <div className="intro-title"><span>Now presenting</span><strong>Arun<br /><i>Guinness</i></strong><small>One man · Many voices</small></div>
-      <button type="button" className="intro-skip" onClick={(event) => { event.stopPropagation(); skip(); }}>Skip intro <Close /></button>
+      <button ref={introButtonRef} type="button" className="intro-skip" onClick={(event) => { event.stopPropagation(); skip(); }}>Skip intro <Close /></button>
     </div>
   );
 }
@@ -83,8 +106,8 @@ export function PerformanceDeck({ performances, compact = false }: { performance
 
   return (
     <div className={`performance-deck ${compact ? "is-compact" : ""}`}>
-      <div className="filter-row" role="tablist" aria-label="Filter performances">
-        {categories.map((item) => <button key={item} type="button" role="tab" aria-selected={category === item} onClick={() => { setCategory(item); setActiveId((item === "All" ? performances[0] : performances.find((performance) => performance.category === item))?.id ?? ""); }}>{item}</button>)}
+      <div className="filter-row" role="group" aria-label="Filter performances">
+        {categories.map((item) => <button key={item} type="button" aria-pressed={category === item} onClick={() => { setCategory(item); setActiveId((item === "All" ? performances[0] : performances.find((performance) => performance.category === item))?.id ?? ""); }}>{item}</button>)}
       </div>
       {/* Gesture handling supplements the native previous/next buttons below. */}
       <div className="performance-stage" onTouchStart={(event) => { pointerStart.current = event.touches[0].clientX; }} onTouchEnd={(event) => { if (pointerStart.current === null) return; const delta = event.changedTouches[0].clientX - pointerStart.current; if (Math.abs(delta) > 45) move(delta < 0 ? 1 : -1); pointerStart.current = null; }}>
@@ -133,7 +156,8 @@ export function ShowBuilder({ formats = programs }: { formats?: readonly ShowFor
       <div className="format-compare">
         {formats.map((format) => {
           const open = openSlug === format.slug;
-          return <article key={format.slug} className={format.slug === recommendation.slug ? "is-recommended" : ""}><button type="button" aria-expanded={open} onClick={() => setOpenSlug(open ? "" : format.slug)}><span>{format.number}</span><strong>{format.title}</strong><small>{format.duration}</small><i>{open ? "Close" : "Details"}</i></button>{open ? <div className="format-details"><p>{format.production}</p><ul>{format.inclusions.map((item) => <li key={item}>{item}</li>)}</ul><Link href={`/book?show=${encodeURIComponent(format.title)}`}>Plan this show <ArrowRight /></Link></div> : null}</article>;
+          const detailsId = `format-${format.slug}`;
+          return <article key={format.slug} className={format.slug === recommendation.slug ? "is-recommended" : ""}><button type="button" aria-expanded={open} aria-controls={detailsId} onClick={() => setOpenSlug(open ? "" : format.slug)}><span>{format.number}</span><strong>{format.title}</strong><small>{format.duration}</small><i>{open ? "Close" : "Details"}</i></button>{open ? <div id={detailsId} className="format-details"><p>{format.production}</p><ul>{format.inclusions.map((item) => <li key={item}>{item}</li>)}</ul><Link href={`/book?show=${encodeURIComponent(format.title)}&event=${encodeURIComponent(event)}&location=${encodeURIComponent(location)}`}>Plan this show <ArrowRight /></Link></div> : null}</article>;
         })}
       </div>
     </div>
@@ -142,10 +166,10 @@ export function ShowBuilder({ formats = programs }: { formats?: readonly ShowFor
 
 export function InteractiveTimeline({ items }: { items: readonly Milestone[] }) {
   const [active, setActive] = useState(0);
-  return <div className="interactive-timeline"><div role="tablist" aria-label="Career timeline">{items.map((item, index) => <button key={item.year} type="button" role="tab" aria-selected={active === index} onClick={() => setActive(index)}><span>{item.year}</span><strong>{item.title}</strong></button>)}</div><article aria-live="polite"><span>0{active + 1}</span><h3>{items[active].title}</h3><p>{items[active].text}</p>{items[active].source ? <small>{items[active].source}</small> : null}</article></div>;
+  return <div className="interactive-timeline"><div role="group" aria-label="Career timeline">{items.map((item, index) => <button key={item.year} type="button" aria-pressed={active === index} aria-controls="timeline-detail" onClick={() => setActive(index)}><span>{item.year}</span><strong>{item.title}</strong></button>)}</div><article id="timeline-detail" aria-live="polite"><span>0{active + 1}</span><h3>{items[active].title}</h3><p>{items[active].text}</p><a href={items[active].sourceUrl} target="_blank" rel="noreferrer">{items[active].source} <ArrowUpRight /></a></article></div>;
 }
 
 export function EvidenceDeck({ items }: { items: readonly ProofItem[] }) {
   const [open, setOpen] = useState(0);
-  return <div className="evidence-deck">{items.map((item, index) => <article key={item.title} className={open === index ? "is-open" : ""}><button type="button" aria-expanded={open === index} onClick={() => setOpen(index)}><span>0{index + 1}</span><strong>{item.title}</strong><small>{item.label}</small><ChevronRight /></button>{open === index ? <div><p>{item.text}</p><a href={item.href} target="_blank" rel="noreferrer">Open verified source <ArrowUpRight /></a></div> : null}</article>)}</div>;
+  return <div className="evidence-deck">{items.map((item, index) => { const panelId = `evidence-${index}`; return <article key={item.title} className={open === index ? "is-open" : ""}><button type="button" aria-expanded={open === index} aria-controls={panelId} onClick={() => setOpen(index)}><span>0{index + 1}</span><strong>{item.title}</strong><small>{item.label}</small><ChevronRight /></button>{open === index ? <div id={panelId}><p>{item.text}</p><a href={item.href} target="_blank" rel="noreferrer">Open verified source <ArrowUpRight /></a></div> : null}</article>; })}</div>;
 }
