@@ -10,6 +10,7 @@ export function MotionController() {
     const root = document.documentElement;
     root.classList.add("motion-ready");
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     let observer: IntersectionObserver | null = null;
     if (reduced) {
       document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((item) => item.classList.add("is-visible"));
@@ -30,15 +31,38 @@ export function MotionController() {
     const bookingSection = document.getElementById("book-home");
     const footer = document.querySelector<HTMLElement>(".site-footer");
     const hero = document.querySelector<HTMLElement>(".home-hero,.page-hero");
+    const depthCleanups: Array<() => void> = [];
+
+    if (!reduced && finePointer) {
+      document.querySelectorAll<HTMLElement>("[data-depth-media]").forEach((item) => {
+        const move = (event: PointerEvent) => {
+          const bounds = item.getBoundingClientRect();
+          const x = ((event.clientX - bounds.left) / bounds.width - .5) * 2;
+          const y = ((event.clientY - bounds.top) / bounds.height - .5) * 2;
+          item.style.setProperty("--depth-x", x.toFixed(3));
+          item.style.setProperty("--depth-y", y.toFixed(3));
+        };
+        const reset = () => {
+          item.style.setProperty("--depth-x", "0");
+          item.style.setProperty("--depth-y", "0");
+        };
+        item.addEventListener("pointermove", move, { passive: true });
+        item.addEventListener("pointerleave", reset);
+        depthCleanups.push(() => {
+          item.removeEventListener("pointermove", move);
+          item.removeEventListener("pointerleave", reset);
+        });
+      });
+    }
     const updateScroll = () => {
       if (frame) return;
       frame = window.requestAnimationFrame(() => {
         const y = window.scrollY;
-        const scrollable = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
         const delta = y - lastY;
         root.classList.toggle("has-scrolled", y > 24);
+        const scrollable = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        root.style.setProperty("--scroll-progress", Math.min(1, y / scrollable).toFixed(4));
         root.classList.toggle("past-hero", Boolean(hero && hero.getBoundingClientRect().bottom < window.innerHeight * .72));
-        root.style.setProperty("--page-progress", String(Math.min(y / scrollable, 1)));
         if (Math.abs(delta) > 6) {
           root.classList.toggle("scrolling-down", delta > 0 && y > 120);
           lastY = y;
@@ -53,26 +77,13 @@ export function MotionController() {
     updateScroll();
     window.addEventListener("scroll", updateScroll, { passive: true });
 
-    let pointerFrame = 0;
-    const updatePointer = (event: PointerEvent) => {
-      if (!hero || event.pointerType === "touch" || pointerFrame) return;
-      pointerFrame = window.requestAnimationFrame(() => {
-        const bounds = hero.getBoundingClientRect();
-        hero.style.setProperty("--pointer-x", `${event.clientX - bounds.left}px`);
-        hero.style.setProperty("--pointer-y", `${event.clientY - bounds.top}px`);
-        pointerFrame = 0;
-      });
-    };
-    if (!reduced) hero?.addEventListener("pointermove", updatePointer, { passive: true });
-
     return () => {
       observer?.disconnect();
+      depthCleanups.forEach((cleanup) => cleanup());
       window.removeEventListener("scroll", updateScroll);
-      hero?.removeEventListener("pointermove", updatePointer);
       if (frame) window.cancelAnimationFrame(frame);
-      if (pointerFrame) window.cancelAnimationFrame(pointerFrame);
-      root.style.removeProperty("--page-progress");
       root.classList.remove("motion-ready", "has-scrolled", "past-hero", "scrolling-down", "near-booking");
+      root.style.removeProperty("--scroll-progress");
     };
   }, [pathname]);
 

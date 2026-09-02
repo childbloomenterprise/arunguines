@@ -1,11 +1,7 @@
 import { expect, test } from "@playwright/test";
 
-const routes = ["/", "/shows", "/artist", "/proof", "/book"] as const;
+const routes = ["/", "/shows", "/school-college-shows", "/artist", "/proof", "/book"] as const;
 const waitForHydration = async (page: import("@playwright/test").Page) => expect(page.locator("html")).toHaveClass(/motion-ready/);
-
-test.beforeEach(async ({ page }, testInfo) => {
-  if (!testInfo.title.startsWith("opening runs")) await page.addInitScript(() => sessionStorage.setItem("arun-curtain-intro-v1", "seen"));
-});
 
 for (const route of routes) {
   test(`${route} renders without overflow or console errors`, async ({ page }) => {
@@ -20,20 +16,24 @@ for (const route of routes) {
   });
 }
 
-test("opening stays out of the mobile critical path and remains replayable", async ({ page }, testInfo) => {
+test("mobile hero keeps useful media and booking action in the first viewport", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "phone-390x844");
-  await page.goto("/", { waitUntil: "domcontentloaded" });
-  const intro = page.getByRole("dialog", { name: "Opening stage sequence" });
-  await expect(intro).toBeHidden();
-  await expect(page.locator("html")).toHaveClass(/motion-ready/);
-  await page.getByRole("button", { name: "Replay stage opening" }).click();
-  await expect(intro).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(intro).toBeHidden();
+  await page.goto("/");
+  const media = page.locator(".hero-player");
+  const book = page.getByRole("link", { name: "Book Arun", exact: true }).first();
+  await expect(media).toBeVisible();
+  await expect(book).toBeVisible();
+  const box = await media.boundingBox();
+  expect(box).not.toBeNull();
+  expect(Math.abs((box!.width / box!.height) - (16 / 9))).toBeLessThan(0.02);
+  expect(box!.y + box!.height).toBeLessThanOrEqual(844);
 });
 
 test("performance filters, controls, and click-to-load media work", async ({ page }) => {
   await page.goto("/proof");
+  await page.getByRole("button", { name: "Next performance" }).first().focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".performance-caption").first()).toContainText("S. Janaki voice");
   await page.getByRole("button", { name: "Voice", exact: true }).click();
   await expect(page.getByRole("button", { name: "Voice", exact: true })).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "Next performance" }).click();
@@ -55,6 +55,7 @@ test("booking validates inline, preserves values, and never opens WhatsApp in au
   await page.getByLabel("Preferred show").selectOption("One Man Show");
   await page.getByLabel("Event date").fill("2026-12-18");
   await page.getByLabel("City / venue").fill("Kochi");
+  await expect(page.locator(".booking-progress")).toHaveAttribute("aria-label", "5 of 5 required details complete");
   await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
   await expect(page.locator(".booking-summary")).toContainText("Asha");
   await expect(page.getByLabel("Your name")).toHaveValue("Asha");
@@ -64,6 +65,8 @@ test("booking validates inline, preserves values, and never opens WhatsApp in au
 
 test("configurator recommendation reaches prefilled booking", async ({ page }) => {
   await page.goto("/shows");
+  await page.getByRole("button", { name: /Campus night/ }).click();
+  await expect(page.locator(".show-result")).toContainText("Variety Musical");
   await page.getByLabel("Event type").selectOption("public-festival");
   await page.getByLabel("Audience size").selectOption("1000-plus");
   await expect(page.locator(".show-result")).toContainText("Mega Show");
@@ -86,13 +89,23 @@ test("mobile navigation and keyboard focus remain operable", async ({ page }) =>
   await expect(page.getByText("Skip to content")).toBeFocused();
 });
 
+test("school stage offer reaches a prefilled booking enquiry", async ({ page }) => {
+  await page.goto("/school-college-shows");
+  await page.getByRole("button", { name: /College stage/ }).click();
+  await expect(page.locator(".campus-mode-stage")).toContainText("Festival energy");
+  await expect(page.getByRole("link", { name: "Plan this stage" })).toHaveAttribute("href", /show=Variety%20Musical&event=College%20fest/);
+  await page.getByRole("link", { name: "Plan a school show", exact: true }).click();
+  await expect(page).toHaveURL(/\/book\?show=Guest(?:%20|\+)Performance&event=School(?:%20|\+)annual(?:%20|\+)day/);
+  await expect(page.getByLabel("Preferred show")).toHaveValue("Guest Performance");
+  await expect(page.getByLabel(/Event type/)).toHaveValue("School annual day");
+});
+
 test("mobile header follows scroll direction", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "phone-390x844");
   await page.goto("/");
   await expect(page.locator("html")).toHaveClass(/motion-ready/);
   const header = page.locator(".site-header");
   await expect(header).toBeVisible();
-  await expect(page.getByRole("button", { name: "Replay stage opening" })).toBeHidden();
   await page.evaluate(() => window.scrollTo(0, 900));
   await expect(page.locator("html")).toHaveClass(/scrolling-down/);
   await expect(header).toHaveCSS("opacity", "0");
@@ -115,11 +128,13 @@ test("responsive homepage visual", async ({ page }) => {
 
 test("desktop canonical routes and interaction states remain visually stable", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-1440x900");
+  await page.emulateMedia({ reducedMotion: "reduce" });
   for (const route of routes) {
     await page.goto(route);
     await waitForHydration(page);
-    await expect(page.locator("main")).toHaveScreenshot(`route-${route === "/" ? "home" : route.slice(1)}.png`, { caret: "initial" });
+    await expect(page).toHaveScreenshot(`route-${route === "/" ? "home" : route.slice(1)}.png`, { caret: "initial" });
   }
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/shows");
   await page.locator(".format-compare article").first().getByRole("button").click();
   await expect(page.locator(".show-builder")).toHaveScreenshot("show-builder-expanded.png", { caret: "initial" });

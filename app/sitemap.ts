@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { siteUrl } from "./site-url";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return ["", "/shows", "/artist", "/proof", "/book"].map((path, index) => ({
+  return ["", "/shows", "/school-college-shows", "/artist", "/proof", "/book"].map((path, index) => ({
     url: `${siteUrl}${path}`,
     lastModified: new Date(),
     changeFrequency: index === 0 ? "weekly" : "monthly",

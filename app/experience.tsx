@@ -1,96 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, Close, Replay } from "./icons";
-import { programs, type Milestone, type Performance, type ProofItem, type ShowFormat } from "./site-data";
+import { useMemo, useRef, useState } from "react";
+import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight } from "./icons";
+import { programs, stagePresets, videos, voiceRoster, type Milestone, type Performance, type ProofItem, type ShowFormat, youtubePosterSources } from "./site-data";
 import { recommendShow } from "./site-logic";
 import { VideoPlayer } from "./video-player";
-
-const INTRO_KEY = "arun-curtain-intro-v1";
-
-export function StageIntro() {
-  const [visible, setVisible] = useState(false);
-  const [playing, setPlaying] = useState(false);
-  const closeTimer = useRef<number | null>(null);
-  const introButtonRef = useRef<HTMLButtonElement>(null);
-  const previousFocus = useRef<HTMLElement | null>(null);
-
-  const play = useCallback(() => {
-    if (closeTimer.current) window.clearTimeout(closeTimer.current);
-    previousFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    setVisible(true);
-    setPlaying(false);
-    window.requestAnimationFrame(() => setPlaying(true));
-    closeTimer.current = window.setTimeout(() => {
-      setVisible(false);
-      sessionStorage.setItem(INTRO_KEY, "seen");
-    }, 980);
-  }, []);
-
-  const skip = useCallback(() => {
-    if (closeTimer.current) window.clearTimeout(closeTimer.current);
-    setVisible(false);
-    sessionStorage.setItem(INTRO_KEY, "seen");
-  }, []);
-
-  useEffect(() => {
-    const opening = window.setTimeout(() => {
-      if (sessionStorage.getItem(INTRO_KEY) === "seen") return;
-      const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-      const allowAutomaticIntro = window.innerWidth >= 700
-        && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        && !connection?.saveData;
-      if (allowAutomaticIntro) play();
-      else sessionStorage.setItem(INTRO_KEY, "seen");
-    }, 0);
-    const replay = () => play();
-    window.addEventListener("arun:replay-intro", replay);
-    return () => {
-      window.removeEventListener("arun:replay-intro", replay);
-      window.clearTimeout(opening);
-      if (closeTimer.current) window.clearTimeout(closeTimer.current);
-    };
-  }, [play, skip]);
-
-  useEffect(() => {
-    if (!visible) return;
-    const background = Array.from(document.querySelectorAll<HTMLElement>(".skip-link,.site-header,main,.site-footer,.mobile-booking"));
-    background.forEach((element) => { element.inert = true; });
-    const focusFrame = window.requestAnimationFrame(() => introButtonRef.current?.focus());
-    const containFocus = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        skip();
-      } else if (event.key === "Tab") {
-        event.preventDefault();
-        introButtonRef.current?.focus();
-      }
-    };
-    document.addEventListener("keydown", containFocus);
-    return () => {
-      window.cancelAnimationFrame(focusFrame);
-      document.removeEventListener("keydown", containFocus);
-      background.forEach((element) => { element.inert = false; });
-      if (previousFocus.current?.isConnected) previousFocus.current.focus();
-    };
-  }, [skip, visible]);
-
-  if (!visible) return null;
-  return (
-    <div className={`stage-intro ${playing ? "is-playing" : ""}`} role="dialog" aria-label="Opening stage sequence" aria-modal="true">
-      <div className="intro-light" aria-hidden="true" />
-      <div className="intro-panel intro-panel-left" aria-hidden="true" />
-      <div className="intro-panel intro-panel-right" aria-hidden="true" />
-      <div className="intro-title"><span>Now presenting</span><strong>Arun<br /><i>Guinness</i></strong><small>One man · Many voices</small></div>
-      <button ref={introButtonRef} type="button" className="intro-skip" onClick={(event) => { event.stopPropagation(); skip(); }}>Skip intro <Close /></button>
-    </div>
-  );
-}
-
-export function ReplayIntroButton() {
-  return <button type="button" className="replay-intro" onClick={() => window.dispatchEvent(new Event("arun:replay-intro"))}><Replay />Replay opening</button>;
-}
 
 export function PerformanceDeck({ performances, compact = false }: { performances: readonly Performance[]; compact?: boolean }) {
   const categories = ["All", ...Array.from(new Set(performances.map((item) => item.category)))] as const;
@@ -110,18 +26,19 @@ export function PerformanceDeck({ performances, compact = false }: { performance
         {categories.map((item) => <button key={item} type="button" aria-pressed={category === item} onClick={() => { setCategory(item); setActiveId((item === "All" ? performances[0] : performances.find((performance) => performance.category === item))?.id ?? ""); }}>{item}</button>)}
       </div>
       {/* Gesture handling supplements the native previous/next buttons below. */}
+      <div className="performance-progress" aria-hidden="true"><span style={{ transform: `scaleX(${(activeIndex + 1) / filtered.length})` }} /></div>
       <div className="performance-stage" onTouchStart={(event) => { pointerStart.current = event.touches[0].clientX; }} onTouchEnd={(event) => { if (pointerStart.current === null) return; const delta = event.changedTouches[0].clientX - pointerStart.current; if (Math.abs(delta) > 45) move(delta < 0 ? 1 : -1); pointerStart.current = null; }}>
-        <div className="performance-media">
-          <VideoPlayer key={active.id} id={active.id} title={active.title} alt={`${active.title} official performance`} className="deck-player" sizes="(max-width: 900px) 100vw, 62vw" eager={activeIndex === 0} category={active.category} variant="gallery" />
+        <div className="performance-media" data-depth-media="true">
+          <VideoPlayer key={active.id} id={active.id} title={active.title} alt={`${active.title} official performance`} className="deck-player" sizes="(max-width: 900px) 100vw, 62vw" eager={activeIndex === 0} category={active.category} ratio="16:9" poster={active.poster} />
         </div>
-        <div className="performance-caption" aria-live="polite">
+        <div key={active.id} className="performance-caption is-changing" aria-live="polite">
           <span>0{activeIndex + 1} / 0{filtered.length}</span><small>{active.category}</small>
           <h3>{active.title}</h3><p>{active.subtitle}</p>
           <div><button type="button" onClick={() => move(-1)} aria-label="Previous performance"><ChevronLeft /></button><button type="button" onClick={() => move(1)} aria-label="Next performance"><ChevronRight /></button></div>
         </div>
       </div>
       <div className="performance-list" aria-label="Choose a performance">
-        {filtered.map((item, index) => <button key={item.id} type="button" className={item.id === active.id ? "is-active" : ""} onClick={() => setActiveId(item.id)}><span>0{index + 1}</span><strong>{item.title}</strong><small>{item.category}</small></button>)}
+        {filtered.map((item, index) => <button key={item.id} type="button" className={item.id === active.id ? "is-active" : ""} aria-pressed={item.id === active.id} onClick={() => setActiveId(item.id)}><span className="performance-thumb"><Image src={youtubePosterSources(item.id, item.poster)[0]} alt="" fill sizes="96px" /></span><span>0{index + 1}</span><strong>{item.title}</strong><small>{item.category}</small></button>)}
       </div>
     </div>
   );
@@ -139,18 +56,29 @@ export function ShowBuilder({ formats = programs }: { formats?: readonly ShowFor
   const [openSlug, setOpenSlug] = useState<string>("");
   const recommendation = recommendShow(formats, { event, audience, duration });
   const bookingHref = `/book?show=${encodeURIComponent(recommendation.title)}&event=${encodeURIComponent(event)}&location=${encodeURIComponent(location)}`;
+  const activePreset = stagePresets.find((preset) => preset.event === event && preset.audience === audience && preset.duration === duration);
+  const energy = activePreset?.energy ?? (duration === "over-120" || audience === "1000-plus" ? 92 : duration === "under-30" ? 48 : 72);
+  const eventLabel = eventOptions.find(([value]) => value === event)?.[1] ?? event;
+
+  const applyPreset = (preset: (typeof stagePresets)[number]) => {
+    setEvent(preset.event);
+    setAudience(preset.audience);
+    setDuration(preset.duration);
+  };
 
   return (
     <div className="show-builder">
       <form className="show-controls" onSubmit={(event) => event.preventDefault()}>
         <span className="act-label">Live recommendation</span><h3>Shape your stage.</h3>
+        <div className="preset-list" role="group" aria-label="Quick stage presets">{stagePresets.map((preset) => <button key={preset.key} type="button" aria-pressed={activePreset?.key === preset.key} onClick={() => applyPreset(preset)}><strong>{preset.label}</strong><small>{preset.description}</small></button>)}</div>
         <label>Event type<select value={event} onChange={(e) => setEvent(e.target.value)}>{eventOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
         <label>Audience size<select value={audience} onChange={(e) => setAudience(e.target.value)}><option value="under-250">Under 250</option><option value="250-1000">250–1,000</option><option value="1000-plus">1,000+</option></select></label>
         <label>Stage time<select value={duration} onChange={(e) => setDuration(e.target.value)}><option value="under-30">Under 30 minutes</option><option value="60-120">60–120 minutes</option><option value="over-120">Over 2 hours</option></select></label>
         <label>City / country<input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Kochi, Muscat, Kuwait..." /></label>
       </form>
       <div className="show-result" aria-live="polite">
-        <span>Recommended format</span><small>{recommendation.duration}</small><h3>{recommendation.title}</h3><p>{recommendation.description}</p><strong>{recommendation.bestFor}</strong>
+        <span>Recommended format</span><small>{recommendation.duration}</small><div key={`${event}-${audience}-${duration}`} className="show-result-copy"><h3>{recommendation.title}</h3><p>{recommendation.description}</p><strong>{recommendation.bestFor}</strong></div>
+        <div className="show-shape" aria-label={`Stage energy ${energy} percent`}><div><span>Stage energy</span><strong>{energy}%</strong></div><i><span style={{ transform: `scaleX(${energy / 100})` }} /></i><small>{eventLabel} · {audience === "1000-plus" ? "1,000+ audience" : audience === "under-250" ? "Under 250" : "250–1,000"}</small></div>
         <Link className="button button-brass" href={bookingHref}>Check this format <ArrowUpRight /></Link>
       </div>
       <div className="format-compare">
@@ -166,7 +94,27 @@ export function ShowBuilder({ formats = programs }: { formats?: readonly ShowFor
 
 export function InteractiveTimeline({ items }: { items: readonly Milestone[] }) {
   const [active, setActive] = useState(0);
-  return <div className="interactive-timeline"><div role="group" aria-label="Career timeline">{items.map((item, index) => <button key={item.year} type="button" aria-pressed={active === index} aria-controls="timeline-detail" onClick={() => setActive(index)}><span>{item.year}</span><strong>{item.title}</strong></button>)}</div><article id="timeline-detail" aria-live="polite"><span>0{active + 1}</span><h3>{items[active].title}</h3><p>{items[active].text}</p><a href={items[active].sourceUrl} target="_blank" rel="noreferrer">{items[active].source} <ArrowUpRight /></a></article></div>;
+  const controlsRef = useRef<HTMLDivElement>(null);
+  const move = (index: number) => {
+    const next = (index + items.length) % items.length;
+    setActive(next);
+    controlsRef.current?.querySelectorAll("button")[next]?.focus();
+  };
+  return <div className="interactive-timeline"><div ref={controlsRef} role="group" aria-label="Career timeline">{items.map((item, index) => <button key={item.year} type="button" aria-pressed={active === index} aria-controls="timeline-detail" onClick={() => setActive(index)} onKeyDown={(event) => { if (["ArrowDown", "ArrowRight", "ArrowUp", "ArrowLeft"].includes(event.key)) { event.preventDefault(); move(index + (["ArrowDown", "ArrowRight"].includes(event.key) ? 1 : -1)); } }}><span>{item.year}</span><strong>{item.title}</strong></button>)}</div><article key={items[active].year} id="timeline-detail" className="timeline-detail" aria-live="polite"><span>0{active + 1}</span><h3>{items[active].title}</h3><p>{items[active].text}</p><a href={items[active].sourceUrl} target="_blank" rel="noreferrer">{items[active].source} <ArrowUpRight /></a></article></div>;
+}
+
+export function VoiceExplorer() {
+  const [active, setActive] = useState(0);
+  const controlsRef = useRef<HTMLDivElement>(null);
+  const voice = voiceRoster[active];
+  const performance = videos[active % 4];
+  const move = (index: number) => {
+    const next = (index + voiceRoster.length) % voiceRoster.length;
+    setActive(next);
+    controlsRef.current?.querySelectorAll("button")[next]?.focus();
+  };
+
+  return <div className="voice-explorer"><div ref={controlsRef} className="voice-selector" role="group" aria-label="Explore voice repertoire">{voiceRoster.map((item, index) => <button key={item.name} type="button" aria-pressed={active === index} aria-controls="voice-detail" onClick={() => setActive(index)} onKeyDown={(event) => { if (event.key === "ArrowRight" || event.key === "ArrowLeft") { event.preventDefault(); move(index + (event.key === "ArrowRight" ? 1 : -1)); } }}><span><Image src={item.photo} alt="" fill sizes="64px" style={{ objectPosition: item.position }} /></span><strong>{item.name}</strong><small>{item.register}</small></button>)}</div><article key={voice.name} id="voice-detail" className="voice-detail" aria-live="polite"><div><span>Voice reference · {String(active + 1).padStart(2, "0")}</span><h3>{voice.name}</h3><p>{voice.register} · {voice.language}</p><a href={voice.source} target="_blank" rel="noreferrer">Portrait source <ArrowUpRight /></a></div><VideoPlayer id={performance.id} title={performance.title} alt={`${performance.title} official performance`} className="voice-player" sizes="(max-width: 900px) calc(100vw - 40px), 48vw" category={performance.category} ratio="16:9" poster={performance.poster} /></article></div>;
 }
 
 export function EvidenceDeck({ items }: { items: readonly ProofItem[] }) {

@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Bodoni_Moda, Manrope } from "next/font/google";
-import { StageIntro } from "./experience";
 import { MotionController } from "./motion-controller";
 import { Header } from "./navigation";
 import { Footer, MobileBookingBar } from "./site-components";
@@ -15,8 +14,8 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, them
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: "Arun Guinness | One Man. Many Voices.", template: "%s | Arun Guinness" },
-  description: "Book Arun Guinness—Kerala singer, voice-imitation artist, mimicry performer and live entertainer—for one-man shows, festivals, corporate events and international programs.",
-  keywords: ["Arun Guinness", "mimicry artist Kerala", "one man show Kerala", "voice artist Kerala", "live singer Kerala", "Gulf stage show", "male female voice singer"],
+  description: "Book Arun Guinness—Kerala singer, voice-imitation artist, mimicry performer and live entertainer—for school annual days, college fests, one-man shows and international stages.",
+  keywords: ["Arun Guinness", "mimicry artist Kerala", "one man show Kerala", "school annual day performer Kerala", "college fest singer Kerala", "campus stage show", "voice artist Kerala", "Gulf stage show", "male female voice singer"],
   alternates: { canonical: "/" },
   icons: { icon: "/favicon.svg" },
   openGraph: { title: "Arun Guinness | One Man. Many Voices.", description: "Singer. Voice artist. Mimicry performer. One unforgettable live show.", type: "website", locale: "en_IN", url: siteUrl, images: [{ url: "/og.png", width: 1200, height: 630, alt: "Arun Guinness live entertainer" }] },
@@ -40,8 +39,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" data-scroll-behavior="smooth">
       <body className={`${body.variable} ${display.variable}`}>
         <a className="skip-link" href="#main-content">Skip to content</a>
-        <div className="site-progress" aria-hidden="true" />
-        <StageIntro />
         <MotionController />
         <Header />
         {children}

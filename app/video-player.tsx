@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Close, Play } from "./icons";
-import { youtubeThumbnail, youtubeUrl } from "./site-data";
+import { type Performance, youtubePosterSources, youtubeUrl } from "./site-data";
 
 type VideoPlayerProps = {
   id: string;
@@ -15,7 +15,11 @@ type VideoPlayerProps = {
   badge?: string;
   category?: string;
   index?: string;
-  variant?: "hero" | "card" | "gallery" | "portrait";
+  ratio?: "16:9" | "4:3" | "1:1";
+  focalPoint?: string;
+  caption?: string;
+  tone?: "light" | "dark";
+  poster?: Performance["poster"];
 };
 
 export function VideoPlayer({
@@ -28,11 +32,15 @@ export function VideoPlayer({
   badge,
   category,
   index,
-  variant = "card",
+  ratio = "16:9",
+  focalPoint = "50% 50%",
+  caption,
+  tone = "dark",
+  poster,
 }: VideoPlayerProps) {
   const [playing, setPlaying] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
-  const [thumbnailFailed, setThumbnailFailed] = useState(false);
+  const [posterIndex, setPosterIndex] = useState(0);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
@@ -61,10 +69,14 @@ export function VideoPlayer({
     setPlaying(false);
     setUnavailable(false);
   };
+  const ratioClass = `media-ratio-${ratio.replace(":", "-")}`;
+  const mediaStyle = { "--media-position": focalPoint } as CSSProperties;
+  const posterSources = youtubePosterSources(id, poster);
+  const thumbnailFailed = posterIndex >= posterSources.length;
 
   if (playing) {
     return (
-      <div className={`embedded-video embedded-video-${variant} is-playing ${className}`}>
+      <div className={`embedded-video ${ratioClass} tone-${tone} is-playing ${className}`} style={mediaStyle}>
         {unavailable ? (
           <div className="video-fallback" role="status"><span>Playback moved to YouTube</span><strong>This performance cannot play inside this browser.</strong><a href={youtubeUrl(id)} target="_blank" rel="noreferrer">Watch the original <ArrowUpRight /></a></div>
         ) : (
@@ -88,24 +100,19 @@ export function VideoPlayer({
 
   return (
     <button
-      className={`embedded-video embedded-video-${variant} ${className}`}
+      className={`embedded-video ${ratioClass} tone-${tone} ${className}`}
+      style={mediaStyle}
       type="button"
       onClick={() => setPlaying(true)}
-      aria-label={`Play ${title} on this page`}
     >
-      {thumbnailFailed ? <span className="thumbnail-fallback" role="img" aria-label={alt}><strong>{title}</strong><small>Official performance · poster unavailable</small></span> : <Image src={youtubeThumbnail(id)} alt={alt} fill preload={eager} sizes={sizes} onError={() => setThumbnailFailed(true)} />}
+      <span className="sr-only">Play {title} on this page.</span>
+      {thumbnailFailed ? <span className="thumbnail-fallback" role="img" aria-label={alt}><strong>{title}</strong><small>Official performance · poster unavailable</small></span> : <Image src={posterSources[posterIndex]} alt={alt} fill preload={eager} sizes={sizes} onError={() => setPosterIndex((index) => index + 1)} />}
       <span className="video-wash" />
       {badge ? <span className="video-badge">{badge}</span> : null}
       {index ? <span className="video-index">{index}</span> : null}
       {category ? <span className="video-category">{category}</span> : null}
       <span className="video-play"><Play /></span>
-      {variant === "hero" ? (
-        <>
-          <span className="voice-chip chip-one">Male register</span>
-          <span className="voice-chip chip-two">Female register</span>
-          <span className="watch-here">Plays here · no redirect</span>
-        </>
-      ) : null}
+      {caption ? <span className="video-caption">{caption}</span> : null}
     </button>
   );
 }

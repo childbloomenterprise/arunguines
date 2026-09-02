@@ -1,32 +1,35 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { programs } from "../app/site-data.ts";
+import { programs, stagePresets, videos, youtubePosterSources } from "../app/site-data.ts";
 import { composeBookingMessage, normalizePhoneInput, recommendShow, validateBookingDraft } from "../app/site-logic.ts";
 import { resolveSiteUrl } from "../app/site-url.ts";
 
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
 
-test("homepage delivers the complete five-act experience", async () => {
+test("homepage delivers the simplified conversion narrative", async () => {
   const page = await read("app/page.tsx");
+  assert.match(page, /className="hero-name">Arun Guinness<\/span>/);
   assert.match(page, /One man\./);
   assert.match(page, /Many voices\./);
-  for (const act of ["Meet the Performer", "Hear the Impossible", "Build the Show", "Trust the Stage", "Encore"]) assert.match(page, new RegExp(act));
+  for (const section of ["shows-home", "performances-home", "about-home", "book-home"]) assert.match(page, new RegExp(`id="${section}"`));
   assert.match(page, /PerformanceDeck/);
-  assert.match(page, /ShowBuilder/);
-  assert.match(page, /BookingForm/);
+  assert.match(page, /ProgramCards/);
+  assert.match(page, /MediaRail/);
+  assert.doesNotMatch(page, /ShowBuilder|InteractiveTimeline|PerformanceMap|BookingForm/);
 });
 
-test("intro plays once per session, stays under budget, and remains replayable", async () => {
-  const [experience, navigation, css] = await Promise.all([read("app/experience.tsx"), read("app/navigation.tsx"), read("app/globals.css")]);
-  assert.match(experience, /sessionStorage\.getItem\(INTRO_KEY\)/);
-  assert.match(experience, /innerWidth >= 700/);
-  assert.match(experience, /saveData/);
-  assert.match(experience, /980/);
-  assert.match(experience, /Escape/);
-  assert.match(experience, /arun:replay-intro/);
-  assert.match(navigation, /arun:replay-intro/);
+test("hero uses explicit responsive media instead of decorative portrait crops", async () => {
+  const [page, player, layout, navigation, css] = await Promise.all([read("app/page.tsx"), read("app/video-player.tsx"), read("app/layout.tsx"), read("app/navigation.tsx"), read("app/globals.css")]);
+  assert.match(page, /ratio="16:9"/);
+  assert.match(player, /ratio\?: "16:9" \| "4:3" \| "1:1"/);
+  assert.match(player, /focalPoint\?: string/);
+  assert.match(css, /\.media-ratio-16-9 \{ aspect-ratio: 16\/9; \}/);
+  assert.doesNotMatch(css, /aspect-ratio:\s*4\/5/);
+  assert.doesNotMatch(page, /hero-ticket|hero-frame|hero-spotlight/);
+  assert.doesNotMatch(layout, /StageIntro|site-progress/);
+  assert.doesNotMatch(navigation, /Replay|arun:replay-intro/);
   assert.match(css, /prefers-reduced-motion/);
 });
 
@@ -40,6 +43,23 @@ test("show recommendation responds deterministically to event context", () => {
 test("booking composer includes every operational field", () => {
   const message = composeBookingMessage({ name: "Asha", phone: "+91 99999 99999", show: "One Man Show", date: "2026-12-18", location: "Kochi", event: "Association", audience: "800", notes: "Malayalam and Hindi" });
   for (const value of ["Asha", "+919999999999", "One Man Show", "2026-12-18", "Kochi", "Association", "800", "Malayalam and Hindi"]) assert.ok(message.includes(value));
+});
+
+test("stage presets map to deterministic recommendations and energy", () => {
+  const expected = { campus: "variety-musical", festival: "mega-show", corporate: "variety-musical", guest: "guest-performance" };
+  for (const preset of stagePresets) {
+    assert.equal(recommendShow(programs, preset).slug, expected[preset.key]);
+    assert.ok(preset.energy >= 0 && preset.energy <= 100);
+  }
+});
+
+test("performance posters expose verified fallback sources", () => {
+  const voice = videos.find((video) => video.id === "P1jg8u0ldbs");
+  assert.ok(voice);
+  const sources = youtubePosterSources(voice.id, voice.poster);
+  assert.equal(sources.length, 2);
+  assert.match(sources[0], /hqdefault\.jpg$/);
+  assert.match(sources[1], /maxresdefault\.jpg$/);
 });
 
 test("booking validation normalizes phones and reports required fields", () => {
@@ -72,20 +92,37 @@ test("public pages omit unresolved launch claims", async () => {
 
 test("canonical routes and permanent redirects replace legacy structure", async () => {
   const [navigation, sitemap, config] = await Promise.all([read("app/site-data.ts"), read("app/sitemap.ts"), read("next.config.ts")]);
-  for (const route of ["/shows", "/artist", "/proof", "/book"]) {
+  for (const route of ["/shows", "/school-college-shows", "/artist", "/proof", "/book"]) {
     assert.ok(navigation.includes(`href: "${route}"`));
     assert.ok(sitemap.includes(`"${route}"`));
-    assert.ok(config.includes(`destination: "${route}`));
+    if (route !== "/school-college-shows") assert.ok(config.includes(`destination: "${route}`));
   }
   for (const route of ["/programs", "/about", "/videos", "/gallery", "/testimonials", "/contact"]) assert.ok(config.includes(`source: "${route}"`));
 });
 
 test("supporting pages emit route-specific canonical metadata", async () => {
-  for (const route of ["shows", "artist", "proof", "book"]) {
+  for (const route of ["shows", "school-college-shows", "artist", "proof", "book"]) {
     const page = await read(`app/${route}/page.tsx`);
     assert.ok(page.includes(`canonical: "/${route}"`));
     assert.ok(page.includes(`url: "/${route}"`));
   }
+});
+
+test("school and college stage offering uses verified institutional evidence", async () => {
+  const [page, selector, data, shows] = await Promise.all([
+    read("app/school-college-shows/page.tsx"),
+    read("app/campus-stage-selector.tsx"),
+    read("app/site-data.ts"),
+    read("app/shows/page.tsx"),
+  ]);
+  const campusText = `${page}\n${selector}`;
+  for (const venue of ["School stage", "College stage", "annual days", "college fests", "arts festivals", "campus inaugurations"]) assert.match(campusText, new RegExp(venue, "i"));
+  assert.match(campusText, /P22go-G5Xnc/);
+  assert.match(page, /Mary Mount Public School/);
+  assert.match(page, /SFS Public School/);
+  assert.match(selector, /encodeURIComponent\(stage\.event\)/);
+  assert.match(data, /href: "\/school-college-shows"/);
+  assert.match(shows, /CampusStageFeature/);
 });
 
 test("performance deck uses verified media and click-to-load embeds", async () => {
@@ -97,6 +134,8 @@ test("performance deck uses verified media and click-to-load embeds", async () =
   assert.match(player, /allowFullScreen/);
   assert.match(player, /setPlaying\(true\)/);
   assert.match(experience, /onTouchStart/);
+  assert.match(experience, /performance-progress/);
+  assert.match(player, /youtubePosterSources/);
   assert.match(experience, /ArrowRight/);
 });
 
@@ -112,14 +151,14 @@ test("site includes accessibility, SEO, and responsive safeguards", async () => 
   assert.match(css, /forced-colors/);
 });
 
-test("menus, intro, and performance filters expose complete keyboard semantics", async () => {
+test("menus and performance filters expose complete keyboard semantics", async () => {
   const [navigation, experience] = await Promise.all([read("app/navigation.tsx"), read("app/experience.tsx")]);
   assert.match(navigation, /focusables/);
   assert.match(navigation, /event\.key === "Escape"/);
   assert.match(navigation, /\.inert = open/);
-  assert.match(experience, /introButtonRef/);
   assert.match(experience, /aria-pressed/);
   assert.doesNotMatch(experience, /role="tab"/);
+  assert.doesNotMatch(experience, /StageIntro|ReplayIntroButton/);
 });
 
 test("mobile navigation, booking actions, and performance map respond to context", async () => {
@@ -130,15 +169,14 @@ test("mobile navigation, booking actions, and performance map respond to context
     read("app/globals.css"),
     read("app/page.tsx"),
   ]);
-  for (const section of ["home", "act-two", "build-show", "act-four", "book-home"]) {
+  for (const section of ["home", "shows-home", "performances-home", "about-home", "book-home"]) {
     assert.match(page, new RegExp(`id="${section}"`));
   }
   assert.doesNotMatch(navigation, /Homepage sections/);
   assert.match(motion, /scrolling-down/);
   assert.match(motion, /near-booking/);
   assert.match(css, /scrolling-down body:not\(\.menu-open\) \.site-header/);
-  assert.match(css, /\.scrolling-down \.mobile-booking/);
-  assert.match(css, /\.near-booking \.mobile-booking/);
+  assert.match(css, /\.past-hero:not\(\.scrolling-down\):not\(\.near-booking\) \.mobile-booking/);
   assert.match(map, /aria-pressed/);
   assert.match(map, /onPointerMove/);
   assert.match(map, /aria-live="polite"/);

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ArrowUpRight, Instagram, MapPin, Message, Phone, Youtube } from "../icons";
+import { ArrowUpRight, MapPin, Message, Phone } from "../icons";
 import { PageFrame, PageHero } from "../site-components";
 import { contact } from "../site-data";
 import { BookingForm } from "../contact/booking-form";
@@ -11,6 +11,11 @@ type BookPageProps = { searchParams: Promise<{ show?: string; event?: string; lo
 
 export default async function BookPage({ searchParams }: BookPageProps) {
   const params = await searchParams;
-  const quickContact = <div className="booking-hero-card"><span>Direct booking</span><strong>{contact.phoneDisplay}</strong><a href={contact.whatsapp} target="_blank" rel="noreferrer"><Message />WhatsApp <ArrowUpRight /></a><a href={`tel:${contact.phone}`}><Phone />Call Arun&apos;s booking line</a></div>;
-  return <PageFrame><PageHero variant="book" label="Act / Booking" title="Your date." accent="His stage." description="A guided enquiry opens directly in WhatsApp—no account, no database and no agency hand-off." highlights={["Direct WhatsApp", "No account", "Domestic + international"]} media={quickContact} /><section className="booking-layout section-shell"><aside className="contact-panel" data-reveal><span>Direct booking</span><h2>Choose your<br /><em>quickest route.</em></h2><a href={contact.whatsapp} target="_blank" rel="noreferrer"><Message /><span><small>WhatsApp</small><strong>{contact.phoneDisplay}</strong></span><ArrowUpRight /></a><a href={`tel:${contact.phone}`}><Phone /><span><small>Call</small><strong>{contact.phoneDisplay}</strong></span><ArrowUpRight /></a><a href={contact.officeMap} target="_blank" rel="noreferrer"><MapPin /><span><small>Base</small><strong>{contact.office}</strong></span><ArrowUpRight /></a><div><a href={contact.instagram} target="_blank" rel="noreferrer"><Instagram />Instagram</a><a href={contact.youtube} target="_blank" rel="noreferrer"><Youtube />YouTube</a></div></aside><BookingForm initialShow={params.show ?? ""} initialEvent={params.event ?? ""} initialLocation={params.location ?? ""} /></section></PageFrame>;
+  return <PageFrame>
+    <PageHero variant="book" motionPreset="cinematic" label="Book Arun" title="Your date." accent="His stage." description="Share the essentials, prepare the enquiry and continue in WhatsApp. No account, database or agency hand-off." highlights={["Direct WhatsApp", "No account", "Domestic + international"]} />
+    <section className="booking-layout section-shell first-task">
+      <BookingForm initialShow={params.show ?? ""} initialEvent={params.event ?? ""} initialLocation={params.location ?? ""} />
+      <aside className="contact-panel" data-reveal><span>Prefer direct contact?</span><h2>One booking line.<br /><em>Two quick options.</em></h2><p>Use the guided form for a complete enquiry, or contact Arun&apos;s booking line directly.</p><a href={contact.whatsapp} target="_blank" rel="noreferrer"><Message /><span><small>WhatsApp</small><strong>{contact.phoneDisplay}</strong></span><ArrowUpRight /></a><a href={`tel:${contact.phone}`}><Phone /><span><small>Call</small><strong>{contact.phoneDisplay}</strong></span><ArrowUpRight /></a><a href={contact.officeMap} target="_blank" rel="noreferrer"><MapPin /><span><small>Based in</small><strong>{contact.office}</strong></span><ArrowUpRight /></a></aside>
+    </section>
+  </PageFrame>;
 }
