@@ -7,7 +7,7 @@
 - Male/female playback-singer voice transformations — official recorded performance
 - Flowers television performance — official channel recording
 - Documented Kuwait appearance — independent 2024 event coverage
-- Kothamangalam, Kerala base — first-person published profile
+- Kochi, Kerala base — confirmed current public location
 - Sound-engineering background — first-person published profile
 - Booking phone and WhatsApp: +91 96567 12941 — public first-person profile/bio
 - Social URLs currently resolve: YouTube, Instagram and Facebook
@@ -29,7 +29,7 @@
 - Formal Guinness World Records certificate and exact approved wording
 - Rotary award certificates and exact wording
 - Current career duration, performance count, country count and voice count
-- Exact office address if more specific than Kothamangalam, Kerala
+- Exact office address if more specific than Kochi, Kerala
 - Organizer testimonials with consent, full name, role/organization/event and approved quote
 - Approved professional portrait/original stage photographs
 

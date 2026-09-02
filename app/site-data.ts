@@ -46,8 +46,8 @@ export const contact = {
   instagram: "https://www.instagram.com/arun_guinness/",
   youtube: "https://www.youtube.com/@arunguinnes",
   facebook: "https://www.facebook.com/arunguinness",
-  office: "Kothamangalam, Kerala, India",
-  officeMap: "https://www.google.com/maps/search/?api=1&query=Kothamangalam%2C%20Kerala%2C%20India",
+  office: "Kochi, Kerala, India",
+  officeMap: "https://www.google.com/maps/search/?api=1&query=Kochi%2C%20Kerala%2C%20India",
 } as const;
 
 export const navItems: readonly NavItem[] = [
