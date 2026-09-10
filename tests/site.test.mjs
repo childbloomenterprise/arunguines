@@ -90,9 +90,13 @@ test("canonical routes and permanent redirects replace legacy structure", async 
   for (const route of ["/shows", "/artist", "/proof"]) {
     assert.ok(navigation.includes(`href: "${route}"`));
     assert.ok(sitemap.includes(`arunguinness.com${route}</loc>`));
-    if (route !== "/school-college-shows") assert.ok(config.includes(`destination: "${route}`));
   }
-  for (const route of ["/programs", "/about", "/videos", "/gallery", "/testimonials", "/contact"]) assert.ok(config.includes(`source: "${route}"`));
+  assert.match(config, /output: "export"/);
+  assert.match(config, /unoptimized: true/);
+  for (const route of ["programs", "about", "videos", "gallery", "testimonials", "contact"]) {
+    const page = await read(`app/${route}/page.tsx`);
+    assert.match(page, /permanentRedirect/);
+  }
 });
 
 test("supporting pages emit route-specific canonical metadata", async () => {
