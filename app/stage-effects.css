@@ -1,0 +1,74 @@
+/* A moving light rig, built from gradients so no background video competes with the performance. */
+body { isolation: isolate; }
+.stage-atmosphere { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; contain: strict; background: #101116; }
+.stage-beam { position: absolute; top: -25vh; width: 72vw; height: 140vh; transform-origin: 50% 0; opacity: .7; animation-play-state: paused; }
+.stage-beam-amber { left: -24vw; background: conic-gradient(from 153deg at 50% 0%, transparent 0deg, #ffc36a05 5deg, #ffbb5636 15deg, #ffc36a0a 25deg, transparent 30deg); transform: rotate(-18deg); animation: amber-sweep 19s ease-in-out infinite alternate paused; }
+.stage-beam-violet { right: -23vw; background: conic-gradient(from 174deg at 50% 0%, transparent 0deg, #b58bfa0b 8deg, #ac83f43d 17deg, #b58bfa09 26deg, transparent 32deg); transform: rotate(12deg); animation: violet-sweep 23s ease-in-out infinite alternate paused; }
+.stage-haze { position: absolute; inset: 18% -15% -30%; background: radial-gradient(ellipse at 72% 46%,#9869d423,transparent 48%),radial-gradient(ellipse at 24% 76%,#ffc36a16,transparent 47%); animation: haze-drift 17s ease-in-out infinite alternate paused; }
+.stage-dust { position: absolute; inset: -20%; opacity: .45; background-image: radial-gradient(circle,#fce4bca6 0 1px,transparent 1.5px),radial-gradient(circle,#c7adf87a 0 1px,transparent 1.5px); background-size: 193px 227px,307px 271px; background-position: 20px 80px,90px 140px; mask-image: linear-gradient(transparent 5%,#000 45%,transparent 90%); animation: dust-rise 36s linear infinite paused; }
+.stage-orbit { position: absolute; width: 110vw; height: 52vw; left: -5vw; bottom: -45vw; border: 1px solid #c5afe726; border-radius: 50%; transform: rotate(-8deg); box-shadow: 0 -1px 40px #b58bfa08; }
+.stage-orbit-two { bottom: -41vw; border-color: #ffc36a14; }
+html[data-stage-motion="running"] :is(.stage-beam,.stage-haze,.stage-dust,.light-meter i) { animation-play-state: running; }
+.stage-hero { background: linear-gradient(180deg,#10111600 75%,#10111645),radial-gradient(ellipse at 8% 0%,#ffc36a09,transparent 55%); }
+.stage-hero:before { background: repeating-linear-gradient(90deg,transparent 0,transparent calc(25% - 1px),#ffffff04 25%); }
+.stage-hero:after { content: ""; position: absolute; z-index: -1; right: 0; top: 18%; width: 53%; height: 65%; border: 1px solid #c5afe712; border-right: 0; border-radius: 48% 0 0 48%; transform: rotate(-7deg); pointer-events: none; }
+.stage-hero .hero-performance { position: relative; background: linear-gradient(135deg,#29222ddd,#14151bea); border-color: #c5afe737; border-radius: 8px 26px 8px 26px; box-shadow: 0 25px 65px #0005,0 0 70px #9566bd16; }
+.stage-hero .hero-performance:before { content: ""; position: absolute; left: 14px; right: 58%; top: -1px; height: 2px; background: linear-gradient(90deg,#ffc36a,transparent); }
+.stage-media-footer { border-top: 1px dashed #c5afe724; margin-top: 14px; }
+.stage-hero .hero-copy h1 strong { background: linear-gradient(105deg,#ffe1b2,#ffc36a 55%,#e5aaed); background-clip: text; -webkit-text-fill-color: transparent; }
+.hero-watch { position: relative; }
+.hero-watch:after { content: ""; position: absolute; bottom: 2px; left: 0; width: 100%; height: 1px; background: var(--brass); transform: scaleX(.2); transform-origin: left; transition: transform .3s ease; }
+.hero-watch:is(:hover,:focus-visible):after { transform: scaleX(1); }
+.program-cards article { position: relative; transition: border-color .25s,background .25s,transform .25s; }
+.program-cards article:is(:hover,:focus-within) { border-color: #ffc36a66; background: #24212b; transform: translateY(-4px); }
+.performance-tile { transition: transform .25s; }
+.performance-tile:focus-within { transform: translateY(-3px); }
+.booking-cta { position: relative; overflow: hidden; border-radius: 8px 32px 8px 32px; background: radial-gradient(ellipse at 0% 100%,#9566bd30,transparent 65%),#1b1923e8; }
+.booking-cta:after { content: ""; position: absolute; pointer-events: none; width: 200px; height: 200px; border: 1px solid #ffc36a26; border-radius: 50%; top: -140px; right: 15%; box-shadow: 0 0 0 28px #ffc36a07,0 0 0 56px #ffc36a05; }
+/* Booking actions borrow the seam and sheen of a stage pass. */
+:is(.header-book,.button-brass,.mobile-booking a:last-child) { position: relative; isolation: isolate; overflow: hidden; transition: box-shadow .25s,background .25s,transform .25s; }
+:is(.header-book,.button-brass,.mobile-booking a:last-child):before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(110deg,transparent 25%,#fff7 48%,transparent 70%); transform: translateX(-130%); }
+:is(.header-book,.button-brass):after { content: ""; position: absolute; right: 43px; top: 8px; bottom: 8px; border-left: 1px dashed #17120c40; }
+:is(.header-book,.button-brass) { gap: 25px; }
+html[data-stage-motion="running"] :is(.header-book,.button-brass,.mobile-booking a:last-child):is(:hover,:focus-visible):before { animation: ticket-sheen .7s ease both; }
+:is(.header-book,.button-brass,.mobile-booking a:last-child):is(:hover,:focus-visible) { box-shadow: 0 0 0 3px #ffc36a1a,0 7px 28px #ffc36a20; }
+:is(.header-book,.button-brass,.mobile-booking a:last-child):active { transform: translateY(2px); }
+:is(.header-book,.button-brass,.hero-watch) svg { transition: transform .25s ease; }
+:is(.header-book,.button-brass):is(:hover,:focus-visible) svg { transform: translate(2px,-2px); }
+a[href^="tel:"] { position: relative; }
+html[data-stage-motion="running"] a[href^="tel:"]:is(:hover,:focus-visible) svg { animation: call-ring .6s ease-in-out 2; }
+.call-stage { width: fit-content; }
+.call-stage:before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--brass); box-shadow: 0 0 0 5px #ffc36a15; }
+html[data-stage-motion="running"] .call-stage:is(:hover,:focus-visible):before { animation: call-signal 1s ease-out infinite; }
+.stage-controls { position: fixed; z-index: 120; left: 18px; bottom: 18px; }
+body.menu-open .stage-controls { visibility: hidden; }
+.stage-motion-toggle { min-height: 40px; padding: 8px 12px; display: inline-flex; align-items: center; gap: 9px; border: 1px solid #ffffff30; border-radius: 24px; background: #15151fee; color: #e1dce9; font: 600 10px/1.2 var(--font-body); cursor: pointer; }
+.stage-motion-toggle:disabled { cursor: default; }
+.light-meter { display: inline-flex; align-items: center; gap: 2px; height: 14px; }
+.light-meter i { width: 2px; height: 9px; border-radius: 2px; background: var(--brass); animation: light-meter 1.4s ease-in-out infinite alternate paused; }
+.light-meter i:nth-child(2) { height: 14px; animation-delay: -.8s; }
+.light-meter i:nth-child(3) { height: 6px; animation-delay: -.4s; }
+@keyframes amber-sweep { to { transform: rotate(19deg); opacity: 1; } }
+@keyframes violet-sweep { to { transform: rotate(-20deg); opacity: .55; } }
+@keyframes haze-drift { to { transform: translate3d(4%,-3%,0) scale(1.05); } }
+@keyframes dust-rise { to { transform: translate3d(0,-70px,0); } }
+@keyframes ticket-sheen { to { transform: translateX(130%); } }
+@keyframes call-ring { 0%,100% { transform: rotate(0); } 25%,75% { transform: rotate(-12deg); } 50% { transform: rotate(12deg); } }
+@keyframes call-signal { to { box-shadow: 0 0 0 12px #ffc36a00; } }
+@keyframes light-meter { to { transform: scaleY(.35); } }
+@media (max-width: 699px) {
+  .stage-controls { left: auto; right: 80px; bottom: auto; top: 17px; }
+  .stage-motion-toggle { min-height: 36px; width: 36px; padding: 7px 9px; justify-content: center; }
+  .stage-motion-toggle > span:last-child { display: none; }
+  .stage-beam { width: 150vw; }
+  .stage-beam-amber { left: -80vw; }
+  .stage-beam-violet { right: -80vw; }
+  .stage-dust { background-size: 153px 207px,227px 251px; opacity: .3; }
+  .stage-media-footer { margin-top: 10px; }
+  .stage-hero:after { top: 40%; width: 90%; height: 40%; }
+  .stage-hero .hero-actions .button { gap: 22px; }
+  .stage-hero .hero-actions .button:after { right: 34px; }
+}
+@media (prefers-reduced-motion: reduce) { *,*:before,*:after { animation: none !important; transition: none !important; } }
+html[data-stage-motion="paused"] *,html[data-stage-motion="paused"] *:before,html[data-stage-motion="paused"] *:after { animation-play-state: paused !important; }
+@media (forced-colors: active) { .stage-atmosphere,.stage-hero:after { display: none; } .stage-hero .hero-copy h1 strong { background: none; -webkit-text-fill-color: CanvasText; } }

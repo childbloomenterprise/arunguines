@@ -1,143 +1,166 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
-const routes = ["/", "/shows", "/school-college-shows", "/artist", "/proof", "/book"] as const;
-const waitForHydration = async (page: import("@playwright/test").Page) => expect(page.locator("html")).toHaveClass(/motion-ready/);
+const routes = ["/", "/shows", "/solo-stage-shows", "/kochi-stage-shows", "/school-college-shows", "/artist", "/proof", "/book"];
+const ready = async (page: Page) => {
+  await expect(page.locator("html")).toHaveClass(/motion-ready/);
+  await page.evaluate(() => document.fonts.ready);
+};
+const completeBrief = async (page: Page) => {
+  await page.getByLabel("Your name", { exact: true }).fill("Asha");
+  await page.getByLabel("Event type", { exact: true }).fill("Malayali association");
+  await page.getByLabel("Event country", { exact: true }).fill("United Kingdom");
+  await page.getByLabel("Event city", { exact: true }).fill("London");
+};
+const blockExternalHandoff = async (page: Page) => {
+  await page.addInitScript(() => {
+    window.open = (url) => { document.documentElement.dataset.handoff = String(url); return null; };
+  });
+};
 
 for (const route of routes) {
-  test(`${route} renders without overflow or console errors`, async ({ page }) => {
+  test(route + " renders without overflow or page errors", async ({ page }) => {
     const errors: string[] = [];
-    page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
-    await page.goto(route);
-    await waitForHydration(page);
-    await expect(page.locator("main")).toBeVisible();
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-    expect(overflow).toBeLessThanOrEqual(1);
+    page.on("pageerror", (error) => errors.push(error.message));
+    const response = await page.goto(route);
+    expect(response?.status()).toBe(200);
+    await ready(page);
+    await expect(page.locator("main h1")).toHaveCount(1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
     expect(errors).toEqual([]);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", new RegExp(route === "/" ? "arunguinness.com/?$" : route + "$"));
   });
 }
 
-test("mobile hero keeps useful media and booking action in the first viewport", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "phone-390x844");
+test("hero identifies the artist and reaches booking with attribution", async ({ page }) => {
   await page.goto("/");
-  const media = page.locator(".hero-player");
-  const book = page.getByRole("link", { name: "Book Arun", exact: true }).first();
-  await expect(media).toBeVisible();
-  await expect(book).toBeVisible();
-  const box = await media.boundingBox();
-  expect(box).not.toBeNull();
-  expect(Math.abs((box!.width / box!.height) - (16 / 9))).toBeLessThan(0.02);
-  expect(box!.y + box!.height).toBeLessThanOrEqual(844);
+  await expect(page.locator(".hero-name")).toHaveText("Arun Guinness");
+  await expect(page.locator("h1")).toContainText("One unforgettable");
+  await expect(page.locator(".hero-copy")).toContainText("Malayali communities worldwide");
+  await page.locator(".hero-actions").getByRole("link", { name: "Check Availability" }).click();
+  await expect(page).toHaveURL(/\/book\?source=%2F$/);
+  await expect(page.getByLabel("Date not decided")).toBeChecked();
+  await expect(page.getByLabel("Show preference")).toHaveValue("");
+  await expect(page.getByLabel("Phone number")).not.toBeVisible();
 });
 
-test("performance filters, controls, and click-to-load media work", async ({ page }) => {
-  await page.goto("/proof");
-  await page.getByRole("button", { name: "Next performance" }).first().focus();
-  await page.keyboard.press("Enter");
-  await expect(page.locator(".performance-caption").first()).toContainText("S. Janaki voice");
-  await page.getByRole("button", { name: "Voice", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Voice", exact: true })).toHaveAttribute("aria-pressed", "true");
-  await page.getByRole("button", { name: "Next performance" }).click();
-  const player = page.locator(".performance-stage .embedded-video").first();
-  await expect(player.locator("iframe")).toHaveCount(0);
-  await player.click();
-  await expect(player.locator("iframe")).toHaveCount(1);
-});
-
-test("booking validates inline, preserves values, and never opens WhatsApp in automation", async ({ page }) => {
-  const externalPages: string[] = [];
-  page.context().on("page", (popup) => externalPages.push(popup.url()));
-  await page.goto("/book");
-  await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
-  await expect(page.getByText("Enter your name.")).toBeVisible();
-  await expect(page.getByText("Enter a valid phone number.")).toBeVisible();
-  await page.getByLabel("Your name").fill("Asha");
-  await page.getByLabel("Phone number").fill("+91 (99999) 99999");
-  await page.getByLabel("Preferred show").selectOption("One Man Show");
-  await page.getByLabel("Event date").fill("2026-12-18");
-  await page.getByLabel("City / venue").fill("Kochi");
-  await expect(page.locator(".booking-progress")).toHaveAttribute("aria-label", "5 of 5 required details complete");
-  await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
-  await expect(page.locator(".booking-summary")).toContainText("Asha");
-  await expect(page.getByLabel("Your name")).toHaveValue("Asha");
-  await expect(page.getByLabel("Phone number")).toHaveValue("+919999999999");
-  expect(externalPages).toEqual([]);
-});
-
-test("configurator recommendation reaches prefilled booking", async ({ page }) => {
+test("show and campus choices preserve their booking context", async ({ page }) => {
   await page.goto("/shows");
-  await page.getByRole("button", { name: /Campus night/ }).click();
-  await expect(page.locator(".show-result")).toContainText("Variety Musical");
-  await page.getByLabel("Event type").selectOption("public-festival");
-  await page.getByLabel("Audience size").selectOption("1000-plus");
-  await expect(page.locator(".show-result")).toContainText("Mega Show");
-  await page.getByRole("link", { name: "Check this format" }).click();
-  await expect(page).toHaveURL(/\/book\?show=Mega(?:%20|\+)Show/);
-  await expect(page.getByLabel("Preferred show")).toHaveValue("Mega Show");
-});
-
-test("mobile navigation and keyboard focus remain operable", async ({ page }) => {
-  await page.goto("/");
-  if ((page.viewportSize()?.width ?? 1440) < 1000) {
-    await page.getByRole("button", { name: "Open navigation" }).click();
-    await expect(page.getByRole("navigation", { name: "Mobile navigation" })).toBeVisible();
-    await page.getByRole("navigation", { name: "Mobile navigation" }).getByRole("link", { name: "Shows", exact: true }).click();
-    await expect(page).toHaveURL(/\/shows$/);
-  }
-  await page.goto("/");
-  await page.keyboard.press("Home");
-  await page.keyboard.press("Tab");
-  await expect(page.getByText("Skip to content")).toBeFocused();
-});
-
-test("school stage offer reaches a prefilled booking enquiry", async ({ page }) => {
+  await expect(page.locator(".show-builder")).toHaveCount(0);
+  await page.getByRole("link", { name: "Check Availability for Mega Show", exact: true }).click();
+  await expect(page.getByLabel("Show preference")).toHaveValue("Mega Show");
+  await expect(page).toHaveURL(/source=%2Fshows/);
   await page.goto("/school-college-shows");
   await page.getByRole("button", { name: /College stage/ }).click();
-  await expect(page.locator(".campus-mode-stage")).toContainText("Festival energy");
-  await expect(page.getByRole("link", { name: "Plan this stage" })).toHaveAttribute("href", /show=Variety%20Musical&event=College%20fest/);
-  await page.getByRole("link", { name: "Plan a school show", exact: true }).click();
-  await expect(page).toHaveURL(/\/book\?show=Guest(?:%20|\+)Performance&event=School(?:%20|\+)annual(?:%20|\+)day/);
-  await expect(page.getByLabel("Preferred show")).toHaveValue("Guest Performance");
-  await expect(page.getByLabel(/Event type/)).toHaveValue("School annual day");
+  await page.getByRole("link", { name: "Plan this stage", exact: true }).click();
+  await expect(page.getByLabel("Show preference")).toHaveValue("Variety Musical");
+  await expect(page.getByLabel("Event type", { exact: true })).toHaveValue("College fest");
+  await expect(page).toHaveURL(/source=%2Fschool-college-shows/);
 });
 
-test("mobile header follows scroll direction", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "phone-390x844");
+test("early enquiry validates, opens the correct message and preserves values", async ({ page }) => {
+  await blockExternalHandoff(page);
+  await page.goto("/book?source=%2Fshows");
+  await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
+  await expect(page.getByLabel("Your name", { exact: true })).toBeFocused();
+  await expect(page.getByText("Enter the event country.")).toBeVisible();
+  await completeBrief(page);
+  await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
+  const handoff = await page.locator("html").getAttribute("data-handoff");
+  const url = new URL(handoff!);
+  expect(url.origin + url.pathname).toBe("https://wa.me/919656712941");
+  const message = url.searchParams.get("text")!;
+  for (const value of ["Asha", "London", "United Kingdom", "Date not decided", "Help me choose", "Website · /shows"]) expect(message).toContain(value);
+  await expect(page.getByRole("link", { name: "Open WhatsApp", exact: true })).toHaveAttribute("href", handoff!);
+  await expect(page.getByLabel("Your name", { exact: true })).toHaveValue("Asha");
+  await expect(page.getByRole("status")).toContainText("If no tab opened");
+  await page.getByLabel("Event city", { exact: true }).fill("Manchester");
+  await expect(page.locator(".booking-summary")).toHaveCount(0);
+});
+
+test("decided dates and optional phone validate without losing the brief", async ({ page }) => {
+  await blockExternalHandoff(page);
+  await page.goto("/book");
+  await completeBrief(page);
+  await page.getByLabel("Date not decided").uncheck();
+  await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
+  await expect(page.getByText("Choose a date or select Date not decided.")).toBeVisible();
+  await page.getByLabel("Choose your event date").fill("2020-01-01");
+  await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
+  await expect(page.getByText("Choose today or a future date.")).toBeVisible();
+  await page.getByLabel("Date not decided").check();
+  await page.getByText("Add more details", { exact: false }).click();
+  await page.getByLabel("Phone number").fill("123");
+  await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
+  await expect(page.getByText("Enter a valid phone number with country code.")).toBeVisible();
+  await page.getByLabel("Phone number").fill("+44 (7700) 900123");
+  await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
+  await expect(page.locator(".booking-summary")).toContainText("+447700900123");
+});
+
+test("clipboard failure leaves a selectable enquiry and WhatsApp fallback", async ({ page }) => {
+  await page.addInitScript(() => Object.defineProperty(navigator, "clipboard", { value: { writeText: async () => { throw new Error("Unavailable"); } }, configurable: true }));
+  await page.goto("/book");
+  await completeBrief(page);
+  await page.getByRole("button", { name: "Copy enquiry", exact: true }).click();
+  await expect(page.getByRole("status")).toContainText("Select the enquiry text below");
+  await expect(page.locator(".booking-summary pre")).toContainText("London");
+  await expect(page.getByRole("link", { name: "Open WhatsApp", exact: true })).toBeVisible();
+});
+
+test("performance filters and user-initiated playback work", async ({ page }) => {
+  await page.route("https://www.youtube-nocookie.com/**", (route) => route.fulfill({ contentType: "text/html", body: "<html><body>Test video frame</body></html>" }));
+  await page.goto("/proof");
+  await expect(page.locator("iframe")).toHaveCount(0);
+  await page.getByRole("button", { name: "International", exact: true }).click();
+  await expect(page.locator(".performance-tile")).toHaveCount(2);
+  await expect(page.getByRole("button", { name: "International", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await page.locator(".performance-tile").first().getByRole("button", { name: /Play/ }).click();
+  await expect(page.locator("iframe")).toHaveCount(1);
+  await expect(page.getByRole("link", { name: "Open on YouTube" })).toBeVisible();
+  await page.getByRole("button", { name: /Close Kuwait/ }).click();
+  await expect(page.locator("iframe")).toHaveCount(0);
+  await page.getByRole("button", { name: "Profile", exact: true }).click();
+  await expect(page.locator(".performance-tile")).toHaveCount(1);
+});
+
+test("mobile navigation, focus and Escape work", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator("html")).toHaveClass(/motion-ready/);
-  const header = page.locator(".site-header");
-  await expect(header).toBeVisible();
-  await page.evaluate(() => window.scrollTo(0, 900));
-  await expect(page.locator("html")).toHaveClass(/scrolling-down/);
-  await expect(header).toHaveCSS("opacity", "0");
-  await page.evaluate(() => window.scrollBy(0, -180));
-  await expect(page.locator("html")).not.toHaveClass(/scrolling-down/);
-  await expect(header).toHaveCSS("opacity", "1");
-});
-
-test("legacy route redirect preserves query", async ({ page }) => {
-  const response = await page.goto("/programs?show=One%20Man%20Show");
-  expect(response?.status()).toBe(200);
-  await expect(page).toHaveURL(/\/shows\?show=One(?:%20|\+)Man(?:%20|\+)Show$/);
-});
-
-test("responsive homepage visual", async ({ page }) => {
-  await page.goto("/");
-  await waitForHydration(page);
-  await expect(page.locator(".home-hero")).toHaveScreenshot("homepage-hero.png", { caret: "initial" });
-});
-
-test("desktop canonical routes and interaction states remain visually stable", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "desktop-1440x900");
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  for (const route of routes) {
-    await page.goto(route);
-    await waitForHydration(page);
-    await expect(page).toHaveScreenshot(`route-${route === "/" ? "home" : route.slice(1)}.png`, { caret: "initial" });
+  await ready(page);
+  await page.keyboard.press("Tab");
+  await expect(page.getByText("Skip to content")).toBeFocused();
+  if ((page.viewportSize()?.width ?? 1440) < 1000) {
+    await page.getByRole("button", { name: "Open navigation" }).click();
+    await expect(page.locator("main")).toHaveAttribute("inert", "");
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("button", { name: "Open navigation" })).toBeFocused();
+    await page.getByRole("button", { name: "Open navigation" }).click();
+    await page.getByRole("navigation", { name: "Mobile navigation" }).getByRole("link", { name: "Live Shows" }).click();
+    await expect(page).toHaveURL(/\/shows$/);
+    await expect(page.locator("main")).not.toHaveAttribute("inert", "");
   }
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.goto("/shows");
-  await page.locator(".format-compare article").first().getByRole("button").click();
-  await expect(page.locator(".show-builder")).toHaveScreenshot("show-builder-expanded.png", { caret: "initial" });
+});
+
+test("legacy redirects preserve parameters", async ({ page }) => {
+  await page.goto("/contact?show=One%20Man%20Show&event=Association&location=Muscat");
+  await expect(page).toHaveURL(/\/book\?/);
+  await expect(page.getByLabel("Show preference")).toHaveValue("One Man Show");
+  await expect(page.getByLabel("Event city", { exact: true })).toHaveValue("Muscat");
+});
+
+test("hero visual and mobile booking fit", async ({ page }, testInfo) => {
+  await page.goto("/");
+  await ready(page);
+  if (testInfo.project.name === "phone-390x844") {
+    const media = await page.locator(".hero-player").boundingBox();
+    expect(media!.y + media!.height).toBeLessThan(844);
+  }
+  await expect(page.locator(".home-hero")).toHaveScreenshot("stage-hero.png", { animations: "disabled" });
+});
+
+test("reduced motion retains readable content", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(page.locator("main")).toHaveScreenshot("shows-reduced-motion.png", { caret: "initial" });
+  await page.goto("/shows");
+  await ready(page);
+  await expect(page.locator(".page-hero-copy")).toHaveCSS("opacity", "1");
+  await expect(page.locator(".program-cards article")).toHaveCount(4);
 });

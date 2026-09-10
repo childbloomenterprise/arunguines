@@ -1,17 +1,17 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import { BookingLink } from "../booking-link";
 import { ArrowRight, ArrowUpRight } from "../icons";
 import { CampusStageSelector } from "../campus-stage-selector";
+import { createPageMetadata } from "../seo";
 import { ActHeading, Eyebrow, PageFrame, PageHero } from "../site-components";
 import { VideoPlayer } from "../video-player";
 
 const description = "Book Arun Guinness for school annual days, college fests, arts and cultural days, campus inaugurations and student-friendly stage shows.";
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "School & College Stage Shows",
   description,
-  alternates: { canonical: "/school-college-shows" },
-  openGraph: { title: "School & College Stage Shows | Arun Guinness", description, url: "/school-college-shows" },
-};
+  path: "/school-college-shows",
+  keywords: ["school annual day stage show", "college fest stage show", "campus stage show Kerala", "arts day stage show", "youth festival stage show", "college fest performer Kochi", "school annual day performer Kochi"],
+});
 
 export default function SchoolCollegeShowsPage() {
   return <PageFrame>
@@ -41,7 +41,7 @@ export default function SchoolCollegeShowsPage() {
 
     <section className="booking-cta section-shell campus-booking" data-reveal>
       <div><Eyebrow light>School annual day</Eyebrow><h2>Give students<br /><em>a live surprise.</em></h2></div>
-      <div><p>Share date, city, audience size and available stage time. The booking enquiry opens directly in WhatsApp.</p><Link className="button button-brass" href="/book?show=Guest%20Performance&event=School%20annual%20day">Plan a school show <ArrowUpRight /></Link><Link className="campus-college-link" href="/book?show=Variety%20Musical&event=College%20fest">Planning a college fest? Start here <ArrowRight /></Link></div>
+      <div><p>Share date, city, audience size and available stage time. The booking enquiry opens directly in WhatsApp.</p><BookingLink className="button button-brass" href="/book?show=Guest%20Performance&event=School%20annual%20day">Plan a school show <ArrowUpRight /></BookingLink><BookingLink className="campus-college-link" href="/book?show=Variety%20Musical&event=College%20fest">Planning a college fest? Start here <ArrowRight /></BookingLink></div>
     </section>
   </PageFrame>;
 }

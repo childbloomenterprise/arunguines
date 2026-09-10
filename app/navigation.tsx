@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BookingLink } from "./booking-link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Close, Menu, VoiceMark } from "./icons";
@@ -14,7 +15,7 @@ export function Header() {
 
   useEffect(() => {
     document.body.classList.toggle("menu-open", open);
-    const background = Array.from(document.querySelectorAll<HTMLElement>(".skip-link,main,.site-footer,.mobile-booking"));
+    const background = Array.from(document.querySelectorAll<HTMLElement>(".skip-link,main,.site-footer,.mobile-booking,.stage-controls"));
     const returnFocus = toggleRef.current;
     background.forEach((element) => { element.inert = open; });
     if (!open) return () => {
@@ -59,7 +60,7 @@ export function Header() {
       <nav className="desktop-nav" aria-label="Main navigation">
         {navItems.map((item) => <Link key={item.href} href={item.href} aria-current={pathname === item.href ? "page" : undefined}>{item.label}</Link>)}
       </nav>
-      <Link href="/book" className="header-book">Book Arun <ArrowUpRight /></Link>
+      <BookingLink className="header-book">Check Availability <ArrowUpRight /></BookingLink>
       <button ref={toggleRef} className="menu-toggle" type="button" aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen((value) => !value)}>
         {open ? <Close /> : <Menu />}
       </button>
@@ -67,7 +68,7 @@ export function Header() {
         <nav aria-label="Mobile navigation">
           <Link href="/" aria-current={pathname === "/" ? "page" : undefined} onClick={() => setOpen(false)}>Home</Link>
           {navItems.map((item) => <Link key={item.href} href={item.href} aria-current={pathname === item.href ? "page" : undefined} onClick={() => setOpen(false)}>{item.label}</Link>)}
-        </nav>
+        <BookingLink onClick={() => setOpen(false)}>Check Availability</BookingLink></nav>
         <p>Singing · voice craft · mimicry · live entertainment</p>
       </div>
     </header>

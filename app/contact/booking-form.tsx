@@ -5,115 +5,89 @@ import { ArrowUpRight, Check, Copy } from "../icons";
 import { contact, programs, type BookingDraft } from "../site-data";
 import { composeBookingMessage, normalizePhoneInput, validateBookingDraft, type BookingErrors } from "../site-logic";
 
-type BookingFormProps = { initialShow?: string; initialEvent?: string; initialLocation?: string; compact?: boolean };
-type RequiredField = keyof BookingErrors;
+type BookingFormProps = { initialShow?: string; initialEvent?: string; initialLocation?: string; initialCountry?: string; source?: string; compact?: boolean };
+const fieldOrder = ["name", "event", "country", "location", "date", "phone"] as const;
+const fieldLabels = { name: "Your name", event: "Event type", country: "Event country", location: "Event city", date: "Choose your event date", phone: "Phone number" };
 
-const requiredFields: readonly RequiredField[] = ["name", "phone", "show", "date", "location"];
-
-function readDraft(form: HTMLFormElement): BookingDraft {
-  const data = new FormData(form);
-  return {
-    name: String(data.get("name") ?? ""),
-    phone: normalizePhoneInput(String(data.get("phone") ?? "")),
-    show: String(data.get("show") ?? ""),
-    date: String(data.get("date") ?? ""),
-    location: String(data.get("location") ?? ""),
-    event: String(data.get("event") ?? ""),
-    audience: String(data.get("audience") ?? ""),
-    notes: String(data.get("notes") ?? ""),
-  };
-}
-
-export function BookingForm({ initialShow = "", initialEvent = "", initialLocation = "", compact = false }: BookingFormProps) {
+export function BookingForm({ initialShow = "", initialEvent = "", initialLocation = "", initialCountry = "", source = "/book", compact = false }: BookingFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
+  const [dateUndecided, setDateUndecided] = useState(true);
+  const [errors, setErrors] = useState<BookingErrors>({});
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState("");
+  const [copied, setCopied] = useState(false);
   const [minDate] = useState(() => {
     const now = new Date();
     return new Date(now.getTime() - now.getTimezoneOffset() * 60_000).toISOString().slice(0, 10);
   });
-  const [errors, setErrors] = useState<BookingErrors>({});
-  const [summary, setSummary] = useState<BookingDraft | null>(null);
-  const [handoffUrl, setHandoffUrl] = useState("");
-  const [status, setStatus] = useState("Nothing is stored or submitted until you send the WhatsApp message.");
-  const [copied, setCopied] = useState(false);
-  const [preview, setPreview] = useState<BookingDraft>({ name: "", phone: "", show: initialShow, date: "", location: initialLocation, event: initialEvent, audience: "", notes: "" });
   const suffix = compact ? "compact" : "full";
-  const completedRequired = [preview.name.trim(), preview.phone.trim(), preview.show, preview.date, preview.location.trim()].filter(Boolean).length;
-  const progress = completedRequired / requiredFields.length;
+  const handoffUrl = message ? `${contact.whatsapp}?text=${encodeURIComponent(message)}` : "";
 
-  function prepare(form: HTMLFormElement): { draft: BookingDraft; url: string } | null {
-    const draft = readDraft(form);
-    const phoneInput = form.elements.namedItem("phone");
-    if (phoneInput instanceof HTMLInputElement) phoneInput.value = draft.phone;
+  function prepare(): string | null {
+    const form = formRef.current;
+    if (!form) return null;
+    const data = new FormData(form);
+    const value = (name: string) => String(data.get(name) ?? "").trim();
+    const draft: BookingDraft = { name: value("name"), event: value("event"), country: value("country"), location: value("location"), date: dateUndecided ? "" : value("date"), show: value("show"), phone: normalizePhoneInput(value("phone")), audience: value("audience"), notes: value("notes"), source };
     const nextErrors = validateBookingDraft(draft, minDate);
+    if (!dateUndecided && !draft.date) nextErrors.date = "Choose a date or select Date not decided.";
     setErrors(nextErrors);
-    const firstInvalid = requiredFields.find((field) => nextErrors[field]);
-    if (firstInvalid) {
-      setStatus("Check the highlighted fields and try again.");
-      const field = form.elements.namedItem(firstInvalid);
-      if (field instanceof HTMLElement) field.focus();
+    const first = fieldOrder.find((field) => nextErrors[field]);
+    if (first) {
+      setStatus("Check the highlighted details below.");
+      const field = form.elements.namedItem(first);
+      if (field instanceof HTMLElement) {
+        const details = field.closest("details");
+        if (details) details.open = true;
+        field.focus();
+      }
       return null;
     }
-    const url = `${contact.whatsapp}?text=${encodeURIComponent(composeBookingMessage(draft))}`;
-    setSummary(draft);
-    setHandoffUrl(url);
+    const nextMessage = composeBookingMessage(draft);
+    setMessage(nextMessage);
     setCopied(false);
-    return { draft, url };
+    return nextMessage;
   }
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const prepared = prepare(event.currentTarget);
+    const prepared = prepare();
     if (!prepared) return;
-    if (navigator.webdriver) {
-      setStatus("Enquiry ready. Automated checks never open external messaging apps.");
-      return;
-    }
-    const popup = window.open(prepared.url, "_blank", "noopener,noreferrer");
-    if (popup) popup.opener = null;
-    setStatus(popup ? "WhatsApp opened. Review the enquiry and press send." : "Your browser blocked the new tab. Use Open WhatsApp or Copy enquiry below.");
+    window.open(`${contact.whatsapp}?text=${encodeURIComponent(prepared)}`, "_blank", "noopener,noreferrer");
+    setStatus("Enquiry ready. Review and send it in WhatsApp. If no tab opened, use Open WhatsApp or Copy enquiry below.");
   }
 
   async function copyMessage() {
-    const form = formRef.current;
-    if (!form) return;
-    const prepared = handoffUrl && summary ? { draft: summary, url: handoffUrl } : prepare(form);
+    const prepared = prepare();
     if (!prepared) return;
-    const message = new URL(prepared.url).searchParams.get("text") ?? "";
     try {
-      await navigator.clipboard.writeText(message);
+      await navigator.clipboard.writeText(prepared);
       setCopied(true);
       setStatus("Enquiry copied. Paste it into WhatsApp when ready.");
     } catch {
-      setStatus("Copy was unavailable. Use Open WhatsApp or select the summary text manually.");
+      setStatus("Copy is unavailable. Select the enquiry text below, or use Open WhatsApp.");
     }
   }
 
-  const error = (field: RequiredField) => errors[field] ? <span id={`${field}-${suffix}-error`} className="field-error">{errors[field]}</span> : null;
-  const describedBy = (field: RequiredField) => errors[field] ? `${field}-${suffix}-error` : undefined;
+  const error = (field: keyof BookingErrors) => errors[field] ? <span id={`${field}-${suffix}-error`} className="field-error">{errors[field]}</span> : null;
+  const accessibility = (field: keyof BookingErrors) => ({ "aria-label": fieldLabels[field], "aria-invalid": Boolean(errors[field]), "aria-describedby": errors[field] ? `${field}-${suffix}-error` : undefined });
 
-  return (
-    <form ref={formRef} className={`booking-form ${compact ? "is-compact" : ""} ${summary ? "is-ready" : ""}`} onSubmit={submit} onInput={(event) => setPreview(readDraft(event.currentTarget))} noValidate>
-      <div className="form-head"><span>Guided enquiry</span><strong>Tell us enough to check the date and shape the right show.</strong></div>
-      <div className="booking-progress" aria-label={`${completedRequired} of ${requiredFields.length} required details complete`}><div><span>Show brief progress</span><strong>{completedRequired}/{requiredFields.length}</strong></div><i><span style={{ transform: `scaleX(${progress})` }} /></i></div>
-      <div className="live-brief" aria-live="polite"><span>Building your brief</span><strong>{preview.show || "Choose a show"}</strong><small>{[preview.event, preview.location, preview.date].filter(Boolean).join(" · ") || "Event, place and date will appear here"}</small></div>
-      <div className="form-row">
-        <label htmlFor={`name-${suffix}`}>Your name<input id={`name-${suffix}`} name="name" autoComplete="name" required aria-invalid={Boolean(errors.name)} aria-describedby={describedBy("name")} placeholder="Full name" />{error("name")}</label>
-        <label htmlFor={`phone-${suffix}`}>Phone number<input id={`phone-${suffix}`} name="phone" type="tel" inputMode="tel" autoComplete="tel" required aria-invalid={Boolean(errors.phone)} aria-describedby={describedBy("phone")} onBlur={(event) => { event.currentTarget.value = normalizePhoneInput(event.currentTarget.value); }} placeholder="+91" />{error("phone")}</label>
-      </div>
-      <div className="form-row">
-        <label htmlFor={`show-${suffix}`}>Preferred show<select id={`show-${suffix}`} name="show" defaultValue={initialShow} required aria-invalid={Boolean(errors.show)} aria-describedby={describedBy("show")}><option value="">Select a format</option>{programs.map((program) => <option key={program.slug} value={program.title}>{program.title}</option>)}</select>{error("show")}</label>
-        <label htmlFor={`event-${suffix}`}>Event type <span className="optional-label">Optional</span><input id={`event-${suffix}`} name="event" defaultValue={initialEvent} placeholder="Festival, corporate..." /></label>
-      </div>
-      <div className="form-row">
-        <label htmlFor={`date-${suffix}`}>Event date<input id={`date-${suffix}`} name="date" type="date" min={minDate} required aria-invalid={Boolean(errors.date)} aria-describedby={describedBy("date")} />{error("date")}</label>
-        <label htmlFor={`location-${suffix}`}>City / venue<input id={`location-${suffix}`} name="location" autoComplete="address-level2" defaultValue={initialLocation} required aria-invalid={Boolean(errors.location)} aria-describedby={describedBy("location")} placeholder="Kochi, Muscat..." />{error("location")}</label>
-      </div>
-      <label htmlFor={`audience-${suffix}`}>Expected audience <span className="optional-label">Optional</span><input id={`audience-${suffix}`} name="audience" inputMode="numeric" placeholder="Approximate size" /></label>
-      <label htmlFor={`notes-${suffix}`}>Requirements <span className="optional-label">Optional</span><textarea id={`notes-${suffix}`} name="notes" rows={compact ? 2 : 4} placeholder="Running time, language mix, venue notes..." /></label>
-      <div className="form-actions"><button className="button button-brass" type="submit">Continue on WhatsApp <ArrowUpRight /></button><button className="button button-outline" type="button" onClick={copyMessage}>{copied ? <Check /> : <Copy />}{copied ? "Copied" : "Copy enquiry"}</button></div>
-      <p className="form-status" role="status" aria-live="polite">{status}</p>
-      {summary ? <section className="booking-summary" aria-labelledby={`summary-title-${suffix}`}><span>Enquiry summary</span><h3 id={`summary-title-${suffix}`}>Ready to review</h3><dl><div><dt>Name</dt><dd>{summary.name}</dd></div><div><dt>Phone</dt><dd>{summary.phone}</dd></div><div><dt>Show</dt><dd>{summary.show}</dd></div><div><dt>Date</dt><dd>{summary.date}</dd></div><div><dt>Location</dt><dd>{summary.location}</dd></div><div><dt>Event</dt><dd>{summary.event || "Not provided"}</dd></div><div><dt>Audience</dt><dd>{summary.audience || "Not provided"}</dd></div><div><dt>Requirements</dt><dd>{summary.notes || "Not provided"}</dd></div></dl></section> : null}
-      {handoffUrl ? <div className="handoff-fallback"><a className="button button-outline" href={handoffUrl} target="_blank" rel="noreferrer">Open WhatsApp <ArrowUpRight /></a></div> : null}
-    </form>
-  );
+  return <form ref={formRef} className={`booking-form ${compact ? "is-compact" : ""}`} onSubmit={submit} onChange={() => { setMessage(""); setCopied(false); setStatus(""); }} noValidate>
+    <div className="form-head"><span>Your next great evening starts here</span><h2>Tell us about your event.</h2><p>Just the essentials. We can work out the rest together.</p></div>
+    <div className="form-row">
+      <label htmlFor={`name-${suffix}`}>Your name<input id={`name-${suffix}`} name="name" autoComplete="name" required maxLength={120} {...accessibility("name")} placeholder="Your full name" />{error("name")}</label>
+      <label htmlFor={`event-${suffix}`}>Event type<input id={`event-${suffix}`} name="event" list={`event-options-${suffix}`} defaultValue={initialEvent} required maxLength={160} {...accessibility("event")} placeholder="e.g. Malayali association celebration" /><datalist id={`event-options-${suffix}`}>{["Malayali association", "Onam / cultural festival", "Family / community gathering", "Corporate event", "School annual day", "College fest", "Other event"].map((item) => <option key={item} value={item} />)}</datalist>{error("event")}</label>
+    </div>
+    <div className="form-row">
+      <label htmlFor={`country-${suffix}`}>Event country<input id={`country-${suffix}`} name="country" defaultValue={initialCountry} required maxLength={100} {...accessibility("country")} placeholder="e.g. United Kingdom" />{error("country")}</label>
+      <label htmlFor={`location-${suffix}`}>Event city<input id={`location-${suffix}`} name="location" defaultValue={initialLocation} required maxLength={160} {...accessibility("location")} placeholder="e.g. London" />{error("location")}</label>
+    </div>
+    <div className="date-choice"><span>Event date</span><label className="checkbox-label"><input type="checkbox" checked={dateUndecided} onChange={(event) => setDateUndecided(event.target.checked)} />Date not decided</label>{!dateUndecided ? <label htmlFor={`date-${suffix}`}>Choose your event date<input id={`date-${suffix}`} name="date" type="date" min={minDate} {...accessibility("date")} />{error("date")}</label> : null}</div>
+    <label htmlFor={`show-${suffix}`}>Show preference<select id={`show-${suffix}`} name="show" defaultValue={programs.some((program) => program.title === initialShow) ? initialShow : ""}><option value="">Help me choose</option>{programs.map((program) => <option key={program.slug} value={program.title}>{program.title}</option>)}</select></label>
+    <details className="optional-details"><summary>Add more details <span>Optional</span></summary><div className="optional-fields"><div className="form-row"><label htmlFor={`phone-${suffix}`}>Phone number<input id={`phone-${suffix}`} name="phone" type="tel" autoComplete="tel" maxLength={30} {...accessibility("phone")} placeholder="Include your country code" />{error("phone")}</label><label htmlFor={`audience-${suffix}`}>Expected audience<input id={`audience-${suffix}`} name="audience" inputMode="numeric" maxLength={40} placeholder="Approximate number of guests" /></label></div><label htmlFor={`notes-${suffix}`}>Anything else we should know?<textarea id={`notes-${suffix}`} name="notes" rows={3} maxLength={1500} placeholder="Favourite songs, language mix, venue or running time…" /></label></div></details>
+    <div className="form-actions"><button className="button button-brass" type="submit">Continue on WhatsApp <ArrowUpRight /></button><button className="copy-action" type="button" onClick={copyMessage}>{copied ? <Check /> : <Copy />}{copied ? "Copied" : "Copy enquiry"}</button></div>
+    <p className="booking-reassurance">You review and send the message in WhatsApp. Dates and pricing are confirmed in conversation.</p>
+    {status ? <p className="form-status" role="status">{status}</p> : null}
+    {message ? <section className="booking-summary" aria-label="Your prepared enquiry"><h3>Your enquiry, ready to send</h3><pre>{message}</pre><div className="handoff-fallback"><a className="button button-dark" href={handoffUrl} target="_blank" rel="noreferrer">Open WhatsApp <ArrowUpRight /></a></div></section> : null}
+  </form>;
 }

@@ -4,7 +4,7 @@ export type Performance = {
   id: string;
   title: string;
   subtitle: string;
-  category: "Signature" | "Voice" | "Television" | "International" | "Live";
+  category: "Profile" | "Signature" | "Voice" | "Television" | "International" | "Live";
   poster?: {
     quality: YoutubeThumbnailQuality;
     fallbackQuality: YoutubeThumbnailQuality;
@@ -12,6 +12,15 @@ export type Performance = {
 };
 
 export type YoutubeThumbnailQuality = "maxresdefault" | "hqdefault";
+
+export type PortfolioPhoto = {
+  src: string;
+  alt: string;
+  caption: string;
+  category: "Live performance" | "Community event" | "Recognition" | "Portrait";
+  orientation: "landscape" | "portrait";
+  focalPoint?: string;
+};
 
 export type StagePreset = {
   key: "campus" | "festival" | "corporate" | "guest";
@@ -37,7 +46,7 @@ export type ShowFormat = {
 
 export type ProofItem = { title: string; text: string; href: string; label: string };
 export type Milestone = { year: string; title: string; text: string; source: string; sourceUrl: string };
-export type BookingDraft = { name: string; phone: string; show: string; date: string; location: string; event: string; audience: string; notes: string };
+export type BookingDraft = { name: string; phone: string; show: string; date: string; country: string; location: string; event: string; audience: string; notes: string; source: string };
 
 export const contact = {
   phoneDisplay: "+91 96567 12941",
@@ -51,11 +60,9 @@ export const contact = {
 } as const;
 
 export const navItems: readonly NavItem[] = [
-  { href: "/shows", label: "Shows" },
-  { href: "/school-college-shows", label: "Campus" },
+  { href: "/shows", label: "Live Shows" },
   { href: "/proof", label: "Watch" },
   { href: "/artist", label: "About" },
-  { href: "/book", label: "Book" },
 ];
 
 export const stats = [
@@ -79,6 +86,62 @@ export const videos: readonly Performance[] = [
   { id: "LcwIFf_3A34", title: "Kuwait live stage", subtitle: "International show · full-room energy", category: "International" },
   { id: "CJiPfOPfbBY", title: "Malayali association live", subtitle: "Community stage · audience connection", category: "Live" },
   { id: "V-n8_vxB0yc", title: "Onam in Kuwait", subtitle: "Festival performance · Kerala to the Gulf", category: "International" },
+] as const;
+
+export const profileVideo: Performance = {
+  id: "a0BScpW4hkA",
+  title: "Arun Guinness profile film",
+  subtitle: "Meet the artist and discover his performance journey",
+  category: "Profile",
+};
+
+export const homepageVideos: readonly Performance[] = [
+  {
+    id: "36viUt4Fmgc",
+    title: "Arun Guinness live",
+    subtitle: "A performance highlight from Arun's official archive",
+    category: "Live",
+    poster: { quality: "hqdefault", fallbackQuality: "maxresdefault" },
+  },
+  {
+    id: "_pK5XHgumAQ",
+    title: "Echo singing",
+    subtitle: "Live voice craft in performance",
+    category: "Voice",
+    poster: { quality: "hqdefault", fallbackQuality: "maxresdefault" },
+  },
+  ...videos.slice(0, 4),
+];
+
+export const featuredPerformances: readonly Performance[] = [videos[0], homepageVideos[0], videos[3]];
+
+export const stagePortfolio: readonly PortfolioPhoto[] = [
+  { src: "/portfolio/01-live-in-red.webp", alt: "Arun Guinness singing into a microphone in a red shirt during a live stage show", caption: "A live vocal performance, close to the audience and fully in the moment.", category: "Live performance", orientation: "landscape", focalPoint: "50% 40%" },
+  { src: "/portfolio/13-school-audience-show.webp", alt: "Arun Guinness singing among a large group of schoolchildren", caption: "Taking the song into the audience at a school celebration.", category: "Community event", orientation: "landscape", focalPoint: "55% 46%" },
+  { src: "/portfolio/04-community-stage.webp", alt: "Collage of Arun Guinness performing with another singer and children on a community stage", caption: "Music, movement and audience participation across a community stage.", category: "Community event", orientation: "portrait", focalPoint: "50% 45%" },
+  { src: "/portfolio/12-onam-muscat-stage.webp", alt: "Arun Guinness performing at an Onam celebration in Muscat", caption: "Onam celebration performance for the Malayali community in Muscat.", category: "Live performance", orientation: "landscape", focalPoint: "50% 48%" },
+  { src: "/portfolio/09-close-live-vocal.webp", alt: "Close view of Arun Guinness singing into a microphone in a red shirt", caption: "Voice craft in focus during a live programme.", category: "Live performance", orientation: "portrait", focalPoint: "63% 43%" },
+  { src: "/portfolio/03-stage-in-yellow.webp", alt: "Arun Guinness speaking into a microphone under purple stage lights", caption: "Connecting with the room between songs under the stage lights.", category: "Live performance", orientation: "portrait", focalPoint: "50% 42%" },
+  { src: "/portfolio/02-dhun-recognition.webp", alt: "Arun Guinness presenting a certificate during the DHUN 2024 prize distribution", caption: "A prize-distribution moment at DHUN 2024.", category: "Recognition", orientation: "landscape", focalPoint: "50% 48%" },
+  { src: "/portfolio/14-school-recognition.webp", alt: "Arun Guinness receiving a gift and handshake at a school programme", caption: "Recognition following a school programme and performance.", category: "Recognition", orientation: "landscape", focalPoint: "52% 48%" },
+  { src: "/portfolio/07-school-honour.webp", alt: "Arun Guinness receiving a trophy at St Juliana's Public School", caption: "An honour shared at St. Juliana's Public School.", category: "Recognition", orientation: "landscape", focalPoint: "50% 48%" },
+  { src: "/portfolio/05-school-inauguration.webp", alt: "Arun Guinness joining a ceremonial lamp lighting at a school annual day", caption: "Joining the ceremonial opening of a school annual-day celebration.", category: "Community event", orientation: "landscape", focalPoint: "50% 50%" },
+  { src: "/portfolio/08-onam-inauguration.webp", alt: "Arun Guinness lighting a ceremonial lamp at an Onam celebration", caption: "Opening an Onam gathering with the traditional lamp-lighting ceremony.", category: "Community event", orientation: "landscape", focalPoint: "50% 48%" },
+  { src: "/portfolio/11-blue-blazer-stage.webp", alt: "Arun Guinness smiling with a microphone while wearing a blue blazer", caption: "A stage portrait between performance moments.", category: "Portrait", orientation: "landscape", focalPoint: "50% 42%" },
+  { src: "/portfolio/06-blue-kurta-portrait.webp", alt: "Portrait of Arun Guinness smiling in a blue kurta at an outdoor event", caption: "Between programmes, ready for the next gathering.", category: "Portrait", orientation: "portrait", focalPoint: "50% 35%" },
+  { src: "/portfolio/10-performer-moment.webp", alt: "Arun Guinness taking a selfie with two fellow performers backstage", caption: "A relaxed stage-side moment with fellow performers.", category: "Portrait", orientation: "portrait", focalPoint: "50% 42%" },
+] as const;
+
+export const eventExperiences = [
+  { title: "A little closer to home.", label: "Malayali associations", event: "Malayali association", text: "Familiar songs and voices. A shared evening for your community, wherever home is now." },
+  { title: "Your celebration. Turned up.", label: "Onam + cultural festivals", event: "Onam / cultural festival", text: "Bring live music, voice transformations and audience interaction into your cultural programme." },
+  { title: "Every generation. Together.", label: "Family + community gatherings", event: "Family / community gathering", text: "Music and entertainment for a room full of different ages, memories and favourite songs." },
+] as const;
+
+export const bookingSteps = [
+  { title: "Tell us about your event", text: "Start with your occasion and location. Still exploring dates or formats? That is fine." },
+  { title: "Shape the evening together", text: "Discuss your audience, music, running time and production needs directly on WhatsApp." },
+  { title: "Confirm the details", text: "Availability, pricing, travel and technical arrangements are agreed before a booking is confirmed." },
 ] as const;
 
 export const voiceRoster = [
@@ -126,6 +189,11 @@ export const proofItems: readonly ProofItem[] = [
 ] as const;
 
 export const faqs = [
+  { question: "Can we enquire before choosing a date or show?", answer: "Yes. Share your occasion, country and city to start the conversation. Choose ‘Date not decided’ or ‘Help me choose’ when you are still planning." },
+  { question: "Can we book Arun for an overseas event?", answer: "Enquiries are welcome from Malayali associations and event organisers worldwide. Availability, travel, accommodation and any visa arrangements are discussed for your event before confirmation." },
+  { question: "Can we discuss songs and the language mix?", answer: "Share your audience’s favourite songs and preferred languages with the booking enquiry. The repertoire and language mix can be discussed around the gathering." },
+  { question: "How long is the show, and what equipment is needed?", answer: "Running time depends on the format and your programme. Share the venue, audience size and stage facilities so sound, microphones and production requirements can be agreed together." },
+  { question: "Does sending an enquiry confirm a booking?", answer: "No. The enquiry starts a conversation. Your date, price, travel and production arrangements must be confirmed directly before the booking is agreed." },
   { question: "What makes Arun's show different?", answer: "He sings in the styles and voices of male and female playback singers, then combines that craft with comedy, characters and audience interaction." },
   { question: "Which events can he perform at?", answer: "Corporate events, festivals, colleges, schools, associations, annual days, inaugurations, private celebrations and international programmes." },
   { question: "Can the show be customized?", answer: "Yes. Duration, supporting artists, language mix and tone can be adjusted around venue, audience and production schedule." },

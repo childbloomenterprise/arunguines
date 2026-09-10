@@ -1,16 +1,11 @@
-const DEFAULT_SITE_URL = "https://arunguinness.com";
+const CANONICAL_SITE_URL = "https://www.arunguinness.com";
 
-export function resolveSiteUrl(value?: string): string {
-  const candidate = value?.trim();
-
-  if (!candidate) return DEFAULT_SITE_URL;
-
-  try {
-    const url = new URL(candidate);
-    return url.protocol === "http:" || url.protocol === "https:" ? url.origin : DEFAULT_SITE_URL;
-  } catch {
-    return DEFAULT_SITE_URL;
-  }
+/**
+ * Keep search metadata on the public domain even when a deployment-level
+ * environment variable still points at a preview hostname.
+ */
+export function resolveSiteUrl(): string {
+  return CANONICAL_SITE_URL;
 }
 
-export const siteUrl = resolveSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
+export const siteUrl = CANONICAL_SITE_URL;

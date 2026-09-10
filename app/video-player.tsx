@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { type CSSProperties, useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useId, useRef, useState } from "react";
 import { ArrowUpRight, Close, Play } from "./icons";
 import { type Performance, youtubePosterSources, youtubeUrl } from "./site-data";
 
@@ -42,12 +42,16 @@ export function VideoPlayer({
   const [unavailable, setUnavailable] = useState(false);
   const [posterIndex, setPosterIndex] = useState(0);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const playRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const playerId = useId();
 
   useEffect(() => {
     if (!playing) return;
+    closeRef.current?.focus({ preventScroll: true });
 
     const listenForPlayerErrors = (event: MessageEvent) => {
-      if (!event.origin.includes("youtube.com") && !event.origin.includes("youtube-nocookie.com")) return;
+      if (!["https://www.youtube.com", "https://www.youtube-nocookie.com"].includes(event.origin) || event.source !== iframeRef.current?.contentWindow) return;
       try {
         const payload = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
         if (payload?.event === "onError" && [100, 101, 150].includes(Number(payload.info))) setUnavailable(true);
@@ -55,7 +59,11 @@ export function VideoPlayer({
         // YouTube sends non-JSON player messages alongside API events.
       }
     };
-    const connect = () => iframeRef.current?.contentWindow?.postMessage(JSON.stringify({ event: "listening", id: `video-${id}` }), "*");
+    const connect = () => {
+      const player = iframeRef.current?.contentWindow;
+      player?.postMessage(JSON.stringify({ event: "listening", id: playerId }), "https://www.youtube-nocookie.com");
+      player?.postMessage(JSON.stringify({ event: "command", func: "addEventListener", args: ["onError"] }), "https://www.youtube-nocookie.com");
+    };
     window.addEventListener("message", listenForPlayerErrors);
     const timer = window.setInterval(connect, 500);
     connect();
@@ -63,11 +71,12 @@ export function VideoPlayer({
       window.removeEventListener("message", listenForPlayerErrors);
       window.clearInterval(timer);
     };
-  }, [id, playing]);
+  }, [playerId, playing]);
 
   const closePlayer = () => {
     setPlaying(false);
     setUnavailable(false);
+    requestAnimationFrame(() => playRef.current?.focus({ preventScroll: true }));
   };
   const ratioClass = `media-ratio-${ratio.replace(":", "-")}`;
   const mediaStyle = { "--media-position": focalPoint } as CSSProperties;
@@ -82,7 +91,7 @@ export function VideoPlayer({
         ) : (
           <iframe
             ref={iframeRef}
-            id={`video-${id}`}
+            id={playerId}
             src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1`}
             title={title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -90,7 +99,7 @@ export function VideoPlayer({
             onError={() => setUnavailable(true)}
           />
         )}
-        <button className="video-close" type="button" onClick={closePlayer} aria-label={`Close ${title}`}>
+        <button ref={closeRef} className="video-close" type="button" onClick={closePlayer} aria-label={`Close ${title}`}>
           <Close />
         </button>
         {!unavailable ? <a className="video-external" href={youtubeUrl(id)} target="_blank" rel="noreferrer">Open on YouTube <ArrowUpRight /></a> : null}
@@ -100,13 +109,14 @@ export function VideoPlayer({
 
   return (
     <button
+      ref={playRef}
       className={`embedded-video ${ratioClass} tone-${tone} ${className}`}
       style={mediaStyle}
       type="button"
       onClick={() => setPlaying(true)}
     >
       <span className="sr-only">Play {title} on this page.</span>
-      {thumbnailFailed ? <span className="thumbnail-fallback" role="img" aria-label={alt}><strong>{title}</strong><small>Official performance · poster unavailable</small></span> : <Image src={posterSources[posterIndex]} alt={alt} fill preload={eager} sizes={sizes} onError={() => setPosterIndex((index) => index + 1)} />}
+      {thumbnailFailed ? <span className="thumbnail-fallback" role="img" aria-label={alt}><strong>{title}</strong><small>Official performance · poster unavailable</small></span> : <Image src={posterSources[posterIndex]} alt={alt} fill loading={eager ? "eager" : "lazy"} fetchPriority={eager ? "high" : "auto"} sizes={sizes} onError={() => setPosterIndex((index) => index + 1)} />}
       <span className="video-wash" />
       {badge ? <span className="video-badge">{badge}</span> : null}
       {index ? <span className="video-index">{index}</span> : null}

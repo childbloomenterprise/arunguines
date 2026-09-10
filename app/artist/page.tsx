@@ -1,20 +1,20 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import { BookingLink } from "../booking-link";
+import { PageSchema } from "../page-schema";
 import { ArrowUpRight } from "../icons";
-import { InteractiveTimeline, VoiceExplorer } from "../experience";
-import { ActHeading, PageFrame, PageHero, StatsStrip } from "../site-components";
-import { artistModes, milestones } from "../site-data";
+import { createPageMetadata, performerKeywords } from "../seo";
+import { PageFrame, PageHero, SectionHeading } from "../site-components";
+import { artistModes, milestones, profileVideo } from "../site-data";
 import { VideoPlayer } from "../video-player";
 
-const description = "Discover Arun Guinness—Kerala singer, voice-imitation performer, mimicry artist, actor, sound engineer and live entertainer.";
-export const metadata: Metadata = { title: "About Arun", description, alternates: { canonical: "/artist" }, openGraph: { title: "About Arun | Arun Guinness", description, url: "/artist" } };
+const description = "Meet Arun Guinness, a singer, voice artist and live entertainer bringing music and familiar voices to Malayali communities worldwide.";
+export const metadata = createPageMetadata({ title: "Meet Arun Guinness", description, path: "/artist", keywords: performerKeywords });
 
 export default function ArtistPage() {
   return <PageFrame>
-    <PageHero variant="artist" motionPreset="cinematic" label="About Arun" title="Built by sound." accent="Driven by stage." description="Technical listening, fearless performance and years spent learning what makes a room come alive." highlights={["Singer + voice artist", "Sound-engineering roots", "Kochi · Kerala"]} media={<VideoPlayer id="a0BScpW4hkA" title="The Arun Guinness story" alt="Arun Guinness in his official profile video" className="route-player" sizes="(max-width: 800px) calc(100vw - 40px), 42vw" eager badge="Artist profile" ratio="16:9" caption="Official profile" />} />
-    <section className="artist-story section-shell"><div data-reveal><ActHeading act="01" label="The differentiator" title="A singer who" accent="became the voices." /></div><div data-reveal><p className="lead">Arun is known for something rarer than speaking mimicry: recreating playback-singer styles while actually singing—including transformations between male and female voices in one performance.</p><p>Electronics and sound-engineering studies developed the technical ear. Television and documented international programmes sharpened the timing. Each voice remains a respectful live impression, never a claim of identity or affiliation.</p><Link className="button button-dark" href="/book">Bring Arun to your stage <ArrowUpRight /></Link></div></section>
-    <section className="craft-section section-shell"><ActHeading act="02" label="The whole artist" title="Four crafts." accent="One instinct." /><div className="craft-grid">{artistModes.map((mode) => <article key={mode.number} data-reveal><span>{mode.number}</span><h3>{mode.title}</h3><p>{mode.text}</p></article>)}</div></section>
-    <section className="voice-library section-shell"><ActHeading act="03" label="Explore the repertoire" title="Recognisable styles." accent="Recorded live." description="Choose a voice reference, then open the paired official performance without leaving the page." /><VoiceExplorer /></section>
-    <section className="timeline-section section-shell"><ActHeading act="04" label="Journey" title="Every stage" accent="changed the voice." /><InteractiveTimeline items={milestones} /><StatsStrip /></section>
+    <PageSchema path="/artist" name="About Arun Guinness" description={description} type="AboutPage" />
+    <PageHero variant="artist" label="The artist" title="One man." accent="A world of voices." description={description} highlights={["Kochi, Kerala", "Singer + voice artist", "Live entertainer"]} media={<VideoPlayer id={profileVideo.id} title={profileVideo.title} alt="Arun Guinness in his official profile film" sizes="(max-width: 800px) calc(100vw - 40px), 500px" ratio="16:9" eager caption="Meet the artist · Official profile" />} />
+    <section className="artist-story section-shell"><SectionHeading label="Behind the voices" title="Listening closely." accent="Connecting naturally." /><div><p className="lead">A familiar song can bring a whole room together. Arun builds his performances around that connection.</p><p>His live singing moves between male and female playback styles, bringing voice impressions, mimicry and audience interaction into the same evening. Electronics and sound-engineering studies helped develop the technical ear behind the craft.</p><p>Based in Kochi, he welcomes enquiries from Malayali communities abroad and event organisers across India.</p><BookingLink className="button button-brass">Check Availability <ArrowUpRight /></BookingLink></div></section>
+    <section className="craft-section section-shell"><SectionHeading label="The performance" title="Music at the heart." accent="Personality in every voice." /><div className="craft-grid">{artistModes.map((mode) => <article key={mode.number}><h3>{mode.title}</h3><p>{mode.text}</p></article>)}</div></section>
+    <section className="inner-section section-shell"><SectionHeading label="Along the way" title="A life shaped" accent="by the stage." /><div className="artist-milestones">{milestones.map((item) => <article key={item.title}><span>{item.year}</span><div><h3>{item.title}</h3><p>{item.text}</p><a className="text-link" href={item.sourceUrl} target="_blank" rel="noreferrer">{item.source} <ArrowUpRight /></a></div></article>)}</div></section>
   </PageFrame>;
 }

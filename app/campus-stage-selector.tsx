@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { BookingLink } from "./booking-link";
 import { useState } from "react";
 import { ArrowRight, ArrowUpRight } from "./icons";
 import { VideoPlayer } from "./video-player";
@@ -48,8 +48,8 @@ export function CampusStageSelector() {
       {(Object.keys(stageModes) as CampusStageMode[]).map((key) => <button key={key} type="button" aria-pressed={mode === key} onClick={() => setMode(key)}><span>{key === "school" ? "01" : "02"}</span><strong>{stageModes[key].label}</strong><small>{key === "school" ? "Annual days + arts events" : "Fests + cultural nights"}</small></button>)}
     </div>
     <article key={mode} className="campus-mode-stage" aria-live="polite">
-      <div className="campus-mode-copy"><span>{stage.eyebrow}</span><h3>{stage.title}</h3><p>{stage.description}</p><div className="campus-mode-formats">{stage.formats.map(([time, title, text], index) => <div key={title}><span>0{index + 1} · {time}</span><strong>{title}</strong><small>{text}</small></div>)}</div><Link className="button button-brass" href={bookingHref}>Plan this stage <ArrowUpRight /></Link></div>
-      <div className="campus-mode-media" data-depth-media="true"><VideoPlayer id={stage.video.id} title={stage.video.title} alt={`${stage.video.title} official performance`} className="campus-mode-player" sizes="(max-width: 900px) calc(100vw - 40px), 48vw" badge={stage.video.badge} caption={stage.video.caption} ratio="16:9" /><Link href={bookingHref}>Open prefilled enquiry <ArrowRight /></Link></div>
+      <div className="campus-mode-copy"><span>{stage.eyebrow}</span><h3>{stage.title}</h3><p>{stage.description}</p><div className="campus-mode-formats">{stage.formats.map(([time, title, text], index) => <div key={title}><span>0{index + 1} · {time}</span><strong>{title}</strong><small>{text}</small></div>)}</div><BookingLink className="button button-brass" href={bookingHref}>Plan this stage <ArrowUpRight /></BookingLink></div>
+      <div className="campus-mode-media" data-depth-media="true"><VideoPlayer id={stage.video.id} title={stage.video.title} alt={`${stage.video.title} official performance`} className="campus-mode-player" sizes="(max-width: 900px) calc(100vw - 40px), 48vw" badge={stage.video.badge} caption={stage.video.caption} ratio="16:9" /><BookingLink href={bookingHref}>Open prefilled enquiry <ArrowRight /></BookingLink></div>
     </article>
   </div>;
 }
