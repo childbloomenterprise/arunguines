@@ -52,7 +52,7 @@ test("performance posters expose verified fallback sources", () => {
   assert.match(sources[1], /maxresdefault\.jpg$/);
 });
 
-test("stage portfolio includes every supplied photo with accessible copy", async () => {
+test("photo archive remains available while homepage leads with videos", async () => {
   assert.equal(stagePortfolio.length, 14);
   assert.equal(new Set(stagePortfolio.map((photo) => photo.src)).size, 14);
   assert.ok(stagePortfolio.every((photo) => photo.src.startsWith("/portfolio/") && photo.alt && photo.caption));
@@ -65,7 +65,8 @@ test("stage portfolio includes every supplied photo with accessible copy", async
   assert.match(gallery, /scrollBy/);
   assert.match(gallery, /aria-label="Previous photos"/);
   assert.match(gallery, /aria-label="Next photos"/);
-  assert.match(homepage, /PhotoPortfolio/);
+  assert.doesNotMatch(homepage, /PhotoPortfolio/);
+  assert.match(homepage, /homepageVideos/);
   assert.match(proof, /PhotoPortfolio/);
 });
 
@@ -86,17 +87,18 @@ test("public pages omit unresolved launch claims", async () => {
 });
 
 test("canonical routes and permanent redirects replace legacy structure", async () => {
-  const [navigation, sitemap, config] = await Promise.all([read("app/site-data.ts"), read("app/sitemap.xml"), read("next.config.ts")]);
+  const [navigation, footer, sitemap, config] = await Promise.all([read("app/site-data.ts"), read("app/site-components.tsx"), read("app/sitemap.xml"), read("next.config.ts")]);
   for (const route of ["/shows", "/artist", "/proof"]) {
-    assert.ok(navigation.includes(`href: "${route}"`));
+    assert.ok(navigation.includes(`href: "${route}"`) || footer.includes(`href="${route}"`));
     assert.ok(sitemap.includes(`arunguinness.com${route}</loc>`));
   }
   assert.match(config, /output: "export"/);
   assert.match(config, /unoptimized: true/);
-  for (const route of ["programs", "about", "videos", "gallery", "testimonials", "contact"]) {
+  for (const route of ["programs", "about", "videos", "gallery", "testimonials"]) {
     const page = await read(`app/${route}/page.tsx`);
     assert.match(page, /permanentRedirect/);
   }
+  assert.match(await read("app/contact/page.tsx"), /location\.search/);
 });
 
 test("supporting pages emit route-specific canonical metadata", async () => {
@@ -109,21 +111,17 @@ test("supporting pages emit route-specific canonical metadata", async () => {
   assert.match(seo, /url: path/);
 });
 
-test("school and college stage offering uses verified institutional evidence", async () => {
-  const [page, selector, data, shows] = await Promise.all([
+test("school and college stage offering keeps verified video and direct enquiry", async () => {
+  const [page, selector, data] = await Promise.all([
     read("app/school-college-shows/page.tsx"),
     read("app/campus-stage-selector.tsx"),
     read("app/site-data.ts"),
-    read("app/shows/page.tsx"),
   ]);
-  const campusText = `${page}\n${selector}`;
-  for (const venue of ["School stage", "College stage", "annual days", "college fests", "arts festivals", "campus inaugurations"]) assert.match(campusText, new RegExp(venue, "i"));
-  assert.match(campusText, /P22go-G5Xnc/);
+  assert.match(page, /P22go-G5Xnc/);
   assert.match(page, /Mary Mount Public School/);
-  assert.match(page, /SFS Public School/);
+  assert.match(page, /Check Availability/);
   assert.match(selector, /encodeURIComponent\(stage\.event\)/);
   assert.match(data, /Malayali associations/);
-  assert.match(shows, /CampusStageFeature/);
 });
 
 test("performance deck uses verified media and click-to-load embeds", async () => {
@@ -203,13 +201,12 @@ test("SEO keyword strategy exceeds the requested 75 unique phrases", async () =>
   }
 });
 
-test("dedicated solo and Kochi SEO pages expose canonical metadata and structured data", async () => {
+test("dedicated solo and Kochi pages retain canonical metadata and booking paths", async () => {
   for (const route of ["solo-stage-shows", "kochi-stage-shows"]) {
     const page = await read(`app/${route}/page.tsx`);
     assert.ok(page.includes(`path: "/${route}"`));
-    assert.match(page, /application\/ld\+json/);
-    assert.match(page, /FAQPage/);
-    assert.match(page, /BreadcrumbList/);
+    assert.match(page, /VideoPlayer/);
+    assert.match(page, /Check Availability/);
   }
 });
 

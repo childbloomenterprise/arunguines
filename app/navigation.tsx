@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { BookingLink } from "./booking-link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Close, Menu, VoiceMark } from "./icons";
+import { ArrowUpRight, Close, Menu } from "./icons";
 import { navItems } from "./site-data";
 
 export function Header() {
@@ -54,7 +55,7 @@ export function Header() {
     <header className="site-header" style={{ viewTransitionName: "site-header" }}>
       <span className="scroll-progress" aria-hidden="true" />
       <Link href="/" className="brand" aria-label="Arun Guinness home">
-        <span className="brand-disc"><VoiceMark /></span>
+        <span className="brand-disc"><Image src="/arun-cartoon-icon.png" alt="" width={48} height={48} /></span>
         <span className="brand-copy"><strong>Arun Guinness</strong><small>One man · Many voices</small></span>
       </Link>
       <nav className="desktop-nav" aria-label="Main navigation">
@@ -69,7 +70,6 @@ export function Header() {
           <Link href="/" aria-current={pathname === "/" ? "page" : undefined} onClick={() => setOpen(false)}>Home</Link>
           {navItems.map((item) => <Link key={item.href} href={item.href} aria-current={pathname === item.href ? "page" : undefined} onClick={() => setOpen(false)}>{item.label}</Link>)}
         <BookingLink onClick={() => setOpen(false)}>Check Availability</BookingLink></nav>
-        <p>Singing · voice craft · mimicry · live entertainment</p>
       </div>
     </header>
   );

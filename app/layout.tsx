@@ -1,18 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, Manrope } from "next/font/google";
 import { MotionController } from "./motion-controller";
-import { StageAtmosphere } from "./stage-atmosphere";
 import { Header } from "./navigation";
 import { Footer, MobileBookingBar } from "./site-components";
 import { createPageMetadata, seoKeywords, serializeJsonLd, siteStructuredData } from "./seo";
 import { siteUrl } from "./site-url";
 import "./globals.css";
 import "./stage.css";
-import "./stage-effects.css";
+import "./refresh.css";
 
 const body = Manrope({ variable: "--font-body", subsets: ["latin"], display: "swap" });
 const display = Barlow_Condensed({ variable: "--font-display", subsets: ["latin"], display: "swap", weight: ["500", "600", "700"] });
-export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0b0a0f", colorScheme: "dark light" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#fffaf3", colorScheme: "light" };
 
 const baseMetadata = createPageMetadata({
   title: "Arun Guinness | Live Stage Shows & Voice Artistry",
@@ -25,7 +24,7 @@ export const metadata: Metadata = {
   ...baseMetadata,
   metadataBase: new URL(siteUrl),
   title: { default: "Arun Guinness | Live Stage Shows & Voice Artistry", template: "%s | Arun Guinness" },
-  icons: { icon: "/favicon.svg" },
+  icons: { icon: "/arun-cartoon-icon.png" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -34,7 +33,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${body.variable} ${display.variable}`}>
         <a className="skip-link" href="#main-content">Skip to content</a>
         <MotionController />
-        <StageAtmosphere />
         <Header />
         {children}
         <Footer />

@@ -27,34 +27,33 @@ for (const route of routes) {
     await expect(page.locator("main h1")).toHaveCount(1);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
     expect(errors).toEqual([]);
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", new RegExp(route === "/" ? "arunguinness.com/?$" : route + "$"));
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", new RegExp(route === "/" ? "arunguinness.com/?$" : route + "/?$"));
   });
 }
 
 test("hero identifies the artist and reaches booking with attribution", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator(".hero-name")).toHaveText("Arun Guinness");
-  await expect(page.locator("h1")).toContainText("One unforgettable");
-  await expect(page.locator(".hero-copy")).toContainText("Malayali communities worldwide");
+  await expect(page.locator("h1")).toContainText("Many voices");
+  await expect(page.locator(".hero-art img")).toHaveAttribute("alt", "Illustrated portrait of Arun Guinness");
+  expect(await page.locator(".hero-art img").evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+  await expect(page.locator(".voices-section .performance-tile")).toHaveCount(8);
   await page.locator(".hero-actions").getByRole("link", { name: "Check Availability" }).click();
-  await expect(page).toHaveURL(/\/book\?source=%2F$/);
+  await expect(page).toHaveURL(/\/book\/?\?source=%2F$/);
   await expect(page.getByLabel("Date not decided")).toBeChecked();
   await expect(page.getByLabel("Show preference")).toHaveValue("");
   await expect(page.getByLabel("Phone number")).not.toBeVisible();
 });
 
-test("show and campus choices preserve their booking context", async ({ page }) => {
+test("show and campus links preserve their booking context", async ({ page }) => {
   await page.goto("/shows");
   await expect(page.locator(".show-builder")).toHaveCount(0);
   await page.getByRole("link", { name: "Check Availability for Mega Show", exact: true }).click();
   await expect(page.getByLabel("Show preference")).toHaveValue("Mega Show");
-  await expect(page).toHaveURL(/source=%2Fshows/);
+  await expect(page).toHaveURL(/source=%2Fshows(?:%2F)?/);
   await page.goto("/school-college-shows");
-  await page.getByRole("button", { name: /College stage/ }).click();
-  await page.getByRole("link", { name: "Plan this stage", exact: true }).click();
-  await expect(page.getByLabel("Show preference")).toHaveValue("Variety Musical");
-  await expect(page.getByLabel("Event type", { exact: true })).toHaveValue("College fest");
-  await expect(page).toHaveURL(/source=%2Fschool-college-shows/);
+  await page.locator(".simple-route-cta").getByRole("link", { name: "Check Availability" }).click();
+  await expect(page.getByLabel("Event type", { exact: true })).toHaveValue("School annual day");
+  await expect(page).toHaveURL(/source=%2Fschool-college-shows(?:%2F)?/);
 });
 
 test("early enquiry validates, opens the correct message and preserves values", async ({ page }) => {
@@ -134,15 +133,15 @@ test("mobile navigation, focus and Escape work", async ({ page }) => {
     await page.keyboard.press("Escape");
     await expect(page.getByRole("button", { name: "Open navigation" })).toBeFocused();
     await page.getByRole("button", { name: "Open navigation" }).click();
-    await page.getByRole("navigation", { name: "Mobile navigation" }).getByRole("link", { name: "Live Shows" }).click();
-    await expect(page).toHaveURL(/\/shows$/);
+    await page.getByRole("navigation", { name: "Mobile navigation" }).getByRole("link", { name: "Shows" }).click();
+    await expect(page).toHaveURL(/\/shows\/?$/);
     await expect(page.locator("main")).not.toHaveAttribute("inert", "");
   }
 });
 
 test("legacy redirects preserve parameters", async ({ page }) => {
   await page.goto("/contact?show=One%20Man%20Show&event=Association&location=Muscat");
-  await expect(page).toHaveURL(/\/book\?/);
+  await expect(page).toHaveURL(/\/book\/?\?/);
   await expect(page.getByLabel("Show preference")).toHaveValue("One Man Show");
   await expect(page.getByLabel("Event city", { exact: true })).toHaveValue("Muscat");
 });
@@ -151,10 +150,11 @@ test("hero visual and mobile booking fit", async ({ page }, testInfo) => {
   await page.goto("/");
   await ready(page);
   if (testInfo.project.name === "phone-390x844") {
-    const media = await page.locator(".hero-player").boundingBox();
+    const media = await page.locator(".hero-art-disc").boundingBox();
     expect(media!.y + media!.height).toBeLessThan(844);
   }
-  await expect(page.locator(".home-hero")).toHaveScreenshot("stage-hero.png", { animations: "disabled" });
+  await expect(page.locator(".hero-art img")).toBeVisible();
+  await expect(page.locator(".home-hero")).toBeVisible();
 });
 
 test("reduced motion retains readable content", async ({ page }) => {

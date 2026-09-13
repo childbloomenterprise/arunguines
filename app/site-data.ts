@@ -60,9 +60,9 @@ export const contact = {
 } as const;
 
 export const navItems: readonly NavItem[] = [
-  { href: "/shows", label: "Live Shows" },
-  { href: "/proof", label: "Watch" },
-  { href: "/artist", label: "About" },
+  { href: "/#voices", label: "Videos" },
+  { href: "/shows", label: "Shows" },
+  { href: "/artist", label: "Arun" },
 ];
 
 export const stats = [

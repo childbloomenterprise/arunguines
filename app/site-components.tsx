@@ -1,6 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ViewTransition } from "react";
-import { ArrowRight, ArrowUpRight, Instagram, MapPin, Message, Phone, VoiceMark, Youtube } from "./icons";
+import { ArrowRight, ArrowUpRight, Message, Phone, VoiceMark } from "./icons";
 import { bookingSteps, contact, eventExperiences, faqs, mediaEvidence, programs, stats } from "./site-data";
 import { BookingLink } from "./booking-link";
 import { VideoPlayer } from "./video-player";
@@ -30,7 +31,7 @@ export function MediaRail() {
 }
 
 export function ProgramCards({ detailed = false }: { detailed?: boolean }) {
-  return <div className="program-cards">{programs.map((program) => <article key={program.slug}><div><VoiceMark /><small>{program.duration === "90 min" ? "Running time tailored together" : "Planned around your event"}</small></div><h3>{program.title}</h3><p>{program.description}</p><strong>{program.bestFor}</strong>{detailed ? <><ul>{program.inclusions.map((item) => <li key={item}>{item}</li>)}</ul><p>{program.production}</p></> : null}<BookingLink href={`/book?show=${encodeURIComponent(program.title)}`} aria-label={`Check Availability for ${program.title}`}>Check Availability <ArrowRight /></BookingLink></article>)}</div>;
+  return <div className="program-cards">{programs.map((program) => <article key={program.slug}><div><VoiceMark /></div><h3>{program.title}</h3><p>{program.description}</p>{detailed ? <ul>{program.inclusions.map((item) => <li key={item}>{item}</li>)}</ul> : null}<BookingLink href={`/book?show=${encodeURIComponent(program.title)}`} aria-label={`Check Availability for ${program.title}`}>Check Availability <ArrowRight /></BookingLink></article>)}</div>;
 }
 
 export function EventExperiences() {
@@ -66,7 +67,7 @@ export function PageHero({ label, title, accent, description, highlights, media,
 }
 
 export function Footer() {
-  return <footer className="site-footer"><div className="footer-cta"><div><Eyebrow light>Ready when you are</Eyebrow><h2>Bring every voice<br /><em>to your stage.</em></h2></div><BookingLink className="button button-brass">Check Availability <ArrowUpRight /></BookingLink></div><div className="footer-links"><div className="footer-brand"><VoiceMark /><strong>Arun Guinness</strong><p>Singer · voice artist · mimicry performer · live entertainer</p></div><div><small>Explore</small><Link href="/shows">Shows</Link><Link href="/solo-stage-shows">Solo stage shows</Link><Link href="/kochi-stage-shows">Kochi stage shows</Link><Link href="/school-college-shows">Schools + colleges</Link><Link href="/proof">Watch</Link><Link href="/artist">About</Link><BookingLink>Check Availability</BookingLink></div><div><small>Direct</small><a href={`tel:${contact.phone}`}><Phone />{contact.phoneDisplay}</a><a href={contact.whatsapp} target="_blank" rel="noreferrer"><Message />WhatsApp</a></div><div><small>Follow</small><a href={contact.instagram} target="_blank" rel="noreferrer"><Instagram />Instagram</a><a href={contact.youtube} target="_blank" rel="noreferrer"><Youtube />YouTube</a><a href={contact.officeMap} target="_blank" rel="noreferrer"><MapPin />Kochi</a></div></div><div className="footer-base"><span>© {new Date().getFullYear()} Arun Guinness</span><span>One man. Many voices. · Kerala to the world</span></div></footer>;
+  return <footer className="site-footer"><div className="footer-simple"><Link href="/" className="footer-identity"><Image src="/arun-cartoon-icon.png" alt="" width={52} height={52} /><strong>Arun Guinness</strong></Link><nav aria-label="Footer navigation"><Link href="/#voices">Videos</Link><Link href="/shows">Shows</Link><Link href="/artist">Arun</Link><Link href="/proof">Photos</Link><BookingLink>Check Availability</BookingLink></nav><div className="footer-social"><a href={contact.instagram} target="_blank" rel="noreferrer">Instagram</a><a href={contact.youtube} target="_blank" rel="noreferrer">YouTube</a><a href={contact.whatsapp} target="_blank" rel="noreferrer">WhatsApp</a></div></div><div className="footer-base"><span>© {new Date().getFullYear()} Arun Guinness</span><span>Kochi · Worldwide</span></div></footer>;
 }
 
 export function MobileBookingBar() {
