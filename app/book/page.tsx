@@ -12,10 +12,10 @@ export const metadata = createPageMetadata({ title: "Book Arun Guinness for a St
 export default function BookPage() {
   return <PageFrame>
     <PageSchema path="/book" name="Check Availability" description={description} type="ContactPage" />
-    <PageHero variant="book" label="Check availability" title="Tell us about" accent="your event." description="A few details are enough. Your enquiry opens in WhatsApp for you to review and send." highlights={[]} />
+    <PageHero variant="book" label="Begin the conversation" title="Tell us what" accent="you imagine." description="A few details can start a remarkable evening. We’ll prepare your note for WhatsApp; you decide when to send it." highlights={[]} />
     <section className="booking-layout section-shell first-task">
       <Suspense fallback={<div className="booking-form booking-loading" role="status">Preparing your enquiry…</div>}><BookFormFromSearch /></Suspense>
-      <aside className="contact-panel" data-reveal><span>Prefer to talk?</span><h2>Reach Arun<br /><em>directly.</em></h2><a href={contact.whatsapp} target="_blank" rel="noreferrer"><Message /><span><small>WhatsApp</small><strong>{contact.phoneDisplay}</strong></span><ArrowUpRight /></a><a href={`tel:${contact.phone}`}><Phone /><span><small>Call</small><strong>{contact.phoneDisplay}</strong></span><ArrowUpRight /></a></aside>
+      <aside className="contact-panel" data-reveal><span>A more personal note</span><h2>Some evenings<br /><em>begin with hello.</em></h2><p>Prefer to talk through the idea? Reach Arun directly.</p><a href={`tel:${contact.phone}`}><Phone /><span><small>Speak to Arun</small><strong>{contact.phoneDisplay}</strong></span><ArrowUpRight /></a><a href={contact.whatsapp} target="_blank" rel="noreferrer"><Message /><span><small>Start on WhatsApp</small><strong>Send a quick note</strong></span><ArrowUpRight /></a></aside>
     </section>
   </PageFrame>;
 }

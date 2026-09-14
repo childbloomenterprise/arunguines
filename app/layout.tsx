@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Barlow_Condensed, Manrope } from "next/font/google";
+import { Cormorant_Garamond, Manrope } from "next/font/google";
 import { MotionController } from "./motion-controller";
 import { Header } from "./navigation";
 import { Footer, MobileBookingBar } from "./site-components";
@@ -10,7 +10,7 @@ import "./stage.css";
 import "./refresh.css";
 
 const body = Manrope({ variable: "--font-body", subsets: ["latin"], display: "swap" });
-const display = Barlow_Condensed({ variable: "--font-display", subsets: ["latin"], display: "swap", weight: ["500", "600", "700"] });
+const display = Cormorant_Garamond({ variable: "--font-display", subsets: ["latin"], display: "swap", weight: ["500", "600", "700"] });
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#fffaf3", colorScheme: "light" };
 
 const baseMetadata = createPageMetadata({

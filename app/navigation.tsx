@@ -6,7 +6,7 @@ import { BookingLink } from "./booking-link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Close, Menu } from "./icons";
-import { navItems } from "./site-data";
+import { contact, navItems } from "./site-data";
 
 export function Header() {
   const pathname = usePathname();
@@ -56,12 +56,12 @@ export function Header() {
       <span className="scroll-progress" aria-hidden="true" />
       <Link href="/" className="brand" aria-label="Arun Guinness home">
         <span className="brand-disc"><Image src="/arun-cartoon-icon.png" alt="" width={48} height={48} /></span>
-        <span className="brand-copy"><strong>Arun Guinness</strong><small>One man · Many voices</small></span>
+        <span className="brand-copy"><strong>Arun Guinness</strong><small>Live voice artistry</small></span>
       </Link>
       <nav className="desktop-nav" aria-label="Main navigation">
         {navItems.map((item) => <Link key={item.href} href={item.href} aria-current={pathname === item.href ? "page" : undefined}>{item.label}</Link>)}
       </nav>
-      <BookingLink className="header-book">Check Availability <ArrowUpRight /></BookingLink>
+      <a className="header-call" href={`tel:${contact.phone}`}>Call Arun</a><BookingLink className="header-book" aria-label="Check Availability">Find a date <ArrowUpRight /></BookingLink>
       <button ref={toggleRef} className="menu-toggle" type="button" aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen((value) => !value)}>
         {open ? <Close /> : <Menu />}
       </button>
@@ -69,7 +69,7 @@ export function Header() {
         <nav aria-label="Mobile navigation">
           <Link href="/" aria-current={pathname === "/" ? "page" : undefined} onClick={() => setOpen(false)}>Home</Link>
           {navItems.map((item) => <Link key={item.href} href={item.href} aria-current={pathname === item.href ? "page" : undefined} onClick={() => setOpen(false)}>{item.label}</Link>)}
-        <BookingLink onClick={() => setOpen(false)}>Check Availability</BookingLink></nav>
+        <BookingLink onClick={() => setOpen(false)}>Find a date</BookingLink><a href={`tel:${contact.phone}`} onClick={() => setOpen(false)}>Call Arun</a></nav>
       </div>
     </header>
   );

@@ -12,7 +12,7 @@ export const metadata = createPageMetadata({ title: "Meet Arun Guinness", descri
 export default function ArtistPage() {
   return <PageFrame>
     <PageSchema path="/artist" name="About Arun Guinness" description={description} type="AboutPage" />
-    <PageHero variant="artist" label="Meet Arun" title="The man behind" accent="the voices." description="Arun Guinness is a singer and voice artist based in Kochi, Kerala." highlights={[]} media={<VideoPlayer id={profileVideo.id} title={profileVideo.title} alt="Arun Guinness in his official profile film" sizes="(max-width: 800px) calc(100vw - 40px), 500px" ratio="16:9" eager />} />
-    <section className="artist-story section-shell"><SectionHeading label="About Arun" title="Music, mimicry" accent="and a room full of smiles." /><div><p className="lead">Arun performs songs and familiar playback voices live for audiences in India and abroad.</p><BookingLink className="button button-brass">Check Availability <ArrowUpRight /></BookingLink></div></section>
+    <PageHero variant="artist" label="Meet Arun" title="The voice is only" accent="the beginning." description="Arun Guinness sings, shifts voices and draws the audience into the moment. He is based in Kochi, Kerala." highlights={[]} media={<VideoPlayer id={profileVideo.id} title={profileVideo.title} alt="Arun Guinness in his official profile film" sizes="(max-width: 800px) calc(100vw - 40px), 500px" ratio="16:9" eager />} />
+    <section className="artist-story section-shell"><SectionHeading label="About Arun" title="A song changes" accent="when the whole room joins in." /><div><p className="lead">Arun brings familiar playback voices and live music to audiences in India and abroad.</p><BookingLink className="button button-brass" aria-label="Check Availability">Find a date <ArrowUpRight /></BookingLink></div></section>
   </PageFrame>;
 }

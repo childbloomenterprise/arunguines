@@ -28,7 +28,7 @@ export function PhotoPortfolio({ label = "Arun Guinness stage and event portfoli
           <Image src={photo.src} alt={photo.alt} fill sizes={photo.orientation === "portrait" ? "(max-width: 699px) 76vw, 360px" : "(max-width: 699px) 86vw, (max-width: 1199px) 62vw, 620px"} />
           <span>{photo.category}</span>
         </div>
-        <figcaption><small>{String(index + 1).padStart(2, "0")}</small><p>{photo.category}</p></figcaption>
+        <figcaption><small>{String(index + 1).padStart(2, "0")}</small><p>{photo.caption}</p></figcaption>
       </figure>)}
     </div>
   </div>;

@@ -52,7 +52,7 @@ test("performance posters expose verified fallback sources", () => {
   assert.match(sources[1], /maxresdefault\.jpg$/);
 });
 
-test("photo archive remains available while homepage leads with videos", async () => {
+test("original photo archive remains available while homepage leads with videos", async () => {
   assert.equal(stagePortfolio.length, 14);
   assert.equal(new Set(stagePortfolio.map((photo) => photo.src)).size, 14);
   assert.ok(stagePortfolio.every((photo) => photo.src.startsWith("/portfolio/") && photo.alt && photo.caption));
@@ -65,7 +65,8 @@ test("photo archive remains available while homepage leads with videos", async (
   assert.match(gallery, /scrollBy/);
   assert.match(gallery, /aria-label="Previous photos"/);
   assert.match(gallery, /aria-label="Next photos"/);
-  assert.doesNotMatch(homepage, /PhotoPortfolio/);
+  assert.match(homepage, /featuredPhotos/);
+  assert.match(homepage, /moments-grid/);
   assert.match(homepage, /homepageVideos/);
   assert.match(proof, /PhotoPortfolio/);
 });

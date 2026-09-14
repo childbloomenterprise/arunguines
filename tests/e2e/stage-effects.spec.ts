@@ -2,10 +2,10 @@ import { expect, test } from "@playwright/test";
 
 test("light theme stays readable with reduced motion", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(255, 250, 244)");
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(251, 250, 246)");
   await expect(page.locator(".stage-atmosphere")).toHaveCount(0);
   await page.locator(".hero-actions").getByRole("link", { name: "Check Availability" }).click();
-  await expect(page.getByRole("button", { name: "Continue on WhatsApp" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Prepare my WhatsApp note" })).toBeVisible();
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(page.getByLabel("Your name", { exact: true })).toBeVisible();
 });

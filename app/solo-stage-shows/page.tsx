@@ -10,7 +10,7 @@ export const metadata = createPageMetadata({ title: "Solo Stage Shows", descript
 
 export default function SoloStageShowsPage() {
   return <PageFrame>
-    <PageHero label="Solo stage shows" title="One artist." accent="A full show." description="Songs, voices and mimicry, live on your stage." highlights={[]} media={<VideoPlayer id={videos[0].id} title={videos[0].title} alt="Arun Guinness performing live" sizes="(max-width: 800px) calc(100vw - 40px), 500px" ratio="16:9" eager />} />
-    <section className="simple-route-cta section-shell"><p>Planning a festival, association event or private celebration?</p><BookingLink className="button button-brass" href="/book?show=One%20Man%20Show">Check Availability <ArrowUpRight /></BookingLink></section>
+    <PageHero label="Solo stage shows" title="One artist." accent="An entire evening." description="Songs shift voice. Characters appear. The room follows along." highlights={[]} media={<VideoPlayer id={videos[0].id} title={videos[0].title} alt="Arun Guinness performing live" sizes="(max-width: 800px) calc(100vw - 40px), 500px" ratio="16:9" eager />} />
+    <section className="simple-route-cta section-shell"><p>Have a room and a date in mind?</p><BookingLink className="button button-brass" aria-label="Check Availability" href="/book?show=One%20Man%20Show">Explore a date <ArrowUpRight /></BookingLink></section>
   </PageFrame>;
 }

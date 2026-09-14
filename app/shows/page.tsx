@@ -10,7 +10,7 @@ export const metadata = createPageMetadata({ title: "Live Shows for Your Communi
 export default function ShowsPage() {
   return <PageFrame>
     <PageSchema path="/shows" name="Live Shows" description={description} type="CollectionPage" />
-    <PageHero variant="shows" label="Live shows" title="Your event." accent="Arun's voices." description="Choose a format or tell us what you have in mind." highlights={[]} />
-    <section className="inner-section section-shell first-task" id="formats"><ProgramCards /><div className="section-action"><BookingLink className="button button-brass">Check Availability <ArrowUpRight /></BookingLink></div></section>
+    <PageHero variant="shows" label="Live shows" title="A different voice" accent="for every room." description="From an intimate gathering to a festival stage, find a shape that fits your evening." highlights={[]} />
+    <section className="inner-section section-shell first-task" id="formats"><ProgramCards /><div className="section-action"><BookingLink className="button button-brass" aria-label="Check Availability">Find your date <ArrowUpRight /></BookingLink></div></section>
   </PageFrame>;
 }

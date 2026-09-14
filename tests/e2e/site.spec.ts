@@ -33,15 +33,21 @@ for (const route of routes) {
 
 test("hero identifies the artist and reaches booking with attribution", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator("h1")).toContainText("Many voices");
-  await expect(page.locator(".hero-art img")).toHaveAttribute("alt", "Illustrated portrait of Arun Guinness");
+  await expect(page.locator("h1")).toContainText("roomful of voices");
+  await expect(page.locator(".hero-art img")).toHaveAttribute("alt", "Illustrated portrait of Arun Guinness beside a studio recording microphone");
   expect(await page.locator(".hero-art img").evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
   await expect(page.locator(".voices-section .performance-tile")).toHaveCount(8);
+  await expect(page.locator(".moments-grid .moment-card")).toHaveCount(5);
   await page.locator(".hero-actions").getByRole("link", { name: "Check Availability" }).click();
   await expect(page).toHaveURL(/\/book\/?\?source=%2F$/);
   await expect(page.getByLabel("Date not decided")).toBeChecked();
   await expect(page.getByLabel("Show preference")).toHaveValue("");
   await expect(page.getByLabel("Phone number")).not.toBeVisible();
+  await page.getByRole("button", { name: "Festival", exact: true }).click();
+  await expect(page.getByLabel("Event type", { exact: true })).toHaveValue("Onam / cultural festival");
+  await expect(page.locator(".show-suggestion")).toContainText("Mega Show");
+  await page.getByRole("button", { name: "Use this format" }).click();
+  await expect(page.getByLabel("Show preference")).toHaveValue("Mega Show");
 });
 
 test("show and campus links preserve their booking context", async ({ page }) => {
@@ -59,11 +65,11 @@ test("show and campus links preserve their booking context", async ({ page }) =>
 test("early enquiry validates, opens the correct message and preserves values", async ({ page }) => {
   await blockExternalHandoff(page);
   await page.goto("/book?source=%2Fshows");
-  await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
+  await page.getByRole("button", { name: "Prepare my WhatsApp note" }).click();
   await expect(page.getByLabel("Your name", { exact: true })).toBeFocused();
   await expect(page.getByText("Enter the event country.")).toBeVisible();
   await completeBrief(page);
-  await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
+  await page.getByRole("button", { name: "Prepare my WhatsApp note" }).click();
   const handoff = await page.locator("html").getAttribute("data-handoff");
   const url = new URL(handoff!);
   expect(url.origin + url.pathname).toBe("https://wa.me/919656712941");
@@ -81,18 +87,18 @@ test("decided dates and optional phone validate without losing the brief", async
   await page.goto("/book");
   await completeBrief(page);
   await page.getByLabel("Date not decided").uncheck();
-  await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
+  await page.getByRole("button", { name: "Prepare my WhatsApp note" }).click();
   await expect(page.getByText("Choose a date or select Date not decided.")).toBeVisible();
   await page.getByLabel("Choose your event date").fill("2020-01-01");
-  await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
+  await page.getByRole("button", { name: "Prepare my WhatsApp note" }).click();
   await expect(page.getByText("Choose today or a future date.")).toBeVisible();
   await page.getByLabel("Date not decided").check();
   await page.getByText("Add more details", { exact: false }).click();
   await page.getByLabel("Phone number").fill("123");
-  await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
+  await page.getByRole("button", { name: "Prepare my WhatsApp note" }).click();
   await expect(page.getByText("Enter a valid phone number with country code.")).toBeVisible();
   await page.getByLabel("Phone number").fill("+44 (7700) 900123");
-  await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
+  await page.getByRole("button", { name: "Prepare my WhatsApp note" }).click();
   await expect(page.locator(".booking-summary")).toContainText("+447700900123");
 });
 

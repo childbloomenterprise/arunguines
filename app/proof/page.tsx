@@ -11,8 +11,8 @@ export const metadata = createPageMetadata({ title: "Watch Arun Guinness Live", 
 export default function ProofPage() {
   return <PageFrame>
     <PageSchema path="/proof" name="Watch Arun Live" description={description} type="CollectionPage" />
-    <PageHero variant="proof" label="Watch & see" title="Arun" accent="on stage." description="Performances and photos from Arun's shows." highlights={[]} />
-    <section id="performances" className="inner-section section-shell first-task"><SectionHeading label="Videos" title="Press" accent="play." /><PerformanceGallery performances={[videos[0], videos[1], homepageVideos[1], homepageVideos[0], ...videos.slice(2), profileVideo]} /></section>
-    <section id="photo-portfolio" className="portfolio-section"><div className="section-shell"><SectionHeading label="Photos" title="Moments from" accent="the stage." /><PhotoPortfolio label="Arun Guinness performance photographs" /></div></section>
+    <PageHero variant="proof" label="The archive" title="See how a room" accent="comes alive." description="Voices on film. Moments from the stage." highlights={[]} />
+    <section id="performances" className="inner-section section-shell first-task"><SectionHeading label="Videos" title="Hear it" accent="for yourself." /><PerformanceGallery performances={[videos[0], videos[1], homepageVideos[1], homepageVideos[0], ...videos.slice(2), profileVideo]} /></section>
+    <section id="photo-portfolio" className="portfolio-section"><div className="section-shell"><SectionHeading label="Photos" title="The moments" accent="that stayed." /><PhotoPortfolio label="Arun Guinness performance photographs" /></div></section>
   </PageFrame>;
 }

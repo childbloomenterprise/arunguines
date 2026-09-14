@@ -31,7 +31,7 @@ export function MediaRail() {
 }
 
 export function ProgramCards({ detailed = false }: { detailed?: boolean }) {
-  return <div className="program-cards">{programs.map((program) => <article key={program.slug}><div><VoiceMark /></div><h3>{program.title}</h3><p>{program.description}</p>{detailed ? <ul>{program.inclusions.map((item) => <li key={item}>{item}</li>)}</ul> : null}<BookingLink href={`/book?show=${encodeURIComponent(program.title)}`} aria-label={`Check Availability for ${program.title}`}>Check Availability <ArrowRight /></BookingLink></article>)}</div>;
+  return <div className="program-cards">{programs.map((program) => <article key={program.slug}><div><VoiceMark /></div><h3>{program.title}</h3><p>{program.description}</p>{detailed ? <ul>{program.inclusions.map((item) => <li key={item}>{item}</li>)}</ul> : null}<BookingLink href={`/book?show=${encodeURIComponent(program.title)}`} aria-label={`Check Availability for ${program.title}`}>Explore a date <ArrowRight /></BookingLink></article>)}</div>;
 }
 
 export function EventExperiences() {
@@ -67,9 +67,9 @@ export function PageHero({ label, title, accent, description, highlights, media,
 }
 
 export function Footer() {
-  return <footer className="site-footer"><div className="footer-simple"><Link href="/" className="footer-identity"><Image src="/arun-cartoon-icon.png" alt="" width={52} height={52} /><strong>Arun Guinness</strong></Link><nav aria-label="Footer navigation"><Link href="/#voices">Videos</Link><Link href="/shows">Shows</Link><Link href="/artist">Arun</Link><Link href="/proof">Photos</Link><BookingLink>Check Availability</BookingLink></nav><div className="footer-social"><a href={contact.instagram} target="_blank" rel="noreferrer">Instagram</a><a href={contact.youtube} target="_blank" rel="noreferrer">YouTube</a><a href={contact.whatsapp} target="_blank" rel="noreferrer">WhatsApp</a></div></div><div className="footer-base"><span>© {new Date().getFullYear()} Arun Guinness</span><span>Kochi · Worldwide</span></div></footer>;
+  return <footer className="site-footer"><div className="footer-simple"><Link href="/" className="footer-identity"><Image src="/arun-cartoon-icon.png" alt="" width={52} height={52} /><strong>Arun Guinness</strong></Link><nav aria-label="Footer navigation"><Link href="/#voices">Videos</Link><Link href="/shows">Shows</Link><Link href="/artist">Arun</Link><Link href="/proof">Photos</Link><BookingLink>Find a date</BookingLink></nav><div className="footer-social"><a href={contact.instagram} target="_blank" rel="noreferrer">Instagram</a><a href={contact.youtube} target="_blank" rel="noreferrer">YouTube</a><a href={contact.whatsapp} target="_blank" rel="noreferrer">WhatsApp</a><a href={`tel:${contact.phone}`}>Call Arun</a></div></div><div className="footer-base"><span>© {new Date().getFullYear()} Arun Guinness</span><span>Kochi · Worldwide</span></div></footer>;
 }
 
 export function MobileBookingBar() {
-  return <div className="mobile-booking" aria-label="Quick booking actions"><a href={`tel:${contact.phone}`}><Phone />Call</a><BookingLink><Message />Check Availability</BookingLink></div>;
+  return <div className="mobile-booking" aria-label="Quick booking actions"><a href={`tel:${contact.phone}`}><Phone />Call Arun</a><BookingLink><Message />Find a date</BookingLink></div>;
 }

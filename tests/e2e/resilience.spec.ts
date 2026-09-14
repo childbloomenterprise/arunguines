@@ -36,5 +36,5 @@ test("content remains readable without JavaScript and under forced colors", asyn
   await page.emulateMedia({ forcedColors: "active" });
   await page.goto("/book");
   await expect(page.getByLabel("Your name", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Continue on WhatsApp" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Prepare my WhatsApp note" })).toBeVisible();
 });
