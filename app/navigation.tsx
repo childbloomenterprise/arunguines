@@ -55,7 +55,7 @@ export function Header() {
     <header className="site-header" style={{ viewTransitionName: "site-header" }}>
       <span className="scroll-progress" aria-hidden="true" />
       <Link href="/" className="brand" aria-label="Arun Guinness home">
-        <span className="brand-disc"><Image src="/arun-cartoon-icon.png" alt="" width={48} height={48} /></span>
+        <span className="brand-disc"><Image src="/arun-cartoon-icon.png" alt="" width={48} height={48} loading="eager" /></span>
         <span className="brand-copy"><strong>Arun Guinness</strong><small>Live voice artistry</small></span>
       </Link>
       <nav className="desktop-nav" aria-label="Main navigation">
