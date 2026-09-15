@@ -73,6 +73,20 @@ svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; s
 .mobile-menu nav a[aria-current="page"] { color: var(--plum); padding-left: 16px; box-shadow: inset 3px 0 0 var(--brass-dark); }
 .mobile-menu p { margin-top: 32px; color: var(--muted); font-size: 13px; }
 
+/* Direct social links stay within reach without competing with the portfolio. */
+.social-rail { position: fixed; z-index: 88; top: 50%; right: 18px; display: grid; gap: 12px; transform: translateY(-50%); transition: opacity var(--motion-fast) ease, transform var(--motion-base) var(--ease-enter), visibility var(--motion-fast) ease; }
+.social-rail a { min-height: 52px; display: flex; align-items: center; justify-content: flex-end; gap: 10px; color: var(--ink); }
+.social-rail a > span { min-width: 106px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.96); box-shadow: 0 8px 24px rgba(23,40,60,.12); font-size: 13px; font-weight: 800; text-align: center; opacity: 0; transform: translateX(8px); transition: opacity var(--motion-fast) ease, transform var(--motion-base) var(--ease-enter); }
+.social-rail a > i { width: 52px; height: 52px; border-radius: 50%; color: #fff; display: grid; place-items: center; box-shadow: 0 10px 28px rgba(23,40,60,.2); transition: transform var(--motion-base) var(--ease-spring), box-shadow var(--motion-base) ease; }
+.social-rail a > i svg { width: 25px; height: 25px; }
+.social-rail a.is-facebook svg { fill: currentColor; stroke: none; }
+.social-rail a.is-whatsapp > i { background: #20c867; }
+.social-rail a.is-facebook > i { background: #1877f2; }
+.social-rail a.is-instagram > i { background: radial-gradient(circle at 30% 105%,#ffd56b 0 22%,#f33e72 43%,#bd35a9 65%,#5851db 100%); }
+.social-rail a:is(:hover,:focus-visible) > span { opacity: 1; transform: none; }
+.social-rail a:is(:hover,:focus-visible) > i { transform: translateX(-2px) scale(1.06); box-shadow: 0 14px 34px rgba(23,40,60,.25); }
+body.menu-open .social-rail { opacity: 0; visibility: hidden; pointer-events: none; transform: translate(12px,-50%); }
+
 /* Shared controls */
 .button { min-height: 50px; width: fit-content; padding: 0 20px; border: 1px solid transparent; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; cursor: pointer; font-size: 13px; font-weight: 850; transition: transform .2s var(--ease), background .2s ease, color .2s ease, border-color .2s ease; }
 .button:hover { transform: translateY(-2px); }
@@ -545,6 +559,10 @@ svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; s
   .page-hero { min-height: 500px; grid-template-columns: minmax(0,1fr) minmax(420px,.88fr); column-gap: clamp(50px,6vw,90px); }
 }
 
+@media (min-width: 700px) {
+  .social-rail a > span { opacity: 1; transform: none; }
+}
+
 @media (orientation: landscape) and (max-height: 620px) and (max-width: 999px) {
   .site-header { height: 62px; }
   .mobile-menu { top: 62px; height: calc(100dvh - 62px); padding-block: 10px; }
@@ -569,6 +587,15 @@ svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; s
   .campus-mode-controls button { grid-template-columns: 24px 1fr; padding-inline: 10px; }
   .campus-mode-controls button > small { display: none; }
   .campus-mode-formats > div { grid-template-columns: 82px 1fr; }
+}
+
+@media (max-width: 699px) {
+  .social-rail { top: auto; right: 12px; bottom: calc(84px + env(safe-area-inset-bottom)); gap: 8px; transform: none; }
+  .social-rail a { min-height: 46px; }
+  .social-rail a > span { position: absolute; right: 56px; min-width: 96px; font-size: 12px; }
+  .social-rail a > i { width: 46px; height: 46px; }
+  .social-rail a > i svg { width: 22px; height: 22px; }
+  body.menu-open .social-rail { transform: translateX(12px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

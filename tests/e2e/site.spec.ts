@@ -186,6 +186,24 @@ test("open navigation closes cleanly when viewport becomes desktop", async ({ pa
   await expect(page.getByRole("navigation", { name: "Main navigation" })).toBeVisible();
 });
 
+test("social contact rail exposes verified profiles without covering mobile actions", async ({ page }, testInfo) => {
+  await page.goto("/proof");
+  await ready(page);
+  const rail = page.getByRole("complementary", { name: "Connect with Arun Guinness" });
+  await expect(rail).toBeVisible();
+  await expect(rail.getByRole("link", { name: /WhatsApp/ })).toHaveAttribute("href", "https://wa.me/919656712941");
+  await expect(rail.getByRole("link", { name: /Facebook/ })).toHaveAttribute("href", "https://www.facebook.com/arunguinness");
+  await expect(rail.getByRole("link", { name: /Instagram/ })).toHaveAttribute("href", "https://www.instagram.com/arun_guinness/");
+  if ((page.viewportSize()?.width ?? 1440) < 700) {
+    const railBox = await rail.boundingBox();
+    const bookingBox = await page.locator(".mobile-booking").boundingBox();
+    if (railBox && bookingBox) expect(railBox.y + railBox.height).toBeLessThanOrEqual(bookingBox.y);
+  }
+  if (testInfo.project.name === "desktop-1440x900") {
+    await expect(rail.locator("a > span").first()).toHaveCSS("opacity", "1");
+  }
+});
+
 test("legacy redirects preserve parameters", async ({ page }) => {
   await page.goto("/contact?show=One%20Man%20Show&event=Association&location=Muscat");
   await expect(page).toHaveURL(/\/book\/?\?/);
