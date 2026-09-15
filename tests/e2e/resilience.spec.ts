@@ -8,7 +8,7 @@ test("missing posters and blocked playback retain a usable source link", async (
   await player.scrollIntoViewIfNeeded();
   await expect(player.locator(".thumbnail-fallback")).toBeVisible();
   await player.click();
-  await expect(page.locator(".voices-section .performance-tile").first().getByRole("status")).toContainText("cannot play inside this browser");
+  await expect(page.getByRole("dialog", { name: "Watching Two voices. One performer." }).getByRole("status")).toContainText("cannot play inside this browser");
   await expect(page.getByRole("link", { name: "Watch the original", exact: true })).toHaveAttribute("href", "https://www.youtube.com/watch?v=e66PF3ImXIQ");
   await page.getByRole("button", { name: "Close Two voices. One performer.", exact: true }).click();
   await expect(page.locator(".voices-section .performance-tile").first().locator("button.embedded-video")).toBeFocused();

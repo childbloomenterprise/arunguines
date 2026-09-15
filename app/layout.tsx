@@ -8,14 +8,15 @@ import { siteUrl } from "./site-url";
 import "./globals.css";
 import "./stage.css";
 import "./refresh.css";
+import "./portfolio.css";
 
 const body = Manrope({ variable: "--font-body", subsets: ["latin"], display: "swap" });
 const display = Cormorant_Garamond({ variable: "--font-display", subsets: ["latin"], display: "swap", weight: ["500", "600", "700"] });
-export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#fffaf3", colorScheme: "light" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#fbfaf6", colorScheme: "light" };
 
 const baseMetadata = createPageMetadata({
-  title: "Arun Guinness | Live Stage Shows & Voice Artistry",
-  description: "Live music, voice transformations and entertainment for Malayali communities worldwide. Explore Arun Guinness performances and check availability for your event.",
+  title: "Arun Guinness | One Man, Many Voices",
+  description: "Explore the performance portfolio of Arun Guinness: signature voices, live shows, campus audiences and events. Watch his work and check availability.",
   path: "/",
   keywords: seoKeywords,
 });
@@ -23,7 +24,7 @@ const baseMetadata = createPageMetadata({
 export const metadata: Metadata = {
   ...baseMetadata,
   metadataBase: new URL(siteUrl),
-  title: { default: "Arun Guinness | Live Stage Shows & Voice Artistry", template: "%s | Arun Guinness" },
+  title: { default: "Arun Guinness | One Man, Many Voices", template: "%s | Arun Guinness" },
   icons: { icon: "/arun-cartoon-icon.png" },
 };
 

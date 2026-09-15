@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { createPortal } from "react-dom";
 import { type CSSProperties, useEffect, useId, useRef, useState } from "react";
 import { ArrowUpRight, Close, Play } from "./icons";
 import { type Performance, youtubePosterSources, youtubeUrl } from "./site-data";
@@ -42,12 +43,19 @@ export function VideoPlayer({
   const [unavailable, setUnavailable] = useState(false);
   const [posterIndex, setPosterIndex] = useState(0);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const playRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const playerId = useId();
 
   useEffect(() => {
     if (!playing) return;
+    const dialog = dialogRef.current;
+    const playButton = playRef.current;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.classList.add("media-viewer-open");
+    dialog?.showModal();
     closeRef.current?.focus({ preventScroll: true });
 
     const listenForPlayerErrors = (event: MessageEvent) => {
@@ -70,44 +78,24 @@ export function VideoPlayer({
     return () => {
       window.removeEventListener("message", listenForPlayerErrors);
       window.clearInterval(timer);
+      dialog?.close();
+      document.body.style.overflow = previousOverflow;
+      document.documentElement.classList.remove("media-viewer-open");
+      requestAnimationFrame(() => playButton?.focus({ preventScroll: true }));
     };
   }, [playerId, playing]);
 
   const closePlayer = () => {
     setPlaying(false);
     setUnavailable(false);
-    requestAnimationFrame(() => playRef.current?.focus({ preventScroll: true }));
   };
   const ratioClass = `media-ratio-${ratio.replace(":", "-")}`;
   const mediaStyle = { "--media-position": focalPoint } as CSSProperties;
   const posterSources = youtubePosterSources(id, poster);
   const thumbnailFailed = posterIndex >= posterSources.length;
 
-  if (playing) {
-    return (
-      <div className={`embedded-video ${ratioClass} tone-${tone} is-playing ${className}`} style={mediaStyle}>
-        {unavailable ? (
-          <div className="video-fallback" role="status"><span>Playback moved to YouTube</span><strong>This performance cannot play inside this browser.</strong><a href={youtubeUrl(id)} target="_blank" rel="noreferrer">Watch the original <ArrowUpRight /></a></div>
-        ) : (
-          <iframe
-            ref={iframeRef}
-            id={playerId}
-            src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1`}
-            title={title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-            onError={() => setUnavailable(true)}
-          />
-        )}
-        <button ref={closeRef} className="video-close" type="button" onClick={closePlayer} aria-label={`Close ${title}`}>
-          <Close />
-        </button>
-        {!unavailable ? <a className="video-external" href={youtubeUrl(id)} target="_blank" rel="noreferrer">Open on YouTube <ArrowUpRight /></a> : null}
-      </div>
-    );
-  }
-
   return (
+    <>
     <button
       ref={playRef}
       className={`embedded-video ${ratioClass} tone-${tone} ${className}`}
@@ -124,5 +112,29 @@ export function VideoPlayer({
       <span className="video-play"><Play /></span>
       {caption ? <span className="video-caption">{caption}</span> : null}
     </button>
+    {playing && typeof document !== "undefined" ? createPortal(
+      <dialog ref={dialogRef} className="video-viewer" aria-label={`Watching ${title}`} onCancel={closePlayer} onClose={closePlayer}>
+        <div className="video-viewer-shell">
+          <div className="video-viewer-header"><span>Arun Guinness · Live portfolio</span><button ref={closeRef} type="button" onClick={closePlayer} aria-label={`Close ${title}`}><Close /></button></div>
+          <div className="video-viewer-frame">
+            {unavailable ? (
+              <div className="video-fallback" role="status"><span>Playback moved to YouTube</span><strong>This performance cannot play inside this browser.</strong><a href={youtubeUrl(id)} target="_blank" rel="noreferrer">Watch the original <ArrowUpRight /></a></div>
+            ) : (
+              <iframe
+                ref={iframeRef}
+                id={playerId}
+                src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1`}
+                title={title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                onError={() => setUnavailable(true)}
+              />
+            )}
+          </div>
+          <div className="video-viewer-footer"><strong>{title}</strong><a href={youtubeUrl(id)} target="_blank" rel="noreferrer">Open on YouTube <ArrowUpRight /></a></div>
+        </div>
+      </dialog>, document.body
+    ) : null}
+    </>
   );
 }

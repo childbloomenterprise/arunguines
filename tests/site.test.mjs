@@ -52,22 +52,27 @@ test("performance posters expose verified fallback sources", () => {
   assert.match(sources[1], /maxresdefault\.jpg$/);
 });
 
-test("original photo archive remains available while homepage leads with videos", async () => {
-  assert.equal(stagePortfolio.length, 14);
-  assert.equal(new Set(stagePortfolio.map((photo) => photo.src)).size, 14);
-  assert.ok(stagePortfolio.every((photo) => photo.src.startsWith("/portfolio/") && photo.alt && photo.caption));
+test("original photographs and PDF additions form a browsable portfolio", async () => {
+  assert.equal(stagePortfolio.length, 25);
+  assert.equal(new Set(stagePortfolio.map((photo) => photo.src)).size, stagePortfolio.length);
+  assert.ok(stagePortfolio.every((photo) => photo.src.startsWith("/portfolio/") && photo.alt && photo.caption && photo.collection));
+  assert.equal(stagePortfolio.filter((photo) => photo.sourcePage).length, 11);
+  await Promise.all(stagePortfolio.map((photo) => readFile(new URL(`public${photo.src}`, root))));
 
-  const [gallery, homepage, proof] = await Promise.all([
+  const [gallery, homepage, proof, css] = await Promise.all([
     read("app/photo-portfolio.tsx"),
     read("app/page.tsx"),
     read("app/proof/page.tsx"),
+    read("app/portfolio.css"),
   ]);
-  assert.match(gallery, /scrollBy/);
+  assert.match(gallery, /showModal/);
   assert.match(gallery, /aria-label="Previous photos"/);
   assert.match(gallery, /aria-label="Next photos"/);
+  assert.match(css, /\.photo-viewer-image img \{ object-fit: contain; \}/);
   assert.match(homepage, /featuredPhotos/);
   assert.match(homepage, /moments-grid/);
   assert.match(homepage, /homepageVideos/);
+  assert.match(homepage, /One Man, /);
   assert.match(proof, /PhotoPortfolio/);
 });
 

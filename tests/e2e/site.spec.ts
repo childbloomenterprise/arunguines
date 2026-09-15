@@ -33,8 +33,8 @@ for (const route of routes) {
 
 test("hero identifies the artist and reaches booking with attribution", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator("h1")).toContainText("roomful of voices");
-  await expect(page.locator(".hero-art img")).toHaveAttribute("alt", "Illustrated portrait of Arun Guinness beside a studio recording microphone");
+  await expect(page.locator("h1")).toContainText("One Man, Many Voices");
+  await expect(page.locator(".hero-art img")).toHaveAttribute("alt", "Arun Guinness singing in the middle of a delighted school audience");
   expect(await page.locator(".hero-art img").evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
   await expect(page.locator(".voices-section .performance-tile")).toHaveCount(8);
   await expect(page.locator(".moments-grid .moment-card")).toHaveCount(5);
@@ -57,7 +57,7 @@ test("show and campus links preserve their booking context", async ({ page }) =>
   await expect(page.getByLabel("Show preference")).toHaveValue("Mega Show");
   await expect(page).toHaveURL(/source=%2Fshows(?:%2F)?/);
   await page.goto("/school-college-shows");
-  await page.locator(".simple-route-cta").getByRole("link", { name: "Check Availability" }).click();
+  await page.locator(".campus-booking").getByRole("link", { name: "Check Availability" }).click();
   await expect(page.getByLabel("Event type", { exact: true })).toHaveValue("School annual day");
   await expect(page).toHaveURL(/source=%2Fschool-college-shows(?:%2F)?/);
 });
@@ -120,12 +120,31 @@ test("performance filters and user-initiated playback work", async ({ page }) =>
   await expect(page.locator(".performance-tile")).toHaveCount(2);
   await expect(page.getByRole("button", { name: "International", exact: true })).toHaveAttribute("aria-pressed", "true");
   await page.locator(".performance-tile").first().getByRole("button", { name: /Play/ }).click();
+  await expect(page.getByRole("dialog", { name: /Watching Kuwait/ })).toBeVisible();
   await expect(page.locator("iframe")).toHaveCount(1);
   await expect(page.getByRole("link", { name: "Open on YouTube" })).toBeVisible();
   await page.getByRole("button", { name: /Close Kuwait/ }).click();
   await expect(page.locator("iframe")).toHaveCount(0);
   await page.getByRole("button", { name: "Profile", exact: true }).click();
   await expect(page.locator(".performance-tile")).toHaveCount(1);
+});
+
+test("portfolio filters and full-photo controls show complete frames", async ({ page }) => {
+  await page.goto("/proof");
+  await expect(page.locator(".photo-portfolio-grid .photo-card")).toHaveCount(25);
+  await page.locator(".photo-portfolio-grid .photo-card").first().getByRole("button").click();
+  const viewer = page.getByRole("dialog", { name: "Portfolio photograph" });
+  await expect(viewer).toBeVisible();
+  await expect(viewer.locator(".photo-viewer-image img")).toHaveCSS("object-fit", "contain");
+  await expect(viewer.locator(".photo-viewer-caption")).toContainText("01 / 25");
+  await viewer.getByRole("button", { name: "Next photos" }).click();
+  await expect(viewer.locator(".photo-viewer-caption")).toContainText("02 / 25");
+  await page.keyboard.press("Escape");
+  await expect(viewer).toHaveCount(0);
+  await expect(page.locator(".photo-portfolio-grid .photo-card").first().getByRole("button")).toBeFocused();
+  await page.getByRole("button", { name: "Campus", exact: true }).click();
+  await expect(page.locator(".photo-portfolio-grid .photo-card")).toHaveCount(10);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
 });
 
 test("mobile navigation, focus and Escape work", async ({ page }) => {
@@ -156,7 +175,7 @@ test("hero visual and mobile booking fit", async ({ page }, testInfo) => {
   await page.goto("/");
   await ready(page);
   if (testInfo.project.name === "phone-390x844") {
-    const media = await page.locator(".hero-art-disc").boundingBox();
+    const media = await page.locator(".hero-photo-frame").boundingBox();
     expect(media!.y + media!.height).toBeLessThan(844);
   }
   await expect(page.locator(".hero-art img")).toBeVisible();

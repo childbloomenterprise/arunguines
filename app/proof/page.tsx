@@ -1,18 +1,22 @@
+import Link from "next/link";
 import { createPageMetadata, performerKeywords } from "../seo";
 import { PageSchema } from "../page-schema";
+import { ArrowRight, ArrowUpRight } from "../icons";
+import { BookingLink } from "../booking-link";
 import { PageFrame, PageHero, SectionHeading } from "../site-components";
 import { homepageVideos, profileVideo, videos } from "../site-data";
 import { PerformanceGallery } from "../performance-gallery";
 import { PhotoPortfolio } from "../photo-portfolio";
 
-const description = "Hear Arun Guinness transform familiar voices and watch live performances, television appearances and overseas community shows.";
-export const metadata = createPageMetadata({ title: "Watch Arun Guinness Live", description, path: "/proof", keywords: performerKeywords });
+const description = "Explore Arun Guinness's performance portfolio: voice videos, live shows, campus audiences, inaugurations and recognition.";
+export const metadata = createPageMetadata({ title: "Arun Guinness Portfolio | Videos & Events", description, path: "/proof", keywords: performerKeywords });
 
 export default function ProofPage() {
   return <PageFrame>
-    <PageSchema path="/proof" name="Watch Arun Live" description={description} type="CollectionPage" />
-    <PageHero variant="proof" label="The archive" title="See how a room" accent="comes alive." description="Voices on film. Moments from the stage." highlights={[]} />
-    <section id="performances" className="inner-section section-shell first-task"><SectionHeading label="Videos" title="Hear it" accent="for yourself." /><PerformanceGallery performances={[videos[0], videos[1], homepageVideos[1], homepageVideos[0], ...videos.slice(2), profileVideo]} /></section>
-    <section id="photo-portfolio" className="portfolio-section"><div className="section-shell"><SectionHeading label="Photos" title="The moments" accent="that stayed." /><PhotoPortfolio label="Arun Guinness performance photographs" /></div></section>
+    <PageSchema path="/proof" name="Arun Guinness Portfolio" description={description} type="CollectionPage" />
+    <PageHero variant="proof" label="The portfolio" title="The work," accent="in full view." description="Watch Arun perform. See the audiences, stages and events that hold the story." highlights={[]} />
+    <section id="performances" className="inner-section section-shell first-task"><SectionHeading label="Performance films" title="Hear the voices." accent="Stay for the room." description="Choose a performance to watch in a full-size player." /><PerformanceGallery performances={[videos[0], videos[1], homepageVideos[1], homepageVideos[0], ...videos.slice(2), profileVideo]} /></section>
+    <section id="photo-portfolio" className="portfolio-section"><div className="section-shell"><SectionHeading label="Photographs" title="Every stage" accent="has a story." description="Live performances, campus halls, ceremonies and the people who shared them." /><PhotoPortfolio label="Arun Guinness performance photographs" /></div></section>
+    <section className="portfolio-next section-shell"><div><span className="eyebrow">Planning an event?</span><h2>See what Arun brings <em>to your room.</em></h2><p>Browse the campus portfolio for school and college shows, or share a date to begin a conversation.</p></div><div><Link className="text-link" href="/school-college-shows">Explore campus shows <ArrowRight /></Link><BookingLink className="button button-brass" aria-label="Check Availability">Check a date <ArrowUpRight /></BookingLink></div></section>
   </PageFrame>;
 }

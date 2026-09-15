@@ -8,45 +8,62 @@ import { contact, homepageVideos, stagePortfolio, videos } from "./site-data";
 import { VideoPlayer } from "./video-player";
 
 const performances = [videos[0], videos[1], homepageVideos[1], homepageVideos[0], ...videos.slice(2)];
-const featuredPhotos = [stagePortfolio[0], stagePortfolio[1], stagePortfolio[2], stagePortfolio[4], stagePortfolio[12]];
+const featuredPhotoPaths = [
+  "/portfolio/01-live-in-red.webp",
+  "/portfolio/17-among-students.webp",
+  "/portfolio/15-campus-inauguration.webp",
+  "/portfolio/18-night-stage.webp",
+  "/portfolio/25-institutional-recognition.webp",
+];
+const featuredPhotos = featuredPhotoPaths.map((src) => stagePortfolio.find((photo) => photo.src === src)!);
 
 export default function Home() {
   return <PageFrame>
-    <PageSchema path="/" name="Arun Guinness — Live Stage Shows" description="Live singing and voice artistry by Arun Guinness." />
+    <PageSchema path="/" name="Arun Guinness — One Man, Many Voices" description="The performance portfolio of Arun Guinness: live voice artistry, shows and events." />
     <section className="home-hero stage-hero" id="home">
-      <div className="hero-copy">
-        <span className="eyebrow">Arun Guinness · Live voice artistry</span>
-        <h1>One artist.<strong>A roomful of voices.</strong></h1>
-        <p>Familiar songs find an unexpected voice. Arun brings them to life, right there in your room.</p>
+      <div className="hero-copy portfolio-animate" data-reveal="hero">
+        <span className="eyebrow">Arun Guinness · Performance portfolio</span>
+        <h1>One Man, <strong>Many Voices</strong></h1>
+        <p>A voice they know. A room that responds. Watch Arun turn familiar songs into live moments.</p>
         <div className="hero-actions">
           <BookingLink className="button button-brass" aria-label="Check Availability">Find your date <ArrowUpRight /></BookingLink>
-          <Link className="hero-watch" href="#voices">Hear Arun live <ArrowRight /></Link>
+          <Link className="hero-watch" href="#voices">Watch the performances <ArrowRight /></Link>
         </div>
       </div>
-      <div className="hero-art">
-        <div className="hero-art-disc"><Image src="/arun-cartoon-logo.webp" alt="Illustrated portrait of Arun Guinness beside a studio recording microphone" width={760} height={760} priority sizes="(max-width: 699px) 75vw, 480px" /></div>
-        <span className="hero-art-note">Singing · Voices · A little magic in the room</span>
+      <div className="hero-art hero-photo portfolio-animate" data-reveal="scale">
+        <div className="hero-photo-frame"><Image src="/portfolio/20-school-crowd-performance.webp" alt="Arun Guinness singing in the middle of a delighted school audience" fill priority sizes="(max-width: 699px) calc(100vw - 40px), 47vw" /></div>
+        <span className="hero-photo-note"><i aria-hidden="true" />On stage. In the crowd. Always live.</span>
       </div>
     </section>
 
     <section className="home-section section-shell voices-section" id="voices">
-      <div className="simple-section-heading"><span className="eyebrow">The performances</span><h2>Every voice has its moment.</h2><p>Signature transformations, songs and live stages. Press play.</p></div>
+      <div className="simple-section-heading portfolio-animate" data-reveal><span className="eyebrow">Watch Arun</span><h2>Hear the turn. Feel the room.</h2><p>Signature voices and live performances, ready to play in full view.</p></div>
       <div className="performance-grid">
-        {performances.map((video, index) => <article className="performance-tile" key={video.id}>
+        {performances.map((video, index) => <article className="performance-tile portfolio-animate" data-reveal key={video.id} style={{ "--reveal-index": index % 3 } as React.CSSProperties}>
           <VideoPlayer id={video.id} title={video.title} alt={`${video.title} by Arun Guinness`} sizes="(max-width: 699px) calc(100vw - 40px), (max-width: 1100px) 45vw, 380px" ratio="16:9" poster={video.poster} eager={index === 0} />
           <div><h3>{video.title}</h3></div>
         </article>)}
       </div>
-      <Link className="text-link" href="/proof">Explore the full archive <ArrowRight /></Link>
+      <Link className="text-link" href="/proof">Explore the complete portfolio <ArrowRight /></Link>
     </section>
 
     <section className="moments-section section-shell" id="moments">
-      <div className="moments-heading"><div><span className="eyebrow">In the room</span><h2>The song stays.<br /><em>So does the moment.</em></h2></div><Link className="text-link" href="/proof#photo-portfolio">See all 14 photos <ArrowUpRight /></Link></div>
+      <div className="moments-heading portfolio-animate" data-reveal><div><span className="eyebrow">The portfolio</span><h2>More than a stage.<br /><em>A room to remember.</em></h2></div><Link className="text-link" href="/proof#photo-portfolio">See all {stagePortfolio.length} photographs <ArrowUpRight /></Link></div>
       <div className="moments-grid">
-        {featuredPhotos.map((photo, index) => <figure className={`moment-card moment-card-${index + 1}`} key={photo.src}>
+        {featuredPhotos.map((photo, index) => <figure className={`moment-card moment-card-${index + 1} portfolio-animate`} data-reveal key={photo.src} style={{ "--reveal-index": index } as React.CSSProperties}>
           <Image src={photo.src} alt={photo.alt} fill sizes={index === 0 ? "(max-width: 699px) 100vw, 55vw" : "(max-width: 699px) 50vw, 30vw"} style={{ objectPosition: index === 2 ? "50% 10%" : photo.focalPoint ?? "50% 50%" }} />
-          <figcaption><span>{String(index + 1).padStart(2, "0")}</span>{photo.category}</figcaption>
+          <figcaption><span>{String(index + 1).padStart(2, "0")}</span>{photo.collection}</figcaption>
         </figure>)}
+      </div>
+    </section>
+
+    <section className="campus-preview section-shell" aria-labelledby="campus-preview-title">
+      <div className="campus-preview-image portfolio-animate" data-reveal="scale"><Image src="/portfolio/23-school-auditorium.webp" alt="Arun Guinness facing a full school auditorium from the stage" fill sizes="(max-width: 699px) calc(100vw - 40px), 52vw" /></div>
+      <div className="campus-preview-copy portfolio-animate" data-reveal>
+        <span className="eyebrow">For schools and colleges</span>
+        <h2 id="campus-preview-title">When the hall <em>sings back.</em></h2>
+        <p>See Arun with students, on campus stages and at the moments around the show.</p>
+        <Link className="text-link" href="/school-college-shows">Explore the campus portfolio <ArrowRight /></Link>
       </div>
     </section>
 
