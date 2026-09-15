@@ -154,6 +154,15 @@ test("mobile navigation, focus and Escape work", async ({ page }) => {
   await expect(page.getByText("Skip to content")).toBeFocused();
   if ((page.viewportSize()?.width ?? 1440) < 1000) {
     await page.getByRole("button", { name: "Open navigation" }).click();
+    const menu = page.locator("#mobile-navigation");
+    await expect(menu).toBeVisible();
+    await expect(menu).toHaveCSS("pointer-events", "auto");
+    await expect(menu).toHaveCSS("background-color", "rgb(251, 250, 246)");
+    await expect(menu).toHaveCSS("opacity", "1");
+    const menuBox = await menu.boundingBox();
+    expect(menuBox?.x).toBe(0);
+    expect(menuBox?.width).toBe(page.viewportSize()?.width);
+    expect(Math.round((menuBox?.y ?? 0) + (menuBox?.height ?? 0))).toBeGreaterThanOrEqual((page.viewportSize()?.height ?? 0) - 1);
     await expect(page.locator("main")).toHaveAttribute("inert", "");
     await page.keyboard.press("Escape");
     await expect(page.getByRole("button", { name: "Open navigation" })).toBeFocused();
@@ -162,6 +171,19 @@ test("mobile navigation, focus and Escape work", async ({ page }) => {
     await expect(page).toHaveURL(/\/shows\/?$/);
     await expect(page.locator("main")).not.toHaveAttribute("inert", "");
   }
+});
+
+test("open navigation closes cleanly when viewport becomes desktop", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "tablet-1024x768", "One breakpoint regression check is sufficient");
+  await page.setViewportSize({ width: 999, height: 768 });
+  await page.goto("/proof");
+  await ready(page);
+  await page.getByRole("button", { name: "Open navigation" }).click();
+  await expect(page.locator("#mobile-navigation")).toBeVisible();
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await expect(page.locator("#mobile-navigation")).toBeHidden();
+  await expect(page.locator("main")).not.toHaveAttribute("inert", "");
+  await expect(page.getByRole("navigation", { name: "Main navigation" })).toBeVisible();
 });
 
 test("legacy redirects preserve parameters", async ({ page }) => {

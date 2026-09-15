@@ -120,6 +120,7 @@ body { background: var(--paper); color: var(--ink); }
 
 @media (max-width: 999px) {
   .site-header { height: 70px; }
+  .mobile-menu { top: 70px; height: calc(100dvh - 70px); }
   .stage-hero { padding-top: 116px; grid-template-columns: 1fr 1fr; }
   .stage-hero .hero-copy h1 { font-size: clamp(52px,6vw,68px); }
   .stage-hero .hero-copy > p { font-size: 15px; }
@@ -127,6 +128,9 @@ body { background: var(--paper); color: var(--ink); }
   .mobile-booking a:last-child { background: var(--plum); color: #fff; }
   .mobile-booking a:first-child { color: var(--ink); }
   .booking-layout { grid-template-columns: 1fr; }
+}
+@media (orientation: landscape) and (max-height: 620px) and (max-width: 999px) {
+  .mobile-menu { top: 62px; height: calc(100dvh - 62px); }
 }
 @media (max-width: 699px) {
   .stage-hero { padding: 98px 20px 42px; grid-template-columns: 1fr; grid-template-areas: "copy" "media"; gap: 26px; }

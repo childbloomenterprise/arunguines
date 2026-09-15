@@ -51,26 +51,38 @@ export function Header() {
     };
   }, [open]);
 
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1000px)");
+    const closeAtDesktop = (event: MediaQueryListEvent) => {
+      if (event.matches) setOpen(false);
+    };
+    desktop.addEventListener("change", closeAtDesktop);
+    return () => desktop.removeEventListener("change", closeAtDesktop);
+  }, []);
+
   return (
-    <header className="site-header" style={{ viewTransitionName: "site-header" }}>
-      <span className="scroll-progress" aria-hidden="true" />
-      <Link href="/" className="brand" aria-label="Arun Guinness home">
-        <span className="brand-disc"><Image src="/arun-cartoon-icon.png" alt="" width={48} height={48} loading="eager" /></span>
-        <span className="brand-copy"><strong>Arun Guinness</strong><small>Live voice artistry</small></span>
-      </Link>
-      <nav className="desktop-nav" aria-label="Main navigation">
-        {navItems.map((item) => <Link key={item.href} href={item.href} aria-current={pathname === item.href ? "page" : undefined}>{item.label}</Link>)}
-      </nav>
-      <a className="header-call" href={`tel:${contact.phone}`}>Call Arun</a><BookingLink className="header-book" aria-label="Check Availability">Find a date <ArrowUpRight /></BookingLink>
-      <button ref={toggleRef} className="menu-toggle" type="button" aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen((value) => !value)}>
-        {open ? <Close /> : <Menu />}
-      </button>
+    <>
+      <header className="site-header" style={{ viewTransitionName: "site-header" }}>
+        <span className="scroll-progress" aria-hidden="true" />
+        <Link href="/" className="brand" aria-label="Arun Guinness home">
+          <span className="brand-disc"><Image src="/arun-cartoon-icon.png" alt="" width={48} height={48} loading="eager" /></span>
+          <span className="brand-copy"><strong>Arun Guinness</strong><small>Live voice artistry</small></span>
+        </Link>
+        <nav className="desktop-nav" aria-label="Main navigation">
+          {navItems.map((item) => <Link key={item.href} href={item.href} aria-current={pathname === item.href ? "page" : undefined}>{item.label}</Link>)}
+        </nav>
+        <a className="header-call" href={`tel:${contact.phone}`}>Call Arun</a><BookingLink className="header-book" aria-label="Check Availability">Find a date <ArrowUpRight /></BookingLink>
+        <button ref={toggleRef} className="menu-toggle" type="button" aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen((value) => !value)}>
+          {open ? <Close /> : <Menu />}
+        </button>
+      </header>
       <div ref={menuRef} id="mobile-navigation" className={`mobile-menu ${open ? "is-open" : ""}`} aria-hidden={!open}>
         <nav aria-label="Mobile navigation">
           <Link href="/" aria-current={pathname === "/" ? "page" : undefined} onClick={() => setOpen(false)}>Home</Link>
           {navItems.map((item) => <Link key={item.href} href={item.href} aria-current={pathname === item.href ? "page" : undefined} onClick={() => setOpen(false)}>{item.label}</Link>)}
-        <BookingLink onClick={() => setOpen(false)}>Find a date</BookingLink><a href={`tel:${contact.phone}`} onClick={() => setOpen(false)}>Call Arun</a></nav>
+          <BookingLink onClick={() => setOpen(false)}>Find a date</BookingLink><a href={`tel:${contact.phone}`} onClick={() => setOpen(false)}>Call Arun</a>
+        </nav>
       </div>
-    </header>
+    </>
   );
 }
