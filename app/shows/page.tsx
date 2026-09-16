@@ -1,8 +1,10 @@
+import Image from "next/image";
+import Link from "next/link";
 import { BookingLink } from "../booking-link";
 import { PageSchema } from "../page-schema";
-import { ArrowUpRight } from "../icons";
+import { ArrowRight, ArrowUpRight } from "../icons";
 import { createPageMetadata, soloStageKeywords } from "../seo";
-import { BookingSteps, CampusStageFeature, EventExperiences, FaqSection, PageFrame, PageHero, ProgramCards, SectionHeading } from "../site-components";
+import { PageFrame, PageHero, ProgramCards } from "../site-components";
 
 const description = "Live music and voice artistry for Malayali associations, cultural festivals, family gatherings and events worldwide. Find your Arun Guinness show.";
 export const metadata = createPageMetadata({ title: "Live Shows for Your Community", description, path: "/shows", keywords: soloStageKeywords });
@@ -10,10 +12,8 @@ export const metadata = createPageMetadata({ title: "Live Shows for Your Communi
 export default function ShowsPage() {
   return <PageFrame>
     <PageSchema path="/shows" name="Live Shows" description={description} type="CollectionPage" />
-    <PageHero variant="shows" label="Live shows" title="Your people." accent="An evening to remember." description={description} highlights={["Community celebrations", "Cultural festivals", "India + worldwide"]} />
-    <section className="inner-section section-shell first-task"><EventExperiences /></section>
-    <section className="inner-section section-shell" id="formats"><SectionHeading label="Find your format" title="A featured moment." accent="Or the whole evening." description="Explore the experience, then discuss running time and production around your event." /><ProgramCards detailed /><div className="section-action"><p>You don&apos;t need to choose a format to get in touch.</p><BookingLink className="button button-brass">Help me choose <ArrowUpRight /></BookingLink></div></section>
-    <section className="inner-section section-shell" id="campus-shows"><SectionHeading label="More ways to bring people together" title="School mornings." accent="College nights." /><CampusStageFeature /></section>
-    <section className="planning-section"><div className="section-shell"><BookingSteps /><FaqSection /></div></section>
+    <PageHero variant="shows" label="Live shows" title="A different voice" accent="for every room." description="From an intimate gathering to a festival stage, find a shape that fits your evening." highlights={[]} />
+    <section className="inner-section section-shell first-task" id="formats"><ProgramCards /><div className="section-action"><BookingLink className="button button-brass" aria-label="Check Availability">Find your date <ArrowUpRight /></BookingLink></div></section>
+    <section className="shows-proof section-shell"><div className="shows-proof-image portfolio-animate" data-reveal="scale"><Image src="/portfolio/01-live-in-red.webp" alt="Arun Guinness singing into a microphone during a live show" fill sizes="(max-width: 699px) calc(100vw - 40px), 49vw" /></div><div className="shows-proof-copy portfolio-animate" data-reveal><span className="eyebrow">See the work</span><h2>Watch the show <em>before you plan one.</em></h2><p>Explore complete performance films and moments from the audiences Arun has met.</p><Link className="text-link" href="/proof">Open the portfolio <ArrowRight /></Link></div></section>
   </PageFrame>;
 }

@@ -1,22 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Barlow_Condensed, Manrope } from "next/font/google";
+import { Cormorant_Garamond, Manrope } from "next/font/google";
 import { MotionController } from "./motion-controller";
-import { StageAtmosphere } from "./stage-atmosphere";
 import { Header } from "./navigation";
 import { Footer, MobileBookingBar } from "./site-components";
+import { SocialDock } from "./social-dock";
 import { createPageMetadata, seoKeywords, serializeJsonLd, siteStructuredData } from "./seo";
 import { siteUrl } from "./site-url";
 import "./globals.css";
 import "./stage.css";
-import "./stage-effects.css";
+import "./refresh.css";
+import "./portfolio.css";
 
 const body = Manrope({ variable: "--font-body", subsets: ["latin"], display: "swap" });
-const display = Barlow_Condensed({ variable: "--font-display", subsets: ["latin"], display: "swap", weight: ["500", "600", "700"] });
-export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0b0a0f", colorScheme: "dark light" };
+const display = Cormorant_Garamond({ variable: "--font-display", subsets: ["latin"], display: "swap", weight: ["500", "600", "700"] });
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#fbfaf6", colorScheme: "light" };
 
 const baseMetadata = createPageMetadata({
-  title: "Arun Guinness | Live Stage Shows & Voice Artistry",
-  description: "Live music, voice transformations and entertainment for Malayali communities worldwide. Explore Arun Guinness performances and check availability for your event.",
+  title: "Arun Guinness | One Man, Many Voices",
+  description: "Explore the performance portfolio of Arun Guinness: signature voices, live shows, campus audiences and events. Watch his work and check availability.",
   path: "/",
   keywords: seoKeywords,
 });
@@ -24,8 +25,8 @@ const baseMetadata = createPageMetadata({
 export const metadata: Metadata = {
   ...baseMetadata,
   metadataBase: new URL(siteUrl),
-  title: { default: "Arun Guinness | Live Stage Shows & Voice Artistry", template: "%s | Arun Guinness" },
-  icons: { icon: "/favicon.svg" },
+  title: { default: "Arun Guinness | One Man, Many Voices", template: "%s | Arun Guinness" },
+  icons: { icon: "/arun-cartoon-icon.png" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -34,8 +35,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${body.variable} ${display.variable}`}>
         <a className="skip-link" href="#main-content">Skip to content</a>
         <MotionController />
-        <StageAtmosphere />
         <Header />
+        <SocialDock />
         {children}
         <Footer />
         <MobileBookingBar />

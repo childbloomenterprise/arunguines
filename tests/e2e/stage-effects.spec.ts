@@ -1,20 +1,13 @@
 import { expect, test } from "@playwright/test";
 
-test("stage lighting pauses, survives navigation and follows system preference", async ({ page }) => {
+test("light theme stays readable with reduced motion", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator("html")).toHaveAttribute("data-stage-motion", "running");
-  await page.getByRole("button", { name: "Pause stage lighting", exact: true }).click();
-  await expect(page.locator(".stage-beam").first()).toHaveCSS("animation-play-state", "paused");
+  await expect(page.locator("body")).toHaveCSS("background-color", "rgb(251, 250, 246)");
+  await expect(page.locator(".stage-atmosphere")).toHaveCount(0);
   await page.locator(".hero-actions").getByRole("link", { name: "Check Availability" }).click();
-  await expect(page.getByRole("button", { name: "Resume stage lighting", exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Resume stage lighting", exact: true }).click();
-  await expect(page.locator("html")).toHaveAttribute("data-stage-motion", "running");
+  await expect(page.getByRole("button", { name: "Prepare my WhatsApp note" })).toBeVisible();
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(page.locator("html")).toHaveAttribute("data-stage-motion", "paused");
-  await expect(page.locator(".stage-beam").first()).toHaveCSS("animation-name", "none");
-  await expect(page.getByRole("button", { name: "Stage lighting motion disabled by system preference" })).toBeDisabled();
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  await expect(page.locator("html")).toHaveAttribute("data-stage-motion", "running");
+  await expect(page.getByLabel("Your name", { exact: true })).toBeVisible();
 });
 
 test("public metadata uses consistent identity and connected page schema", async ({ page }) => {

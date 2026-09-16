@@ -1,73 +1,75 @@
+import Image from "next/image";
 import Link from "next/link";
 import { PageSchema } from "./page-schema";
-import { ArrowRight, ArrowUpRight, VoiceMark } from "./icons";
+import { ArrowRight, ArrowUpRight } from "./icons";
 import { BookingLink } from "./booking-link";
-import { BookingSteps, EventExperiences, Eyebrow, FaqSection, MediaRail, PageFrame, ProgramCards, SectionHeading } from "./site-components";
-import { contact, featuredPerformances, videos } from "./site-data";
+import { PageFrame } from "./site-components";
+import { contact, homepageVideos, stagePortfolio, videos } from "./site-data";
 import { VideoPlayer } from "./video-player";
-import { PhotoPortfolio } from "./photo-portfolio";
+
+const performances = [videos[0], videos[1], homepageVideos[1], homepageVideos[0], ...videos.slice(2)];
+const featuredPhotoPaths = [
+  "/portfolio/01-live-in-red.webp",
+  "/portfolio/17-among-students.webp",
+  "/portfolio/15-campus-inauguration.webp",
+  "/portfolio/18-night-stage.webp",
+  "/portfolio/25-institutional-recognition.webp",
+];
+const featuredPhotos = featuredPhotoPaths.map((src) => stagePortfolio.find((photo) => photo.src === src)!);
 
 export default function Home() {
   return <PageFrame>
-    <PageSchema path="/" name="Arun Guinness — Live Stage Shows" description="Live singing, voice transformations and shared celebration for Malayali communities worldwide." />
+    <PageSchema path="/" name="Arun Guinness — One Man, Many Voices" description="The performance portfolio of Arun Guinness: live voice artistry, shows and events." />
     <section className="home-hero stage-hero" id="home">
-      <div className="hero-copy">
-        <Eyebrow light>Live stage shows · Kerala to the world</Eyebrow>
-        <span className="hero-name">Arun Guinness</span>
-        <h1>Many voices.<strong>One unforgettable<br className="desktop-break" /> evening.</strong></h1>
-        <p>Live singing, remarkable voice transformations, and shared celebration for Malayali communities worldwide.</p>
+      <div className="hero-copy portfolio-animate" data-reveal="hero">
+        <span className="eyebrow">Arun Guinness · Performance portfolio</span>
+        <h1>One Man, <strong>Many Voices</strong></h1>
+        <p>A voice they know. A room that responds. Watch Arun turn familiar songs into live moments.</p>
         <div className="hero-actions">
-          <BookingLink className="button button-brass">Check Availability <ArrowUpRight /></BookingLink>
-          <Link className="hero-watch" href="#performances-home">Watch Arun Live <ArrowRight /></Link>
+          <BookingLink className="button button-brass" aria-label="Check Availability">Find your date <ArrowUpRight /></BookingLink>
+          <Link className="hero-watch" href="#voices">Watch the performances <ArrowRight /></Link>
         </div>
       </div>
-      <div className="hero-performance">
-        <div className="stage-media-label"><span><i />Step into the spotlight.</span><VoiceMark /></div>
-        <VideoPlayer id={videos[0].id} title={videos[0].title} alt="Arun Guinness performing his signature male and female voice transformation" className="hero-player" sizes="(max-width: 999px) calc(100vw - 40px), 540px" eager ratio="16:9" />
-        <div className="stage-media-footer"><div><strong>ONE MAN. MANY VOICES.</strong><span>Hear the transformation. Recorded live.</span></div><span className="live-pill">LIVE PERFORMANCE</span></div>
+      <div className="hero-art hero-photo hero-poster portfolio-animate" data-reveal="scale">
+        <div className="hero-photo-frame hero-poster-frame"><Image src="/portfolio/arun-live-show-poster.webp" alt="Arun Guinness live one-man show poster with Arun holding a recording microphone under blue and purple stage lights" fill priority sizes="(max-width: 699px) calc(100vw - 40px), 430px" /></div>
+        <span className="hero-photo-note"><i aria-hidden="true" />One performer. A full live show.</span>
       </div>
-      <div className="hero-bottom"><span>Singing <i /> Voice artistry <i /> Live entertainment</span><span>Kochi, Kerala ↗ Worldwide</span></div>
     </section>
 
-    <section className="home-section section-shell" id="performances-home">
-      <SectionHeading label="Press play. Meet Arun." title="Some things are better" accent="heard live." description="Familiar voices. Unexpected transformations. A feel for the evening you could bring to your community." />
+    <section className="home-section section-shell voices-section" id="voices">
+      <div className="simple-section-heading portfolio-animate" data-reveal><span className="eyebrow">Watch Arun</span><h2>Hear the turn. Feel the room.</h2><p>Signature voices and live performances, ready to play in full view.</p></div>
       <div className="performance-grid">
-        {featuredPerformances.map((video) => <article className="performance-tile" key={video.id}>
-          <VideoPlayer id={video.id} title={video.title} alt={video.title + " by Arun Guinness"} sizes="(max-width: 699px) calc(100vw - 40px), 390px" ratio="16:9" poster={video.poster} />
-          <div><span>{video.category === "Signature" ? "THE SIGNATURE" : video.category === "International" ? "ACROSS BORDERS" : "ON STAGE"}</span><h3>{video.title}</h3><p>{video.subtitle}</p></div>
+        {performances.map((video, index) => <article className="performance-tile portfolio-animate" data-reveal key={video.id} style={{ "--reveal-index": index % 3 } as React.CSSProperties}>
+          <VideoPlayer id={video.id} title={video.title} alt={`${video.title} by Arun Guinness`} sizes="(max-width: 699px) calc(100vw - 40px), (max-width: 1100px) 45vw, 380px" ratio="16:9" poster={video.poster} eager={index === 0} />
+          <div><h3>{video.title}</h3></div>
         </article>)}
       </div>
-      <Link className="text-link" href="/proof">Explore the performances <ArrowRight /></Link>
+      <Link className="text-link" href="/proof">Explore the complete portfolio <ArrowRight /></Link>
     </section>
 
-    <section className="portfolio-section" id="portfolio-home"><div className="section-shell">
-      <SectionHeading label="Stage & event portfolio" title="Songs, celebrations," accent="and shared moments." description="A growing visual archive of Arun's live shows, guest appearances and community programmes." light />
-      <PhotoPortfolio />
-      <Link className="text-link text-link-light portfolio-link" href="/proof#photo-portfolio">See the full performance story <ArrowRight /></Link>
-    </div></section>
-
-    <section className="event-section" id="events-home"><div className="section-shell">
-      <SectionHeading label="Your people. Your occasion." title="An evening that brings" accent="everyone together." description="For the organisers bringing a little of Kerala to communities around the world." />
-      <EventExperiences />
-    </div></section>
-
-    <section className="home-section section-shell" id="shows-home">
-      <SectionHeading label="Choose your experience" title="Your stage." accent="Your kind of show." description="A featured moment or the main event. Start with the experience you have in mind; shape the details together." />
-      <ProgramCards />
-      <div className="section-action"><p>Not sure which format fits?</p><BookingLink className="text-link">Help me choose <ArrowRight /></BookingLink></div>
+    <section className="moments-section section-shell" id="moments">
+      <div className="moments-heading portfolio-animate" data-reveal><div><span className="eyebrow">The portfolio</span><h2>More than a stage.<br /><em>A room to remember.</em></h2></div><Link className="text-link" href="/proof#photo-portfolio">See all {stagePortfolio.length} photographs <ArrowUpRight /></Link></div>
+      <div className="moments-grid">
+        {featuredPhotos.map((photo, index) => <figure className={`moment-card moment-card-${index + 1} portfolio-animate`} data-reveal key={photo.src} style={{ "--reveal-index": index } as React.CSSProperties}>
+          <Image src={photo.src} alt={photo.alt} fill sizes={index === 0 ? "(max-width: 699px) 100vw, 55vw" : "(max-width: 699px) 50vw, 30vw"} style={{ objectPosition: index === 2 ? "50% 10%" : photo.focalPoint ?? "50% 50%" }} />
+          <figcaption><span>{String(index + 1).padStart(2, "0")}</span>{photo.collection}</figcaption>
+        </figure>)}
+      </div>
     </section>
 
-    <section className="community-section section-shell">
-      <div><Eyebrow light>Kerala roots. A wider stage.</Eyebrow><h2>Familiar voices.<br /><span>Far from home.</span></h2><p>From Kerala television to community celebrations in Kuwait, explore Arun&apos;s performances and the events that brought people together.</p><a className="text-link" href="https://www.indiansinkuwait.com/news/70618-IAK-Onavesham-2024-A-Grand-Celebration-of-Onam-at-ICSK-School-Salmiya" target="_blank" rel="noreferrer">Onavesham 2024 · Kuwait event coverage <ArrowUpRight /></a></div>
-      <div><VideoPlayer id={videos[2].id} title={videos[2].title} alt="Arun Guinness performing on the Flowers television stage" sizes="(max-width: 800px) calc(100vw - 80px), 500px" ratio="16:9" caption="Flowers television performance" /><MediaRail /></div>
+    <section className="campus-preview section-shell" aria-labelledby="campus-preview-title">
+      <div className="campus-preview-image portfolio-animate" data-reveal="scale"><Image src="/portfolio/23-school-auditorium.webp" alt="Arun Guinness facing a full school auditorium from the stage" fill sizes="(max-width: 699px) calc(100vw - 40px), 52vw" /></div>
+      <div className="campus-preview-copy portfolio-animate" data-reveal>
+        <span className="eyebrow">For schools and colleges</span>
+        <h2 id="campus-preview-title">When the hall <em>sings back.</em></h2>
+        <p>See Arun with students, on campus stages and at the moments around the show.</p>
+        <Link className="text-link" href="/school-college-shows">Explore the campus portfolio <ArrowRight /></Link>
+      </div>
     </section>
 
-    <section className="home-section about-preview section-shell" id="about-home">
-      <div><Eyebrow>The artist behind the voices</Eyebrow><h2>A musical ear.<br /><span>A feel for the room.</span></h2></div>
-      <div><p className="lead">Arun Guinness is a singer, voice artist and live entertainer based in Kochi, Kerala.</p><p>His sound-engineering background meets the instinct of a live performer: moving between playback styles, music and mimicry, and making space for the audience to join in.</p><Link className="text-link" href="/artist">Meet Arun <ArrowRight /></Link></div>
+    <section className="idea-section section-shell">
+      <div><span className="eyebrow">From Idea to Anything</span><h2>Give your evening a voice.</h2><p>A date, a place, a beginning of an idea. We can shape the rest together.</p><div className="idea-choices"><BookingLink href="/book?event=Onam%20%2F%20cultural%20festival">A festival</BookingLink><BookingLink href="/book?event=Family%20%2F%20community%20gathering">A gathering</BookingLink><BookingLink href="/book?event=School%20annual%20day">A campus stage</BookingLink></div></div>
+      <div className="idea-actions"><BookingLink className="button button-brass" aria-label="Check Availability">Explore a date <ArrowUpRight /></BookingLink><a className="call-link" href={`tel:${contact.phone}`}>Speak to Arun <ArrowRight /></a></div>
     </section>
-
-    <section className="planning-section"><div className="section-shell"><SectionHeading label="Plan with confidence" title="From an idea" accent="to an evening." /><BookingSteps /><FaqSection /></div></section>
-    <section className="booking-cta section-shell" id="book-home"><div><Eyebrow light>The next spotlight could be yours</Eyebrow><h2>Bring Arun<br /><span>to your stage.</span></h2></div><div><p>From an Onam celebration to a community&apos;s big night: tell us your event, city and date. Let&apos;s start planning the performance.</p><BookingLink className="button button-brass">Check Availability <ArrowUpRight /></BookingLink><a className="text-link call-stage" href={`tel:${contact.phone}`}>Talk about your stage <ArrowUpRight /></a><a className="text-link" href={contact.whatsapp + "?text=" + encodeURIComponent("Hello Arun, I found you on your website (/) and would like to discuss an event.")} target="_blank" rel="noreferrer">Prefer to chat directly? WhatsApp us <ArrowRight /></a></div></section>
   </PageFrame>;
 }
