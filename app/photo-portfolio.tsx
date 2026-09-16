@@ -71,7 +71,7 @@ export function PhotoPortfolio({ label = "Arun Guinness stage and event portfoli
     <div className="photo-portfolio-grid">
       {photos.map((photo, index) => <figure className={`photo-card ${index === 0 ? "is-featured" : ""}`} key={photo.src}>
         <button className="photo-card-media" type="button" onClick={(event) => openPhoto(index, event.currentTarget)} aria-label={`View complete photograph: ${photo.alt}`}>
-          <Image src={photo.src} alt="" fill sizes={index === 0 ? "(max-width: 699px) calc(100vw - 40px), (max-width: 1199px) 65vw, 820px" : "(max-width: 699px) calc(100vw - 40px), (max-width: 1199px) 45vw, 390px"} style={{ objectPosition: photo.focalPoint ?? "50% 50%" }} />
+          <Image src={photo.src} alt="" fill priority={index === 0} sizes={index === 0 ? "(max-width: 699px) calc(100vw - 40px), (max-width: 1199px) 65vw, 820px" : "(max-width: 699px) calc(100vw - 40px), (max-width: 1199px) 45vw, 390px"} style={{ objectPosition: photo.focalPoint ?? "50% 50%" }} />
           <span>{photo.collection}</span>
           <span className="photo-open" aria-hidden="true"><ArrowRight /></span>
         </button>

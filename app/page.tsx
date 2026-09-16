@@ -30,9 +30,9 @@ export default function Home() {
           <Link className="hero-watch" href="#voices">Watch the performances <ArrowRight /></Link>
         </div>
       </div>
-      <div className="hero-art hero-photo portfolio-animate" data-reveal="scale">
-        <div className="hero-photo-frame"><Image src="/portfolio/20-school-crowd-performance.webp" alt="Arun Guinness singing in the middle of a delighted school audience" fill priority sizes="(max-width: 699px) calc(100vw - 40px), 47vw" /></div>
-        <span className="hero-photo-note"><i aria-hidden="true" />On stage. In the crowd. Always live.</span>
+      <div className="hero-art hero-photo hero-poster portfolio-animate" data-reveal="scale">
+        <div className="hero-photo-frame hero-poster-frame"><Image src="/portfolio/arun-live-show-poster.webp" alt="Arun Guinness live one-man show poster with Arun holding a recording microphone under blue and purple stage lights" fill priority sizes="(max-width: 699px) calc(100vw - 40px), 430px" /></div>
+        <span className="hero-photo-note"><i aria-hidden="true" />One performer. A full live show.</span>
       </div>
     </section>
 

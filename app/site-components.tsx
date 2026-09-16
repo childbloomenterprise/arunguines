@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ViewTransition } from "react";
-import { ArrowRight, ArrowUpRight, Facebook, Instagram, Message, Phone, VoiceMark, Whatsapp } from "./icons";
+import { ArrowRight, ArrowUpRight, Message, Phone, VoiceMark } from "./icons";
 import { bookingSteps, contact, eventExperiences, faqs, mediaEvidence, programs, stats } from "./site-data";
 import { BookingLink } from "./booking-link";
 import { VideoPlayer } from "./video-player";
@@ -70,18 +70,6 @@ export function Footer() {
   return <footer className="site-footer"><div className="footer-simple"><Link href="/" className="footer-identity"><Image src="/arun-cartoon-icon.png" alt="" width={52} height={52} /><strong>Arun Guinness</strong></Link><nav aria-label="Footer navigation"><Link href="/#voices">Videos</Link><Link href="/proof">Portfolio</Link><Link href="/shows">Shows</Link><Link href="/artist">Arun</Link><BookingLink>Find a date</BookingLink></nav><div className="footer-social"><a href={contact.instagram} target="_blank" rel="noreferrer">Instagram</a><a href={contact.youtube} target="_blank" rel="noreferrer">YouTube</a><a href={contact.whatsapp} target="_blank" rel="noreferrer">WhatsApp</a><a href={`tel:${contact.phone}`}>Call Arun</a></div></div><div className="footer-base"><span>© {new Date().getFullYear()} Arun Guinness</span><span>Kochi · Worldwide</span></div></footer>;
 }
 
-const socialLinks = [
-  { label: "WhatsApp", href: contact.whatsapp, icon: Whatsapp, className: "is-whatsapp" },
-  { label: "Facebook", href: contact.facebook, icon: Facebook, className: "is-facebook" },
-  { label: "Instagram", href: contact.instagram, icon: Instagram, className: "is-instagram" },
-] as const;
-
-export function SocialRail() {
-  return <aside className="social-rail" aria-label="Connect with Arun Guinness">
-    {socialLinks.map(({ label, href, icon: Icon, className }) => <a key={label} className={className} href={href} target="_blank" rel="noreferrer" aria-label={`${label} — Arun Guinness`}><span>{label}</span><i aria-hidden="true"><Icon /></i></a>)}
-  </aside>;
-}
-
 export function MobileBookingBar() {
-  return <div className="mobile-booking" aria-label="Quick booking actions"><a href={`tel:${contact.phone}`}><Phone />Call Arun</a><BookingLink><Message />Find a date</BookingLink></div>;
+  return <div className="mobile-booking" aria-label="Quick booking actions"><a className="mobile-booking-call" href={`tel:${contact.phone}`}><i aria-hidden="true"><Phone /></i><span><small>Talk directly</small><strong>Call Arun</strong></span></a><BookingLink className="mobile-booking-date"><i aria-hidden="true"><Message /></i><span><small>Plan a show</small><strong>Find a date</strong></span></BookingLink></div>;
 }

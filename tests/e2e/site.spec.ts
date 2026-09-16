@@ -34,7 +34,7 @@ for (const route of routes) {
 test("hero identifies the artist and reaches booking with attribution", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("h1")).toContainText("One Man, Many Voices");
-  await expect(page.locator(".hero-art img")).toHaveAttribute("alt", "Arun Guinness singing in the middle of a delighted school audience");
+  await expect(page.locator(".hero-art img")).toHaveAttribute("alt", "Arun Guinness live one-man show poster with Arun holding a recording microphone under blue and purple stage lights");
   expect(await page.locator(".hero-art img").evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
   await expect(page.locator(".voices-section .performance-tile")).toHaveCount(8);
   await expect(page.locator(".moments-grid .moment-card")).toHaveCount(5);
@@ -186,22 +186,25 @@ test("open navigation closes cleanly when viewport becomes desktop", async ({ pa
   await expect(page.getByRole("navigation", { name: "Main navigation" })).toBeVisible();
 });
 
-test("social contact rail exposes verified profiles without covering mobile actions", async ({ page }, testInfo) => {
+test("social contact dock expands verified profiles and stays above mobile actions", async ({ page }) => {
   await page.goto("/proof");
   await ready(page);
-  const rail = page.getByRole("complementary", { name: "Connect with Arun Guinness" });
-  await expect(rail).toBeVisible();
-  await expect(rail.getByRole("link", { name: /WhatsApp/ })).toHaveAttribute("href", "https://wa.me/919656712941");
-  await expect(rail.getByRole("link", { name: /Facebook/ })).toHaveAttribute("href", "https://www.facebook.com/arunguinness");
-  await expect(rail.getByRole("link", { name: /Instagram/ })).toHaveAttribute("href", "https://www.instagram.com/arun_guinness/");
+  const dock = page.getByRole("complementary", { name: "Connect with Arun Guinness" });
+  const toggle = dock.getByRole("button", { name: "Open social links" });
+  await expect(toggle).toBeVisible();
+  await expect(dock.getByRole("link")).toHaveCount(0);
+  await toggle.click();
+  await expect(dock.getByRole("link", { name: /WhatsApp/ })).toHaveAttribute("href", "https://wa.me/919656712941");
+  await expect(dock.getByRole("link", { name: /Facebook/ })).toHaveAttribute("href", "https://www.facebook.com/arunguinness");
+  await expect(dock.getByRole("link", { name: /Instagram/ })).toHaveAttribute("href", "https://www.instagram.com/arun_guinness/");
   if ((page.viewportSize()?.width ?? 1440) < 700) {
-    const railBox = await rail.boundingBox();
+    const dockBox = await dock.boundingBox();
     const bookingBox = await page.locator(".mobile-booking").boundingBox();
-    if (railBox && bookingBox) expect(railBox.y + railBox.height).toBeLessThanOrEqual(bookingBox.y);
+    if (dockBox && bookingBox) expect(dockBox.y + dockBox.height).toBeLessThanOrEqual(bookingBox.y);
   }
-  if (testInfo.project.name === "desktop-1440x900") {
-    await expect(rail.locator("a > span").first()).toHaveCSS("opacity", "1");
-  }
+  await page.keyboard.press("Escape");
+  await expect(dock.getByRole("link")).toHaveCount(0);
+  await expect(toggle).toBeFocused();
 });
 
 test("legacy redirects preserve parameters", async ({ page }) => {
@@ -211,13 +214,10 @@ test("legacy redirects preserve parameters", async ({ page }) => {
   await expect(page.getByLabel("Event city", { exact: true })).toHaveValue("Muscat");
 });
 
-test("hero visual and mobile booking fit", async ({ page }, testInfo) => {
+test("hero visual and mobile booking fit", async ({ page }) => {
   await page.goto("/");
   await ready(page);
-  if (testInfo.project.name === "phone-390x844") {
-    const media = await page.locator(".hero-photo-frame").boundingBox();
-    expect(media!.y + media!.height).toBeLessThan(844);
-  }
+  await expect(page.locator('.hero-poster-frame img[src*="arun-live-show-poster"]')).toBeVisible();
   await expect(page.locator(".hero-art img")).toBeVisible();
   await expect(page.locator(".home-hero")).toBeVisible();
 });

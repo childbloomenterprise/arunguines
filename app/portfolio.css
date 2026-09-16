@@ -338,3 +338,121 @@ html.media-viewer-open { overflow: hidden; }
   .photo-viewer, .video-viewer { background: Canvas; color: CanvasText; }
   .photo-viewer-stage > button, .photo-viewer-top button, .video-viewer-header button { border: 1px solid ButtonText; }
 }
+
+/* Supplied show artwork anchors the homepage without cropping its typography. */
+.hero-poster { justify-self: center; }
+.hero-poster-frame {
+  width: min(100%, 430px);
+  aspect-ratio: 2 / 3;
+  border-width: 5px;
+  border-radius: 22px;
+  transform: rotate(.7deg);
+  background: #10142b;
+  box-shadow: 0 32px 90px #192a4638, 0 3px 8px #192a4624;
+}
+.hero-poster-frame img { object-fit: contain; object-position: 50% 50%; }
+
+/* One calm launcher keeps social options available without covering the work. */
+.social-dock {
+  position: fixed;
+  z-index: 88;
+  right: 20px;
+  bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  transition: opacity var(--motion-fast) ease, transform var(--motion-base) var(--ease-enter), visibility var(--motion-fast) ease;
+}
+.social-dock-links { margin-bottom: 10px; display: grid; gap: 9px; }
+.social-dock-links a { min-height: 48px; display: flex; align-items: center; justify-content: flex-end; gap: 9px; color: var(--ink); animation: social-option-in 240ms var(--ease-enter) both; animation-delay: calc(var(--social-index, 0) * 35ms); }
+.social-dock-links a > span { min-width: 100px; padding: 8px 13px; border: 1px solid var(--line); border-radius: 999px; background: #fffefa; box-shadow: 0 8px 24px #17283c1c; font-size: 12px; font-weight: 800; text-align: center; }
+.social-dock-links a > i { width: 48px; height: 48px; border-radius: 50%; color: #fff; display: grid; place-items: center; box-shadow: 0 10px 28px #17283c30; transition: transform var(--motion-base) var(--ease-spring); }
+.social-dock-links a > i svg { width: 23px; height: 23px; }
+.social-dock-links a.is-facebook svg { fill: currentColor; stroke: none; }
+.social-dock-links a.is-whatsapp > i { background: #20c867; }
+.social-dock-links a.is-facebook > i { background: #1877f2; }
+.social-dock-links a.is-instagram > i { background: radial-gradient(circle at 30% 105%,#ffd56b 0 22%,#f33e72 43%,#bd35a9 65%,#5851db 100%); }
+.social-dock-links a:is(:hover,:focus-visible) > i { transform: translateX(-2px) scale(1.06); }
+.social-dock-toggle { width: 56px; height: 56px; padding: 0; border: 1px solid #ffffff36; border-radius: 50%; background: var(--plum); color: #fff; cursor: pointer; display: grid; place-items: center; box-shadow: 0 14px 38px #17283c42; transition: transform var(--motion-base) var(--ease-spring), background var(--motion-fast) ease; }
+.social-dock-toggle svg { width: 24px; height: 24px; transition: transform var(--motion-base) var(--ease-spring); }
+.social-dock.is-open .social-dock-toggle svg { transform: rotate(45deg); }
+.social-dock-toggle:is(:hover,:focus-visible) { background: #173743; transform: scale(1.05); }
+body.menu-open .social-dock { opacity: 0; visibility: hidden; pointer-events: none; transform: translateX(12px); }
+body:has(.booking-layout) .mobile-booking { display: none; }
+
+/* Mobile booking becomes a clear two-step action bar with safe touch targets. */
+.mobile-booking {
+  left: max(10px, env(safe-area-inset-left));
+  right: max(10px, env(safe-area-inset-right));
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  min-height: 70px;
+  padding: 4px;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: 4px;
+  border: 1px solid #ffffffc7;
+  border-radius: 21px;
+  background: #fffdf9ed;
+  color: var(--ink);
+  box-shadow: 0 14px 42px #17283c2d;
+  backdrop-filter: blur(18px) saturate(1.15);
+}
+.mobile-booking a,
+.mobile-booking a + a { min-width: 0; min-height: 60px; padding: 0 12px; border: 0; border-radius: 16px; display: flex; justify-content: flex-start; gap: 9px; }
+.mobile-booking a > i { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+.mobile-booking a > i svg { width: 17px; }
+.mobile-booking a > span { min-width: 0; display: flex; flex-direction: column; line-height: 1.15; }
+.mobile-booking a small { color: var(--muted); font-size: 9px; font-weight: 750; letter-spacing: .025em; }
+.mobile-booking a strong { margin-top: 3px; font-size: 12px; white-space: nowrap; }
+.mobile-booking-call { background: #f6f2ea; color: var(--ink); }
+.mobile-booking-call > i { background: #fff; color: var(--plum); }
+.mobile-booking .mobile-booking-date { background: var(--plum); color: #fff; }
+.mobile-booking .mobile-booking-date > i { background: #ffffff18; }
+.mobile-booking .mobile-booking-date small { color: #ffffffb8; }
+
+@keyframes social-option-in { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 999px) {
+  .social-dock { right: 14px; bottom: calc(92px + env(safe-area-inset-bottom)); }
+  body:has(.booking-layout) .social-dock { bottom: calc(14px + env(safe-area-inset-bottom)); }
+}
+
+@media (orientation: landscape) and (max-height: 620px) and (max-width: 999px) {
+  .hero-poster-frame { width: auto; height: min(300px, calc(100dvh - 88px)); margin-inline: auto; }
+  .social-dock { right: 14px; bottom: 14px; }
+  .mobile-booking { display: none; }
+}
+
+@media (max-width: 699px) {
+  :root { --shell: calc(100% - 32px); }
+  html { scroll-padding-top: 78px; }
+  .site-header { padding-inline: 16px; gap: 10px; }
+  .brand-copy strong { font-size: 22px; }
+  .mobile-menu { padding-inline: 16px; }
+  .stage-hero { padding-inline: 16px; padding-bottom: 34px; }
+  .stage-hero .hero-copy h1 { font-size: clamp(48px, 14vw, 68px); overflow-wrap: anywhere; }
+  .hero-poster-frame { width: min(100%, 360px); aspect-ratio: 2 / 3; border-width: 4px; transform: none; }
+  .hero-photo-note { width: min(100%, 360px); margin-inline: auto; }
+  .button { min-height: 48px; }
+  .portfolio-gallery .photo-portfolio-toolbar > div:first-child { min-width: 0; }
+  .portfolio-filters { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .portfolio-gallery .portfolio-filters button { width: 100%; justify-content: center; }
+  .booking-summary dl { grid-template-columns: 1fr; }
+  .campus-mode-controls { grid-template-columns: 1fr; }
+  .social-dock-toggle { width: 50px; height: 50px; }
+  .social-dock-links a > i { width: 46px; height: 46px; }
+}
+
+@media (max-width: 420px) {
+  .brand-disc { width: 44px; height: 44px; }
+  .mobile-booking a,
+  .mobile-booking a + a { padding-inline: 9px; gap: 7px; }
+  .mobile-booking a > i { width: 31px; height: 31px; }
+  .mobile-booking a small { display: none; }
+  .mobile-booking a strong { margin-top: 0; font-size: 11px; }
+  .voice-grid { grid-template-columns: 1fr; }
+  .form-actions .button { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-dock-links a { animation: none; }
+}
