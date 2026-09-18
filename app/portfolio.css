@@ -658,3 +658,53 @@ body:has(.booking-layout) .mobile-booking { display: none; }
   .show-formats .program-cards article.program-card,
   .show-formats .program-card-media img { transition: none; }
 }
+
+/* Slow moving stage light gives the portfolio the atmosphere of a live Arun show. */
+.stage-hero {
+  overflow: clip;
+  background:
+    radial-gradient(ellipse 45% 68% at 8% 10%, #d9ecff 0, #d9ecff00 71%),
+    radial-gradient(ellipse 41% 60% at 91% 28%, #eedbff 0, #eedbff00 72%),
+    radial-gradient(ellipse 36% 48% at 52% 100%, #ffedcf 0, #ffedcf00 72%),
+    #fbfaf6;
+}
+.stage-hero::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: -28% -18%;
+  pointer-events: none;
+  opacity: .96;
+  background:
+    radial-gradient(ellipse 18% 44% at 19% 8%, #59c9ff5e 0 8%, #59c9ff22 38%, transparent 71%),
+    radial-gradient(ellipse 17% 48% at 80% 4%, #c75bff61 0 8%, #c75bff1c 42%, transparent 72%),
+    conic-gradient(from 208deg at 13% 3%, transparent 0 17deg, #55bfff1e 18deg 23deg, transparent 24deg 56deg, #f3a85f18 57deg 62deg, transparent 63deg 360deg),
+    conic-gradient(from 157deg at 88% 2%, transparent 0 18deg, #bd6dff22 19deg 25deg, transparent 26deg 48deg, #54d9d226 49deg 54deg, transparent 55deg 360deg);
+  background-size: 100% 100%, 100% 100%, 88% 108%, 90% 108%;
+  background-repeat: no-repeat;
+  filter: saturate(1.18);
+}
+.stage-hero > * { position: relative; z-index: 1; }
+.page-hero-shows::after {
+  width: min(52vw, 700px);
+  opacity: .9;
+  background:
+    radial-gradient(circle at 35% 40%, #aedfffba 0 4%, #aedfff42 25%, transparent 61%),
+    conic-gradient(from 220deg at 50% 50%, transparent 0 22deg, #c2edff50 23deg 30deg, transparent 31deg 69deg, #e3bdff50 70deg 78deg, transparent 79deg 360deg);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .stage-hero::after { animation: stage-lights-sweep 15s ease-in-out infinite alternate; }
+  .page-hero-shows::after { animation: shows-light-drift 10s ease-in-out infinite alternate; }
+}
+@keyframes stage-lights-sweep {
+  0% { transform: translate3d(-3%, 1%, 0) rotate(-3deg) scale(1.02); opacity: .57; }
+  52% { transform: translate3d(2%, -2%, 0) rotate(2deg) scale(1.08); opacity: .9; }
+  100% { transform: translate3d(5%, 3%, 0) rotate(5deg) scale(1.03); opacity: .68; }
+}
+@keyframes shows-light-drift {
+  from { transform: translate3d(-5%, 1%, 0) rotate(-7deg) scale(.95); }
+  to { transform: translate3d(6%, -5%, 0) rotate(9deg) scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage-hero::after, .page-hero-shows::after { animation: none; }
+}
