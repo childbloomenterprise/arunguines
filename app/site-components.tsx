@@ -31,7 +31,30 @@ export function MediaRail() {
 }
 
 export function ProgramCards({ detailed = false }: { detailed?: boolean }) {
-  return <div className="program-cards">{programs.map((program) => <article key={program.slug}><div><VoiceMark /></div><h3>{program.title}</h3><p>{program.description}</p>{detailed ? <ul>{program.inclusions.map((item) => <li key={item}>{item}</li>)}</ul> : null}<BookingLink href={`/book?show=${encodeURIComponent(program.title)}`} aria-label={`Check Availability for ${program.title}`}>Explore a date <ArrowRight /></BookingLink></article>)}</div>;
+  const programArtwork = {
+    "one-man-show": { src: "/portfolio/09-close-live-vocal.webp", alt: "Close view of Arun Guinness singing into a microphone in a red shirt", position: "63% 43%", label: "Signature performance" },
+    "variety-musical": { src: "/portfolio/11-blue-blazer-stage.webp", alt: "Arun Guinness smiling with a microphone while wearing a blue blazer", position: "50% 42%", label: "Music + voices" },
+    "mega-show": { src: "/portfolio/12-onam-muscat-stage.webp", alt: "Arun Guinness performing at an Onam celebration in Muscat", position: "50% 48%", label: "Festival scale" },
+    "guest-performance": { src: "/portfolio/15-campus-inauguration.webp", alt: "Arun Guinness joining guests for a ceremonial lamp lighting on a school stage", position: "50% 50%", label: "Featured guest" },
+  } as const;
+
+  return <div className="program-cards">{programs.map((program, index) => {
+    const artwork = programArtwork[program.slug];
+    return <article key={program.slug} className="program-card portfolio-animate" data-reveal style={{ "--reveal-index": index } as React.CSSProperties}>
+      <div className="program-card-media">
+        <Image src={artwork.src} alt={artwork.alt} fill sizes="(max-width: 699px) calc(100vw - 40px), (max-width: 999px) calc(50vw - 34px), 25vw" style={{ objectPosition: artwork.position }} />
+        <span>{artwork.label}</span>
+        <i className="program-card-mark" aria-hidden="true"><VoiceMark /></i>
+      </div>
+      <div className="program-card-copy">
+        <span className="program-card-number">0{index + 1}</span>
+        <h3>{program.title}</h3>
+        <p>{program.description}</p>
+        {detailed ? <ul>{program.inclusions.map((item) => <li key={item}>{item}</li>)}</ul> : null}
+        <BookingLink href={`/book?show=${encodeURIComponent(program.title)}`} aria-label={`Check Availability for ${program.title}`}>Explore a date <ArrowRight /></BookingLink>
+      </div>
+    </article>;
+  })}</div>;
 }
 
 export function EventExperiences() {
