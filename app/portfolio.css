@@ -708,3 +708,65 @@ body:has(.booking-layout) .mobile-booking { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .stage-hero::after, .page-hero-shows::after { animation: none; }
 }
+
+/* Premium interaction layer: movement follows attention, touch, and choice throughout the portfolio. */
+::selection { background: #b7dcec; color: #173743; }
+.site-header { transition: background 260ms ease, box-shadow 260ms ease, transform 260ms var(--ease-enter); }
+html.has-scrolled .site-header { background: #fffdf9ed; box-shadow: 0 8px 28px #17374314; }
+.brand, .brand-disc, .brand-copy { transition: transform 260ms var(--ease-spring), opacity 220ms ease; }
+.brand:is(:hover, :focus-visible) .brand-disc { transform: rotate(-5deg) scale(1.06); }
+.desktop-nav a, .mobile-menu nav a { overflow: hidden; }
+.desktop-nav a span, .mobile-menu nav a { transition: transform 240ms var(--ease-enter); }
+.desktop-nav a:is(:hover, :focus-visible) span { transform: translateY(-1px); }
+.desktop-nav a::before { content: ""; position: absolute; inset: auto 13px 4px; height: 1px; border-radius: 50%; background: #a9d7e2; filter: blur(3px); opacity: 0; transition: opacity 220ms ease, transform 220ms var(--ease-enter); transform: scaleX(.25); }
+.desktop-nav a:is(:hover, :focus-visible)::before { opacity: .9; transform: scaleX(1); }
+.eyebrow i { transition: width 280ms var(--ease-enter), transform 280ms var(--ease-enter), box-shadow 280ms ease; }
+:is(.simple-section-heading,.moments-heading,.act-heading,.page-hero-copy):is(:hover,:focus-within) .eyebrow i { width: 31px; transform: translateX(3px); box-shadow: 10px 0 22px #7dc4df73; }
+.text-link, .event-experience strong, .section-action .button { transition: color 220ms ease, gap 240ms var(--ease-enter), transform 240ms var(--ease-enter); }
+.text-link:is(:hover,:focus-visible), .event-experience:is(:hover,:focus-visible) strong { gap: 13px; }
+.text-link:is(:active), .event-experience:is(:active) { transform: translateY(1px); }
+.performance-tile, .moment-card, .photo-card-media, .campus-preview, .artist-portfolio, .shows-proof, .campus-story-card > div, .contact-panel, .booking-form, .stats-strip details { transition: transform 300ms var(--ease-enter), box-shadow 300ms ease, border-color 260ms ease, background 260ms ease; }
+@media (hover: hover) and (pointer: fine) {
+  .performance-tile:is(:hover,:focus-within) { transform: translateY(-6px) rotate(-.2deg); }
+  .performance-tile:is(:hover,:focus-within) .video-play { transform: scale(1.08); }
+  .moment-card:is(:hover,:focus-within) { transform: translateY(-6px) scale(1.006); }
+  .moment-card:is(:hover,:focus-within) figcaption { transform: translateY(-2px); }
+  .photo-card:is(:hover,:focus-within) .photo-card-media { transform: translateY(-5px); box-shadow: 0 24px 52px #17374329; }
+  .photo-card:is(:hover,:focus-within) .photo-card-media > span { transform: translateY(2px); }
+  .campus-story-card:is(:hover,:focus-within) > div { transform: translateY(-5px); box-shadow: 0 19px 42px #1737431d; }
+  .campus-preview:is(:hover,:focus-within), .artist-portfolio:is(:hover,:focus-within), .shows-proof:is(:hover,:focus-within) { transform: translateY(-4px); }
+  .contact-panel:is(:hover,:focus-within) { transform: translateY(-4px); box-shadow: 0 23px 55px #1737432e; }
+  .booking-form:is(:hover,:focus-within) { box-shadow: 0 20px 48px #17374316; }
+  .stats-strip details:is(:hover,:focus-within) { background: #edf7f4; transform: translateY(-2px); }
+}
+.performance-tile .video-play, .moment-card figcaption, .photo-card-media > span, .contact-panel > a svg { transition: transform 250ms var(--ease-spring), color 220ms ease; }
+.event-experience { position: relative; transition: transform 260ms var(--ease-enter), background 260ms ease, box-shadow 260ms ease; }
+.event-experience::after { content: ""; position: absolute; left: 0; right: 20px; bottom: 0; height: 2px; border-radius: 2px; background: linear-gradient(90deg,#80c6d8,#bba4df); transform: scaleX(0); transform-origin: left; transition: transform 300ms var(--ease-enter); }
+.event-experience:is(:hover,:focus-visible)::after { transform: scaleX(1); }
+.event-experience:is(:hover,:focus-visible) { transform: translateY(-3px); }
+.faq-list details { transition: background 240ms ease, padding 240ms var(--ease-enter), border-color 240ms ease; }
+.faq-list details:is(:hover,:focus-within) { background: #f2f8f6; padding-inline: 12px; }
+.faq-list summary::after { transition: transform 260ms var(--ease-spring), color 220ms ease; }
+.faq-list details[open] summary::after { transform: rotate(180deg); color: var(--brass-dark); }
+.booking-form input, .booking-form select, .booking-form textarea { transition: border-color 180ms ease, box-shadow 220ms ease, background 220ms ease, transform 220ms var(--ease-enter); }
+.booking-form input:focus, .booking-form select:focus, .booking-form textarea:focus { background: #fffefa; transform: translateY(-1px); }
+.contact-panel > a { transition: padding 230ms var(--ease-enter), color 220ms ease, background 220ms ease; }
+.contact-panel > a:is(:hover,:focus-visible) { padding-left: 8px; background: #ffffff0b; }
+.contact-panel > a:is(:hover,:focus-visible) svg:last-child { transform: translate(3px,-3px); }
+.social-dock-toggle::after { content: ""; position: absolute; inset: -7px; border: 1px solid #4b214237; border-radius: inherit; opacity: 0; transform: scale(.82); transition: opacity 240ms ease, transform 300ms var(--ease-spring); }
+.social-dock:is(:hover,:focus-within) .social-dock-toggle::after { opacity: 1; transform: scale(1); }
+@media (prefers-reduced-motion: no-preference) {
+  .social-dock-toggle { animation: dock-breathe 4.2s ease-in-out infinite; }
+  .page-hero .eyebrow i, .simple-section-heading .eyebrow i { animation: cue-light 3.6s ease-in-out infinite; }
+  .section-action .button { animation: action-breathe 5s ease-in-out infinite; }
+}
+@keyframes dock-breathe { 0%,100% { box-shadow: 0 14px 38px #17283c42,0 0 0 4px #4b214217; } 50% { box-shadow: 0 17px 44px #17283c4e,0 0 0 7px #4b214226; } }
+@keyframes cue-light { 0%,100% { opacity: .72; } 50% { opacity: 1; box-shadow: 8px 0 18px #7dc4df6e; } }
+@keyframes action-breathe { 0%,100% { box-shadow: 0 8px 22px #17374312; } 50% { box-shadow: 0 13px 31px #17374323; } }
+@media (max-width: 699px) {
+  .faq-list details:is(:hover,:focus-within) { padding-inline: 7px; }
+  .event-experience::after { right: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .social-dock-toggle, .page-hero .eyebrow i, .simple-section-heading .eyebrow i, .section-action .button { animation: none; }
+}
