@@ -770,3 +770,73 @@ html.has-scrolled .site-header { background: #fffdf9ed; box-shadow: 0 8px 28px #
 @media (prefers-reduced-motion: reduce) {
   .social-dock-toggle, .page-hero .eyebrow i, .simple-section-heading .eyebrow i, .section-action .button { animation: none; }
 }
+
+/* Two quiet page tones extend the white identity without fragmenting the brand. */
+.page-frame {
+  --page-tone: #fbfaf6;
+  --page-tone-soft: #ffffff;
+  --page-tone-line: #dfe3e3;
+  min-height: 100vh;
+  background: var(--page-tone);
+  transition: background-color 420ms ease;
+}
+.page-tone-mist {
+  --page-tone: #edf2f3;
+  --page-tone-soft: #f7faf9;
+  --page-tone-line: #cedbdd;
+  background:
+    radial-gradient(circle at 88% 9%, #dce9ec 0, #dce9ec00 29%),
+    linear-gradient(180deg, #f7f9f8 0, #edf2f3 34%, #f8faf9 100%);
+}
+.page-tone-stone {
+  --page-tone: #f2efe9;
+  --page-tone-soft: #fbfaf7;
+  --page-tone-line: #ded8cd;
+  background:
+    radial-gradient(circle at 9% 11%, #e8e2d8 0, #e8e2d800 31%),
+    linear-gradient(180deg, #fbfaf7 0, #f2efe9 38%, #faf8f4 100%);
+}
+.page-tone-mist .page-hero,
+.page-tone-stone .page-hero { border-bottom-color: var(--page-tone-line); }
+.page-tone-mist .page-hero {
+  background:
+    radial-gradient(circle at 84% 26%, #d6e7eb 0, #d6e7eb00 34%),
+    linear-gradient(135deg, #f8faf9cc, #edf3f3b8);
+}
+.page-tone-stone .page-hero {
+  background:
+    radial-gradient(circle at 82% 22%, #e5ddd1 0, #e5ddd100 35%),
+    linear-gradient(135deg, #fffefbcc, #f0ece5c4);
+}
+.page-tone-mist .page-hero-shows,
+.page-tone-stone .page-hero-shows { background: inherit; }
+.page-tone-mist :is(.portfolio-section,.campus-booking),
+.page-tone-stone :is(.show-formats,.booking-layout) {
+  position: relative;
+  isolation: isolate;
+}
+.page-tone-mist .portfolio-section { background: #ffffff72; border-block: 1px solid #d2dedf; }
+.page-tone-mist .campus-booking { background: linear-gradient(125deg,#e2edef,#f8faf9); border-color: #cbdadd; }
+.page-tone-stone .show-formats::after,
+.page-tone-stone .booking-layout::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 8% -4% 3%;
+  border-radius: 32px;
+  background: linear-gradient(135deg,#ffffff66,#e9e3da70);
+  pointer-events: none;
+}
+.page-tone-mist :is(.performance-tile,.photo-card-media,.campus-story-card > div),
+.page-tone-stone :is(.program-card,.booking-form) { border-color: var(--page-tone-line); }
+.page-tone-mist .portfolio-next,
+.page-tone-stone .shows-proof,
+.page-tone-stone .simple-route-cta { border-color: var(--page-tone-line); }
+@media (max-width: 699px) {
+  .page-tone-mist, .page-tone-stone { background-attachment: scroll; }
+  .page-tone-stone .show-formats::after,
+  .page-tone-stone .booking-layout::after { inset: 4% -8px 1%; border-radius: 22px; }
+}
+@media (forced-colors: active) {
+  .page-tone-mist, .page-tone-stone, .page-tone-mist .page-hero, .page-tone-stone .page-hero { background: Canvas; color: CanvasText; }
+}

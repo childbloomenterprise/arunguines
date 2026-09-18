@@ -10,7 +10,7 @@ const description = "Check Arun Guinness availability for one-man shows, corpora
 export const metadata = createPageMetadata({ title: "Book Arun Guinness for a Stage Show", description, path: "/book", keywords: bookingKeywords });
 
 export default function BookPage() {
-  return <PageFrame>
+  return <PageFrame tone="stone">
     <PageSchema path="/book" name="Check Availability" description={description} type="ContactPage" />
     <PageHero variant="book" label="Begin the conversation" title="Tell us what" accent="you imagine." description="A few details can start a remarkable evening. We’ll prepare your note for WhatsApp; you decide when to send it." highlights={[]} />
     <section className="booking-layout section-shell first-task">

@@ -12,7 +12,7 @@ const description = "Explore Arun Guinness's performance portfolio: voice videos
 export const metadata = createPageMetadata({ title: "Arun Guinness Portfolio | Videos & Events", description, path: "/proof", keywords: performerKeywords });
 
 export default function ProofPage() {
-  return <PageFrame>
+  return <PageFrame tone="mist">
     <PageSchema path="/proof" name="Arun Guinness Portfolio" description={description} type="CollectionPage" />
     <PageHero variant="proof" label="The portfolio" title="The work," accent="in full view." description="Watch Arun perform. See the audiences, stages and events that hold the story." highlights={[]} />
     <section id="performances" className="inner-section section-shell first-task"><SectionHeading label="Performance films" title="Hear the voices." accent="Stay for the room." description="Choose a performance to watch in a full-size player." /><PerformanceGallery performances={[videos[0], videos[1], homepageVideos[1], homepageVideos[0], ...videos.slice(2), profileVideo]} /></section>

@@ -7,8 +7,8 @@ import { BookingLink } from "./booking-link";
 import { VideoPlayer } from "./video-player";
 export { PerformanceMap } from "./performance-map";
 
-export function PageFrame({ children }: { children: React.ReactNode }) {
-  return <ViewTransition enter="page-enter" exit="page-exit" default="none"><main id="main-content">{children}</main></ViewTransition>;
+export function PageFrame({ children, tone = "white" }: { children: React.ReactNode; tone?: "white" | "mist" | "stone" }) {
+  return <ViewTransition enter="page-enter" exit="page-exit" default="none"><main id="main-content" className={`page-frame page-tone-${tone}`}>{children}</main></ViewTransition>;
 }
 
 export function Eyebrow({ children, light = false }: { children: React.ReactNode; light?: boolean }) {

@@ -17,7 +17,7 @@ export default function SchoolCollegeShowsPage() {
     stagePortfolio.find((photo) => photo.sourcePage === 100)!,
     stagePortfolio.find((photo) => photo.sourcePage === 89)!,
   ];
-  return <PageFrame>
+  return <PageFrame tone="mist">
     <PageHero label="School & college portfolio" title="Let the campus" accent="sing back." description="See Arun with students, on stage and in the middle of the audience. Start with a real school performance." highlights={[]} media={<VideoPlayer id="P22go-G5Xnc" title="Arun Guinness at Mary Mount Public School" alt="Arun Guinness performing at Mary Mount Public School" sizes="(max-width: 800px) calc(100vw - 40px), 500px" ratio="16:9" eager />} />
     <section className="campus-story section-shell" aria-labelledby="campus-story-title">
       <div className="campus-story-heading portfolio-animate" data-reveal><span className="eyebrow">Around the performance</span><h2 id="campus-story-title">From first song <em>to the last smile.</em></h2><p>These photographs show the scale of the room, Arun&apos;s connection with students and the moments around a school event.</p></div>
