@@ -4,10 +4,10 @@ import { PageSchema } from "./page-schema";
 import { ArrowRight, ArrowUpRight } from "./icons";
 import { BookingLink } from "./booking-link";
 import { PageFrame } from "./site-components";
-import { contact, homepageVideos, stagePortfolio, videos } from "./site-data";
+import { contact, homepageVideos, profileVideo, stagePortfolio, videos } from "./site-data";
 import { VideoPlayer } from "./video-player";
 
-const performances = [videos[0], videos[1], homepageVideos[1], homepageVideos[0], ...videos.slice(2)];
+const performanceHighlights = [videos[0], videos[1], homepageVideos[1], videos[3]];
 const featuredPhotoPaths = [
   "/portfolio/01-live-in-red.webp",
   "/portfolio/17-among-students.webp",
@@ -39,15 +39,30 @@ export default function Home() {
       </div>
     </section>
 
-    <section className="home-section section-shell voices-section" id="voices">
-      <div className="simple-section-heading portfolio-animate" data-reveal><span className="eyebrow">Watch Arun</span><h2>Hear the turn. Feel the room.</h2><p>Signature voices and live performances, ready to play in full view.</p></div>
-      <div className="performance-grid">
-        {performances.map((video, index) => <article className="performance-tile portfolio-animate" data-reveal key={video.id} style={{ "--reveal-index": index % 3 } as React.CSSProperties}>
-          <VideoPlayer id={video.id} title={video.title} alt={`${video.title} by Arun Guinness`} sizes="(max-width: 699px) calc(100vw - 40px), (max-width: 1100px) 45vw, 380px" ratio="16:9" poster={video.poster} eager={index === 0} />
-          <div><h3>{video.title}</h3></div>
+    <section className="profile-film-section section-shell" id="voices" aria-labelledby="profile-film-title">
+      <div className="profile-film-copy portfolio-animate" data-reveal>
+        <span className="eyebrow">Begin with his story</span>
+        <h2 id="profile-film-title">Meet Arun.<br /><em>Then hear the voices.</em></h2>
+        <p>A short portrait of the performer, the journey and the craft behind a one-man show built for a full room.</p>
+        <div className="profile-film-notes" aria-label="Profile film topics"><span>His journey</span><span>Voice artistry</span><span>Live stages</span></div>
+      </div>
+      <div className="profile-film-player portfolio-animate" data-reveal="scale">
+        <VideoPlayer id={profileVideo.id} title={profileVideo.title} alt="Arun Guinness official profile film" sizes="(max-width: 699px) calc(100vw - 32px), (max-width: 1100px) 58vw, 760px" ratio="16:9" badge="Main profile film" caption="Arun Guinness · Official profile" eager />
+      </div>
+    </section>
+
+    <section className="home-section section-shell voices-section performance-highlights" aria-labelledby="performance-highlights-title">
+      <div className="performance-highlights-heading portfolio-animate" data-reveal>
+        <div><span className="eyebrow">Selected performances</span><h2 id="performance-highlights-title">Four moments.<br /><em>A world of voices.</em></h2></div>
+        <p>A concise view of Arun’s range—from precise voice impressions to the energy of an international live stage.</p>
+      </div>
+      <div className="performance-grid performance-highlight-grid">
+        {performanceHighlights.map((video, index) => <article className="performance-tile performance-highlight portfolio-animate" data-reveal key={video.id} style={{ "--reveal-index": index % 2 } as React.CSSProperties}>
+          <VideoPlayer id={video.id} title={video.title} alt={`${video.title} by Arun Guinness`} sizes="(max-width: 699px) calc(100vw - 32px), (max-width: 1100px) 46vw, 590px" ratio="16:9" poster={video.poster} />
+          <div><span>{video.category}</span><h3>{video.title}</h3><p>{video.subtitle}</p></div>
         </article>)}
       </div>
-      <Link className="text-link" href="/proof">Explore the complete portfolio <ArrowRight /></Link>
+      <Link className="text-link performance-archive-link" href="/proof">Explore the complete video archive <ArrowRight /></Link>
     </section>
 
     <section className="moments-section section-shell" id="moments">
