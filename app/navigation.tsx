@@ -69,7 +69,7 @@ export function Header() {
           <span className="brand-copy"><strong>Arun Guinness</strong><small>Live voice artistry</small></span>
         </Link>
         <nav className="desktop-nav" aria-label="Main navigation">
-          {navItems.map((item) => <Link key={item.href} href={item.href} aria-current={pathname === item.href ? "page" : undefined}>{item.label}</Link>)}
+          {navItems.map((item, index) => <Link key={item.href} href={item.href} aria-current={pathname === item.href ? "page" : undefined} data-nav-index={index + 1}><span>{item.label}</span></Link>)}
         </nav>
         <a className="header-call" href={`tel:${contact.phone}`}>Call Arun</a><BookingLink className="header-book" aria-label="Check Availability">Find a date <ArrowUpRight /></BookingLink>
         <button ref={toggleRef} className="menu-toggle" type="button" aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen((value) => !value)}>
