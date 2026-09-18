@@ -32,7 +32,10 @@ export default function Home() {
       </div>
       <div className="hero-art hero-photo hero-poster portfolio-animate" data-reveal="scale">
         <div className="hero-photo-frame hero-poster-frame"><Image src="/portfolio/arun-live-show-poster.webp" alt="Arun Guinness live one-man show poster with Arun holding a recording microphone under blue and purple stage lights" fill priority sizes="(max-width: 699px) calc(100vw - 40px), 430px" /></div>
-        <span className="hero-photo-note"><i aria-hidden="true" />One performer. A full live show.</span>
+        <div className="hero-photo-note">
+          <i aria-hidden="true" />
+          <span><small>One performer</small><strong>An entire live show</strong></span>
+        </div>
       </div>
     </section>
 
