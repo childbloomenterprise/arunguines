@@ -32,6 +32,9 @@ export function MotionController() {
     const footer = document.querySelector<HTMLElement>(".site-footer");
     const hero = document.querySelector<HTMLElement>(".home-hero,.page-hero");
     const depthCleanups: Array<() => void> = [];
+    const updateVisibility = () => root.classList.toggle("motion-paused", document.hidden);
+    updateVisibility();
+    document.addEventListener("visibilitychange", updateVisibility);
 
     if (!reduced && finePointer) {
       document.querySelectorAll<HTMLElement>("[data-depth-media]").forEach((item) => {
@@ -80,9 +83,10 @@ export function MotionController() {
     return () => {
       observer?.disconnect();
       depthCleanups.forEach((cleanup) => cleanup());
+      document.removeEventListener("visibilitychange", updateVisibility);
       window.removeEventListener("scroll", updateScroll);
       if (frame) window.cancelAnimationFrame(frame);
-      root.classList.remove("motion-ready", "has-scrolled", "past-hero", "scrolling-down", "near-booking");
+      root.classList.remove("motion-ready", "motion-paused", "has-scrolled", "past-hero", "scrolling-down", "near-booking");
       root.style.removeProperty("--scroll-progress");
     };
   }, [pathname]);

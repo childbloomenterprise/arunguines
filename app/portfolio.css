@@ -1192,3 +1192,137 @@ html.has-scrolled .site-header { background: #fffdf9ed; box-shadow: 0 8px 28px #
   ) { transition-duration: .01ms; }
   :is(.button, .header-book, .menu-toggle, .social-dock-toggle, .mobile-booking a)::before { display: none; }
 }
+
+/* Living Soundscape: visible voice ribbons and singing strings that never capture interaction. */
+.voice-atmosphere {
+  --voice-cool: #4ab7d5;
+  --voice-violet: #9b72d1;
+  --voice-warm: #c8945d;
+  position: fixed;
+  z-index: 6;
+  inset: 74px 0 0;
+  overflow: hidden;
+  opacity: .64;
+  pointer-events: none;
+  contain: strict;
+}
+.page-tone-mist .voice-atmosphere {
+  --voice-cool: #368da8;
+  --voice-violet: #7891bd;
+  --voice-warm: #aa8a6a;
+  opacity: .57;
+}
+.page-tone-stone .voice-atmosphere {
+  --voice-cool: #6a9cad;
+  --voice-violet: #987aa6;
+  --voice-warm: #b77d48;
+  opacity: .58;
+}
+.voice-atmosphere svg { width: 100%; height: 100%; overflow: visible; }
+.page-frame :is(
+  .hero-copy,
+  .hero-photo,
+  .profile-film-copy,
+  .profile-film-player,
+  .performance-highlights-heading,
+  .performance-tile,
+  .moments-heading,
+  .moment-card,
+  .campus-preview,
+  .idea-section,
+  .page-hero-copy,
+  .page-hero-media,
+  .act-heading,
+  .program-card,
+  .shows-proof,
+  .artist-portfolio,
+  .photo-card,
+  .portfolio-next,
+  .booking-form,
+  .contact-panel,
+  .simple-route-cta
+) { position: relative; z-index: 7; }
+.voice-stop-cool { stop-color: var(--voice-cool); }
+.voice-stop-violet { stop-color: var(--voice-violet); }
+.voice-stop-warm { stop-color: var(--voice-warm); }
+.voice-ribbon,
+.singing-string,
+.resonance circle {
+  vector-effect: non-scaling-stroke;
+  fill: none;
+  stroke-linecap: round;
+}
+.voice-ribbon {
+  stroke: url(#voice-ribbon-gradient);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 13 31 18;
+  opacity: .56;
+}
+.voice-ribbon-echo { opacity: .42; animation-delay: -8s; }
+.singing-strings { opacity: .52; }
+.singing-string {
+  stroke: url(#voice-string-gradient);
+  stroke-width: 1;
+  stroke-dasharray: 2 9 20 12;
+}
+.singing-string-two { opacity: .74; animation-delay: -2.2s; }
+.singing-string-three { opacity: .5; animation-delay: -4.4s; }
+.resonance { transform-box: fill-box; transform-origin: center; }
+.resonance circle { stroke: var(--voice-cool); stroke-width: 1; opacity: .2; }
+.resonance circle:nth-child(2) { stroke: var(--voice-violet); opacity: .15; }
+.resonance circle:nth-child(3) { stroke: var(--voice-warm); opacity: .11; }
+.voice-particle { fill: var(--voice-warm); opacity: .56; transform-box: fill-box; transform-origin: center; }
+.particle-two, .particle-four { fill: var(--voice-cool); }
+.particle-three { fill: var(--voice-violet); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .voice-ribbon { animation: voice-ribbon-travel 18s ease-in-out infinite alternate; }
+  .singing-string { animation: singing-string-travel 9s ease-in-out infinite alternate; }
+  .resonance-left { animation: resonance-breathe 10s ease-in-out infinite alternate; }
+  .resonance-right { animation: resonance-breathe 12s ease-in-out -5s infinite alternate-reverse; }
+  .voice-particle { animation: voice-particle-glow 6s ease-in-out infinite; }
+  .particle-two { animation-delay: -1.5s; }
+  .particle-three { animation-delay: -3s; }
+  .particle-four { animation-delay: -4.5s; }
+}
+@keyframes voice-ribbon-travel {
+  0% { stroke-dashoffset: 0; transform: translate3d(-1.5%, 0, 0); }
+  55% { opacity: .78; }
+  100% { stroke-dashoffset: -92; transform: translate3d(1.8%, 7px, 0); }
+}
+@keyframes singing-string-travel {
+  0% { stroke-dashoffset: 0; transform: translate3d(-1%, -3px, 0); }
+  50% { opacity: .8; }
+  100% { stroke-dashoffset: -64; transform: translate3d(1%, 3px, 0); }
+}
+@keyframes resonance-breathe {
+  from { opacity: .48; transform: scale(.92) rotate(-3deg); }
+  to { opacity: .9; transform: scale(1.08) rotate(3deg); }
+}
+@keyframes voice-particle-glow {
+  0%, 100% { opacity: .18; transform: scale(.65); }
+  45% { opacity: .75; transform: scale(1.35); }
+}
+.motion-paused .voice-atmosphere :is(.voice-ribbon, .singing-string, .resonance, .voice-particle),
+.media-viewer-open .voice-atmosphere :is(.voice-ribbon, .singing-string, .resonance, .voice-particle) {
+  animation-play-state: paused;
+}
+@media (max-width: 699px) {
+  .voice-atmosphere { top: 70px; opacity: .46; }
+  .singing-string-two,
+  .singing-string-three,
+  .voice-particles { display: none; }
+  .voice-ribbon { stroke-width: 1.25; opacity: .48; }
+  .singing-string { stroke-width: .9; opacity: .42; }
+  .resonance-left { display: none; }
+  .resonance-right { opacity: .6; }
+}
+@media (orientation: landscape) and (max-height: 620px) and (max-width: 999px) {
+  .voice-atmosphere { top: 62px; opacity: .42; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .voice-atmosphere { opacity: .28; }
+  .voice-atmosphere :is(.voice-ribbon, .singing-string, .resonance, .voice-particle) { animation: none; }
+  .voice-particles { display: none; }
+}
+@media print { .voice-atmosphere { display: none; } }
