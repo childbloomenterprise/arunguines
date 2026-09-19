@@ -124,6 +124,55 @@ html.media-viewer-open { overflow: hidden; }
 }
 .portfolio-gallery .portfolio-filters button:hover { transform: translateY(-2px); border-color: var(--plum); background: #fff; }
 .portfolio-gallery .portfolio-filters button[aria-pressed="true"] { color: #fff; background: var(--plum); border-color: var(--plum); }
+.photo-portfolio-groups { display: grid; gap: clamp(72px, 9vw, 126px); }
+.photo-portfolio-group { scroll-margin-top: 110px; }
+.photo-portfolio-group-heading {
+  position: relative;
+  z-index: 7;
+  margin-bottom: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #203b4430;
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 18px;
+}
+.photo-portfolio-group-heading > span {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #9a76515c;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--brass-dark);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+.photo-portfolio-group-heading h3 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(31px, 3.4vw, 48px);
+  font-weight: 500;
+  line-height: .96;
+  letter-spacing: -.035em;
+}
+.photo-portfolio-group-heading p { max-width: 680px; margin: 10px 0 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+.photo-portfolio-group-heading small { display: block; margin-top: 8px; color: var(--brass-dark); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.photo-portfolio-group-heading > strong {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid #203b4425;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--ink);
+  background: #fffefaad;
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
 .photo-portfolio-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 17px; }
 .portfolio-gallery .photo-card { width: 100%; min-width: 0; margin: 0; }
 .portfolio-gallery .photo-card.is-featured { grid-column: span 2; }
@@ -316,6 +365,12 @@ html.media-viewer-open { overflow: hidden; }
   .artist-portfolio h2, .shows-proof h2 { font-size: clamp(48px, 11vw, 66px); }
   .portfolio-gallery .photo-portfolio-toolbar { align-items: flex-start; flex-direction: column; }
   .portfolio-filters { justify-content: flex-start; }
+  .photo-portfolio-groups { gap: 76px; }
+  .photo-portfolio-group-heading { grid-template-columns: 38px minmax(0, 1fr); gap: 12px; margin-bottom: 22px; }
+  .photo-portfolio-group-heading > span { width: 32px; height: 32px; }
+  .photo-portfolio-group-heading h3 { font-size: clamp(32px, 10vw, 44px); }
+  .photo-portfolio-group-heading p { font-size: 13px; }
+  .photo-portfolio-group-heading > strong { grid-column: 2; width: max-content; margin-top: 1px; }
   .photo-portfolio-grid { grid-template-columns: 1fr; gap: 24px; }
   .portfolio-gallery .photo-card.is-featured { grid-column: span 1; }
   .portfolio-gallery .photo-card-media, .portfolio-gallery .photo-card.is-featured .photo-card-media { aspect-ratio: 4/3; }
@@ -1264,9 +1319,12 @@ html.has-scrolled .site-header { background: #fffdf9ed; box-shadow: 0 8px 28px #
   font-size: clamp(2rem, 3.4vw, 4.2rem);
   opacity: .105;
 }
-.music-note-one { top: 20%; left: 35%; transform: rotate(-12deg); }
+.music-note-one { top: 20%; right: 33%; transform: rotate(-12deg); }
 .music-note-two { right: 31%; bottom: 18%; transform: rotate(9deg); }
 .music-note-three { right: 10%; bottom: 10%; font-size: clamp(1.6rem, 2.6vw, 3.2rem); transform: rotate(-5deg); }
+.music-note-four { top: 11%; right: 14%; font-size: clamp(1.5rem, 2.4vw, 3rem); opacity: .075; transform: rotate(8deg); }
+.music-note-five { top: 52%; right: 5%; font-size: clamp(1.7rem, 2.8vw, 3.4rem); opacity: .07; transform: rotate(-10deg); }
+.music-note-six { right: 22%; bottom: 29%; font-size: clamp(1.9rem, 3vw, 3.7rem); opacity: .08; transform: rotate(6deg); }
 
 @media (prefers-reduced-motion: no-preference) {
   .music-symbol-primary { animation: music-clef-primary 24s cubic-bezier(.45, 0, .2, 1) infinite alternate; }
@@ -1274,6 +1332,9 @@ html.has-scrolled .site-header { background: #fffdf9ed; box-shadow: 0 8px 28px #
   .music-note-one { animation: music-note-one 18s ease-in-out -5s infinite alternate; }
   .music-note-two { animation: music-note-two 22s ease-in-out -12s infinite alternate; }
   .music-note-three { animation: music-note-three 26s ease-in-out -8s infinite alternate; }
+  .music-note-four { animation: music-note-four 24s ease-in-out -15s infinite alternate; }
+  .music-note-five { animation: music-note-five 20s ease-in-out -9s infinite alternate; }
+  .music-note-six { animation: music-note-six 28s ease-in-out -18s infinite alternate; }
 }
 @keyframes music-clef-primary {
   from { opacity: .055; transform: translate3d(0, 8px, 0) rotate(-7deg) scale(.99); }
@@ -1295,6 +1356,18 @@ html.has-scrolled .site-header { background: #fffdf9ed; box-shadow: 0 8px 28px #
   from { opacity: .06; transform: translate3d(0, 4px, 0) rotate(-5deg); }
   to { opacity: .1; transform: translate3d(-5px, -4px, 0) rotate(-2deg); }
 }
+@keyframes music-note-four {
+  from { opacity: .05; transform: translate3d(0, 3px, 0) rotate(8deg); }
+  to { opacity: .085; transform: translate3d(5px, -4px, 0) rotate(11deg); }
+}
+@keyframes music-note-five {
+  from { opacity: .045; transform: translate3d(0, 4px, 0) rotate(-10deg); }
+  to { opacity: .08; transform: translate3d(-6px, -5px, 0) rotate(-7deg); }
+}
+@keyframes music-note-six {
+  from { opacity: .055; transform: translate3d(0, 3px, 0) rotate(6deg); }
+  to { opacity: .09; transform: translate3d(6px, -4px, 0) rotate(9deg); }
+}
 .motion-paused .music-atmosphere :is(.music-symbol, .music-note),
 .media-viewer-open .music-atmosphere :is(.music-symbol, .music-note) {
   animation-play-state: paused;
@@ -1304,8 +1377,11 @@ html.has-scrolled .site-header { background: #fffdf9ed; box-shadow: 0 8px 28px #
   .music-symbol-primary { top: 13%; right: -38%; font-size: 23rem; opacity: .045; }
   .music-symbol-secondary,
   .music-note-two,
-  .music-note-three { display: none; }
+  .music-note-three,
+  .music-note-five,
+  .music-note-six { display: none; }
   .music-note-one { top: 43%; left: 8%; font-size: 2.15rem; opacity: .075; }
+  .music-note-four { top: 18%; right: 8%; font-size: 1.5rem; opacity: .055; }
 }
 @media (orientation: landscape) and (max-height: 620px) and (max-width: 999px) {
   .music-atmosphere { top: 62px; }

@@ -6,13 +6,31 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Close } from "./icons";
 import { stagePortfolio, type PortfolioPhoto } from "./site-data";
 
-const collections = ["All", "Stage", "Campus", "Occasions", "Portraits"] as const;
+const portfolioCollections = ["School Programs", "Stage Shows", "Inaugurations", "Invitations & Honours"] as const;
+const collections = ["All", ...portfolioCollections] as const;
 type Collection = (typeof collections)[number];
+type PortfolioCollection = (typeof portfolioCollections)[number];
 
-const orderedPhotos = [
-  ...stagePortfolio.filter((photo) => photo.sourcePage === 94),
-  ...stagePortfolio.filter((photo) => photo.sourcePage !== 94),
-];
+const collectionDetails: Record<PortfolioCollection, { description: string; examples: string }> = {
+  "School Programs": {
+    description: "Performances shaped for students, staff and families—with the audience becoming part of the show.",
+    examples: "Annual days · arts festivals · student celebrations · campus honours",
+  },
+  "Stage Shows": {
+    description: "Arun in performance, from close-room voice craft to festival and international stages.",
+    examples: "One-man shows · cultural festivals · community stages · overseas events",
+  },
+  Inaugurations: {
+    description: "Ceremonial openings where Arun joins hosts and invited guests before the programme begins.",
+    examples: "Lamp lighting · annual-day openings · Onam inaugurations · institutional launches",
+  },
+  "Invitations & Honours": {
+    description: "Invited appearances, guest moments and presentations that sit around the performance itself.",
+    examples: "Chief-guest appearances · prize distributions · commemorative gifts · recognition",
+  },
+};
+
+const orderedPhotos = portfolioCollections.flatMap((name) => stagePortfolio.filter((photo) => photo.collection === name));
 
 export function PhotoPortfolio({ label = "Arun Guinness stage and event portfolio" }: { label?: string }) {
   const [collection, setCollection] = useState<Collection>("All");
@@ -20,6 +38,8 @@ export function PhotoPortfolio({ label = "Arun Guinness stage and event portfoli
   const dialogRef = useRef<HTMLDialogElement>(null);
   const openerRef = useRef<HTMLButtonElement | null>(null);
   const photos = collection === "All" ? orderedPhotos : orderedPhotos.filter((photo) => photo.collection === collection);
+  const visibleCollections: readonly PortfolioCollection[] = collection === "All" ? portfolioCollections : [collection];
+  const photoGroups = visibleCollections.map((name) => ({ name, photos: photos.filter((photo) => photo.collection === name) }));
   const selected = selectedIndex === null ? null : photos[selectedIndex];
   const isOpen = selectedIndex !== null;
 
@@ -68,15 +88,31 @@ export function PhotoPortfolio({ label = "Arun Guinness stage and event portfoli
       </div>
     </div>
     <p className="sr-only" role="status">{photos.length} photographs in {collection === "All" ? "the portfolio" : collection}</p>
-    <div className="photo-portfolio-grid">
-      {photos.map((photo, index) => <figure className={`photo-card ${index === 0 ? "is-featured" : ""}`} key={photo.src}>
-        <button className="photo-card-media" type="button" onClick={(event) => openPhoto(index, event.currentTarget)} aria-label={`View complete photograph: ${photo.alt}`}>
-          <Image src={photo.src} alt="" fill priority={index === 0} sizes={index === 0 ? "(max-width: 699px) calc(100vw - 40px), (max-width: 1199px) 65vw, 820px" : "(max-width: 699px) calc(100vw - 40px), (max-width: 1199px) 45vw, 390px"} style={{ objectPosition: photo.focalPoint ?? "50% 50%" }} />
-          <span>{photo.collection}</span>
-          <span className="photo-open" aria-hidden="true"><ArrowRight /></span>
-        </button>
-        <figcaption><small>{String(index + 1).padStart(2, "0")}</small><p>{photo.caption}</p></figcaption>
-      </figure>)}
+    <div className="photo-portfolio-groups">
+      {photoGroups.map((group, groupIndex) => {
+        const headingId = `portfolio-${group.name.toLowerCase().replace(/[^a-z]+/g, "-")}`;
+        const detail = collectionDetails[group.name];
+        return <section className="photo-portfolio-group" aria-labelledby={headingId} key={group.name}>
+          <div className="photo-portfolio-group-heading">
+            <span>{String(groupIndex + 1).padStart(2, "0")}</span>
+            <div><h3 id={headingId}>{group.name}</h3><p>{detail.description}</p><small>{detail.examples}</small></div>
+            <strong>{group.photos.length} photographs</strong>
+          </div>
+          <div className="photo-portfolio-grid">
+            {group.photos.map((photo, groupPhotoIndex) => {
+              const photoIndex = photos.findIndex((item) => item.src === photo.src);
+              return <figure className={`photo-card ${groupPhotoIndex === 0 ? "is-featured" : ""}`} key={photo.src}>
+                <button className="photo-card-media" type="button" onClick={(event) => openPhoto(photoIndex, event.currentTarget)} aria-label={`View complete photograph: ${photo.alt}`}>
+                  <Image src={photo.src} alt="" fill priority={photoIndex === 0} sizes={groupPhotoIndex === 0 ? "(max-width: 699px) calc(100vw - 40px), (max-width: 1199px) 65vw, 820px" : "(max-width: 699px) calc(100vw - 40px), (max-width: 1199px) 45vw, 390px"} style={{ objectPosition: photo.focalPoint ?? "50% 50%" }} />
+                  <span>{photo.collection}</span>
+                  <span className="photo-open" aria-hidden="true"><ArrowRight /></span>
+                </button>
+                <figcaption><small>{String(groupPhotoIndex + 1).padStart(2, "0")}</small><p>{photo.caption}</p></figcaption>
+              </figure>;
+            })}
+          </div>
+        </section>;
+      })}
     </div>
     {selected && createPortal(<PhotoViewer
       dialogRef={dialogRef}
