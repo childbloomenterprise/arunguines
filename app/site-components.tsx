@@ -5,11 +5,11 @@ import { ArrowRight, ArrowUpRight, Message, Phone, VoiceMark } from "./icons";
 import { bookingSteps, contact, eventExperiences, faqs, mediaEvidence, programs, stats } from "./site-data";
 import { BookingLink } from "./booking-link";
 import { VideoPlayer } from "./video-player";
-import { VoiceAtmosphere } from "./voice-atmosphere";
+import { MusicAtmosphere } from "./music-atmosphere";
 export { PerformanceMap } from "./performance-map";
 
 export function PageFrame({ children, tone = "white" }: { children: React.ReactNode; tone?: "white" | "mist" | "stone" }) {
-  return <ViewTransition enter="page-enter" exit="page-exit" default="none"><main id="main-content" className={`page-frame page-tone-${tone}`}><VoiceAtmosphere />{children}</main></ViewTransition>;
+  return <ViewTransition enter="page-enter" exit="page-exit" default="none"><main id="main-content" className={`page-frame page-tone-${tone}`}><MusicAtmosphere />{children}</main></ViewTransition>;
 }
 
 export function Eyebrow({ children, light = false }: { children: React.ReactNode; light?: boolean }) {

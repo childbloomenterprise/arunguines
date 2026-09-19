@@ -1193,32 +1193,25 @@ html.has-scrolled .site-header { background: #fffdf9ed; box-shadow: 0 8px 28px #
   :is(.button, .header-book, .menu-toggle, .social-dock-toggle, .mobile-booking a)::before { display: none; }
 }
 
-/* Living Soundscape: visible voice ribbons and singing strings that never capture interaction. */
-.voice-atmosphere {
-  --voice-cool: #4ab7d5;
-  --voice-violet: #9b72d1;
-  --voice-warm: #c8945d;
+/* Music mark: a restrained treble-clef atmosphere that never captures interaction. */
+.music-atmosphere {
+  --music-ink: #234d5c;
+  --music-accent: #98704c;
   position: fixed;
   z-index: 6;
   inset: 74px 0 0;
   overflow: hidden;
-  opacity: .64;
   pointer-events: none;
   contain: strict;
 }
-.page-tone-mist .voice-atmosphere {
-  --voice-cool: #368da8;
-  --voice-violet: #7891bd;
-  --voice-warm: #aa8a6a;
-  opacity: .57;
+.page-tone-mist .music-atmosphere {
+  --music-ink: #315c6d;
+  --music-accent: #817159;
 }
-.page-tone-stone .voice-atmosphere {
-  --voice-cool: #6a9cad;
-  --voice-violet: #987aa6;
-  --voice-warm: #b77d48;
-  opacity: .58;
+.page-tone-stone .music-atmosphere {
+  --music-ink: #4f6670;
+  --music-accent: #896341;
 }
-.voice-atmosphere svg { width: 100%; height: 100%; overflow: visible; }
 .page-frame :is(
   .hero-copy,
   .hero-photo,
@@ -1242,87 +1235,84 @@ html.has-scrolled .site-header { background: #fffdf9ed; box-shadow: 0 8px 28px #
   .contact-panel,
   .simple-route-cta
 ) { position: relative; z-index: 7; }
-.voice-stop-cool { stop-color: var(--voice-cool); }
-.voice-stop-violet { stop-color: var(--voice-violet); }
-.voice-stop-warm { stop-color: var(--voice-warm); }
-.voice-ribbon,
-.singing-string,
-.resonance circle {
-  vector-effect: non-scaling-stroke;
-  fill: none;
-  stroke-linecap: round;
+.music-symbol,
+.music-note {
+  position: absolute;
+  color: var(--music-ink);
+  font-family: "Segoe UI Symbol", "Noto Music", "Times New Roman", serif;
+  font-weight: 400;
+  line-height: 1;
+  user-select: none;
+  will-change: transform, opacity;
 }
-.voice-ribbon {
-  stroke: url(#voice-ribbon-gradient);
-  stroke-width: 1.5;
-  stroke-dasharray: 5 13 31 18;
-  opacity: .56;
+.music-symbol-primary {
+  top: 2%;
+  right: -4%;
+  font-size: clamp(22rem, 42vw, 42rem);
+  opacity: .075;
+  transform: rotate(-7deg);
 }
-.voice-ribbon-echo { opacity: .42; animation-delay: -8s; }
-.singing-strings { opacity: .52; }
-.singing-string {
-  stroke: url(#voice-string-gradient);
-  stroke-width: 1;
-  stroke-dasharray: 2 9 20 12;
+.music-symbol-secondary {
+  bottom: -21%;
+  left: -3%;
+  font-size: clamp(16rem, 28vw, 30rem);
+  opacity: .035;
+  transform: rotate(8deg);
 }
-.singing-string-two { opacity: .74; animation-delay: -2.2s; }
-.singing-string-three { opacity: .5; animation-delay: -4.4s; }
-.resonance { transform-box: fill-box; transform-origin: center; }
-.resonance circle { stroke: var(--voice-cool); stroke-width: 1; opacity: .2; }
-.resonance circle:nth-child(2) { stroke: var(--voice-violet); opacity: .15; }
-.resonance circle:nth-child(3) { stroke: var(--voice-warm); opacity: .11; }
-.voice-particle { fill: var(--voice-warm); opacity: .56; transform-box: fill-box; transform-origin: center; }
-.particle-two, .particle-four { fill: var(--voice-cool); }
-.particle-three { fill: var(--voice-violet); }
+.music-note {
+  color: var(--music-accent);
+  font-size: clamp(2rem, 3.4vw, 4.2rem);
+  opacity: .105;
+}
+.music-note-one { top: 20%; left: 35%; transform: rotate(-12deg); }
+.music-note-two { right: 31%; bottom: 18%; transform: rotate(9deg); }
+.music-note-three { right: 10%; bottom: 10%; font-size: clamp(1.6rem, 2.6vw, 3.2rem); transform: rotate(-5deg); }
 
 @media (prefers-reduced-motion: no-preference) {
-  .voice-ribbon { animation: voice-ribbon-travel 18s ease-in-out infinite alternate; }
-  .singing-string { animation: singing-string-travel 9s ease-in-out infinite alternate; }
-  .resonance-left { animation: resonance-breathe 10s ease-in-out infinite alternate; }
-  .resonance-right { animation: resonance-breathe 12s ease-in-out -5s infinite alternate-reverse; }
-  .voice-particle { animation: voice-particle-glow 6s ease-in-out infinite; }
-  .particle-two { animation-delay: -1.5s; }
-  .particle-three { animation-delay: -3s; }
-  .particle-four { animation-delay: -4.5s; }
+  .music-symbol-primary { animation: music-clef-primary 24s cubic-bezier(.45, 0, .2, 1) infinite alternate; }
+  .music-symbol-secondary { animation: music-clef-secondary 30s cubic-bezier(.45, 0, .2, 1) -11s infinite alternate; }
+  .music-note-one { animation: music-note-one 18s ease-in-out -5s infinite alternate; }
+  .music-note-two { animation: music-note-two 22s ease-in-out -12s infinite alternate; }
+  .music-note-three { animation: music-note-three 26s ease-in-out -8s infinite alternate; }
 }
-@keyframes voice-ribbon-travel {
-  0% { stroke-dashoffset: 0; transform: translate3d(-1.5%, 0, 0); }
-  55% { opacity: .78; }
-  100% { stroke-dashoffset: -92; transform: translate3d(1.8%, 7px, 0); }
+@keyframes music-clef-primary {
+  from { opacity: .055; transform: translate3d(0, 8px, 0) rotate(-7deg) scale(.99); }
+  to { opacity: .085; transform: translate3d(-10px, -8px, 0) rotate(-5.5deg) scale(1.015); }
 }
-@keyframes singing-string-travel {
-  0% { stroke-dashoffset: 0; transform: translate3d(-1%, -3px, 0); }
-  50% { opacity: .8; }
-  100% { stroke-dashoffset: -64; transform: translate3d(1%, 3px, 0); }
+@keyframes music-clef-secondary {
+  from { opacity: .025; transform: translate3d(-4px, 5px, 0) rotate(8deg) scale(.99); }
+  to { opacity: .045; transform: translate3d(9px, -7px, 0) rotate(9.5deg) scale(1.01); }
 }
-@keyframes resonance-breathe {
-  from { opacity: .48; transform: scale(.92) rotate(-3deg); }
-  to { opacity: .9; transform: scale(1.08) rotate(3deg); }
+@keyframes music-note-one {
+  from { opacity: .075; transform: translate3d(0, 5px, 0) rotate(-12deg); }
+  to { opacity: .12; transform: translate3d(7px, -6px, 0) rotate(-8deg); }
 }
-@keyframes voice-particle-glow {
-  0%, 100% { opacity: .18; transform: scale(.65); }
-  45% { opacity: .75; transform: scale(1.35); }
+@keyframes music-note-two {
+  from { opacity: .07; transform: translate3d(0, 6px, 0) rotate(9deg); }
+  to { opacity: .115; transform: translate3d(-8px, -5px, 0) rotate(5deg); }
 }
-.motion-paused .voice-atmosphere :is(.voice-ribbon, .singing-string, .resonance, .voice-particle),
-.media-viewer-open .voice-atmosphere :is(.voice-ribbon, .singing-string, .resonance, .voice-particle) {
+@keyframes music-note-three {
+  from { opacity: .06; transform: translate3d(0, 4px, 0) rotate(-5deg); }
+  to { opacity: .1; transform: translate3d(-5px, -4px, 0) rotate(-2deg); }
+}
+.motion-paused .music-atmosphere :is(.music-symbol, .music-note),
+.media-viewer-open .music-atmosphere :is(.music-symbol, .music-note) {
   animation-play-state: paused;
 }
 @media (max-width: 699px) {
-  .voice-atmosphere { top: 70px; opacity: .46; }
-  .singing-string-two,
-  .singing-string-three,
-  .voice-particles { display: none; }
-  .voice-ribbon { stroke-width: 1.25; opacity: .48; }
-  .singing-string { stroke-width: .9; opacity: .42; }
-  .resonance-left { display: none; }
-  .resonance-right { opacity: .6; }
+  .music-atmosphere { top: 70px; }
+  .music-symbol-primary { top: 13%; right: -38%; font-size: 23rem; opacity: .045; }
+  .music-symbol-secondary,
+  .music-note-two,
+  .music-note-three { display: none; }
+  .music-note-one { top: 43%; left: 8%; font-size: 2.15rem; opacity: .075; }
 }
 @media (orientation: landscape) and (max-height: 620px) and (max-width: 999px) {
-  .voice-atmosphere { top: 62px; opacity: .42; }
+  .music-atmosphere { top: 62px; }
+  .music-symbol-primary { top: -22%; right: -3%; font-size: 25rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .voice-atmosphere { opacity: .28; }
-  .voice-atmosphere :is(.voice-ribbon, .singing-string, .resonance, .voice-particle) { animation: none; }
-  .voice-particles { display: none; }
+  .music-atmosphere :is(.music-symbol, .music-note) { animation: none; }
+  .music-note { display: none; }
 }
-@media print { .voice-atmosphere { display: none; } }
+@media print { .music-atmosphere { display: none; } }
