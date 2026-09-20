@@ -8,14 +8,13 @@ import { contact, homepageVideos, profileVideo, stagePortfolio, videos } from ".
 import { VideoPlayer } from "./video-player";
 
 const performanceHighlights = [videos[0], videos[1], homepageVideos[1], videos[3]];
-const featuredPhotoPaths = [
-  "/portfolio/01-live-in-red.webp",
-  "/portfolio/17-among-students.webp",
-  "/portfolio/15-campus-inauguration.webp",
-  "/portfolio/18-night-stage.webp",
-  "/portfolio/25-institutional-recognition.webp",
-];
-const featuredPhotos = featuredPhotoPaths.map((src) => stagePortfolio.find((photo) => photo.src === src)!);
+const featuredPhotos = [
+  { src: "/portfolio/01-live-in-red.webp", detail: "Live performance", href: "/proof#portfolio-stage-shows" },
+  { src: "/portfolio/17-among-students.webp", detail: "Audience-led campus show", href: "/proof#portfolio-school-programs" },
+  { src: "/portfolio/15-campus-inauguration.webp", detail: "Ceremonial opening", href: "/proof#portfolio-inaugurations" },
+  { src: "/portfolio/18-night-stage.webp", detail: "Outdoor evening", href: "/proof#portfolio-stage-shows" },
+  { src: "/portfolio/25-institutional-recognition.webp", detail: "Institutional recognition", href: "/proof#portfolio-invitations-honours" },
+].map((item) => ({ ...item, photo: stagePortfolio.find((photo) => photo.src === item.src)! }));
 
 export default function Home() {
   return <PageFrame>
@@ -66,11 +65,13 @@ export default function Home() {
     </section>
 
     <section className="moments-section section-shell" id="moments">
-      <div className="moments-heading portfolio-animate" data-reveal><div><span className="eyebrow">The portfolio</span><h2>More than a stage.<br /><em>A room to remember.</em></h2></div><Link className="text-link" href="/proof#photo-portfolio">See all {stagePortfolio.length} photographs <ArrowUpRight /></Link></div>
+      <div className="moments-heading portfolio-animate" data-reveal><div><span className="eyebrow">The portfolio</span><h2>More than a stage.<br /><em>A room to remember.</em></h2></div><Link className="text-link" href="/proof#photo-portfolio">See all {stagePortfolio.length} organised photographs <ArrowUpRight /></Link></div>
       <div className="moments-grid">
-        {featuredPhotos.map((photo, index) => <figure className={`moment-card moment-card-${index + 1} portfolio-animate`} data-reveal key={photo.src} style={{ "--reveal-index": index } as React.CSSProperties}>
-          <Image src={photo.src} alt={photo.alt} fill sizes={index === 0 ? "(max-width: 699px) 100vw, 55vw" : "(max-width: 699px) 50vw, 30vw"} style={{ objectPosition: index === 2 ? "50% 10%" : photo.focalPoint ?? "50% 50%" }} />
-          <figcaption><span>{String(index + 1).padStart(2, "0")}</span>{photo.collection}</figcaption>
+        {featuredPhotos.map(({ photo, detail, href }, index) => <figure className={`moment-card moment-card-${index + 1} portfolio-animate`} data-reveal key={photo.src} style={{ "--reveal-index": index } as React.CSSProperties}>
+          <Link className="moment-card-link" href={href} aria-label={`Explore ${photo.collection}: ${detail}`}>
+            <Image src={photo.src} alt={photo.alt} fill sizes={index === 0 ? "(max-width: 699px) 100vw, 55vw" : "(max-width: 699px) 50vw, 30vw"} style={{ objectPosition: index === 2 ? "50% 10%" : photo.focalPoint ?? "50% 50%" }} />
+            <figcaption><span>{String(index + 1).padStart(2, "0")}</span><span><strong>{photo.collection}</strong><small>{detail}</small></span><ArrowUpRight /></figcaption>
+          </Link>
         </figure>)}
       </div>
     </section>

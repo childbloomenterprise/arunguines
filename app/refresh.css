@@ -187,13 +187,19 @@ body { letter-spacing: -.012em; }
 .moments-heading .text-link { margin: 0 0 5px; flex: none; }
 .moments-grid { display: grid; grid-template-columns: repeat(12,minmax(0,1fr)); grid-template-rows: repeat(2,minmax(210px,17vw)); gap: 14px; }
 .moment-card { position: relative; min-width: 0; margin: 0; overflow: hidden; border-radius: 14px; background: var(--ivory); box-shadow: var(--shadow-sm); }
+.moment-card-link { position: absolute; inset: 0; display: block; color: inherit; }
+.moment-card-link:focus-visible { outline: 3px solid var(--brass); outline-offset: -5px; }
 .moment-card-1 { grid-column: span 6; grid-row: span 2; }
 .moment-card-2,.moment-card-3,.moment-card-4,.moment-card-5 { grid-column: span 3; }
 .moment-card img { object-fit: cover; transition: transform .55s var(--ease-enter); }
 .moment-card:hover img { transform: scale(1.035); }
 .moment-card:after { content: ""; position: absolute; inset: 50% 0 0; background: linear-gradient(transparent,#0d1c2099); pointer-events: none; }
-.moment-card figcaption { position: absolute; z-index: 1; left: 18px; bottom: 15px; color: #fff; display: flex; gap: 10px; align-items: baseline; font-size: 13px; font-weight: 700; text-shadow: 0 1px 8px #0008; }
+.moment-card figcaption { position: absolute; z-index: 1; left: 18px; right: 18px; bottom: 15px; color: #fff; display: flex; gap: 10px; align-items: center; font-size: 13px; font-weight: 700; text-shadow: 0 1px 8px #0008; }
 .moment-card figcaption span { color: #efdfc4; font: 600 21px/1 var(--font-display); }
+.moment-card figcaption > span:nth-child(2) { min-width: 0; display: flex; flex-direction: column; gap: 3px; color: #fff; font: inherit; }
+.moment-card figcaption strong { overflow: hidden; font-size: 13px; line-height: 1.1; text-overflow: ellipsis; white-space: nowrap; }
+.moment-card figcaption small { color: #ffffd5d6; font-size: 9px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+.moment-card figcaption svg { width: 16px; margin-left: auto; flex: none; }
 .idea-section { border: 1px solid #d9ddd4; background: linear-gradient(125deg,#edf2ef,#f9f7ef); }
 .idea-section h2 { font: 600 clamp(46px,4.8vw,70px)/.92 var(--font-display); letter-spacing: -.025em; }
 .idea-choices { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 23px; }
@@ -247,7 +253,11 @@ body { letter-spacing: -.012em; }
   .moments-grid { grid-template-columns: repeat(2,minmax(0,1fr)); grid-template-rows: 280px repeat(2,175px); gap: 9px; }
   .moment-card-1 { grid-column: 1/-1; grid-row: span 1; }
   .moment-card-2,.moment-card-3,.moment-card-4,.moment-card-5 { grid-column: span 1; }
-  .moment-card figcaption { left: 10px; bottom: 10px; font-size: 10px; gap: 5px; }
+  .moment-card figcaption { left: 10px; right: 10px; bottom: 10px; font-size: 10px; gap: 6px; }
+  .moment-card figcaption span { font-size: 17px; }
+  .moment-card figcaption strong { overflow: visible; font-size: 10px; line-height: 1.05; text-overflow: clip; white-space: normal; }
+  .moment-card figcaption small { display: none; }
+  .moment-card figcaption svg { display: none; }
   .idea-actions { flex-direction: row; align-items: center; flex-wrap: wrap; }
   .show-suggestion { align-items: flex-start; flex-direction: column; }
 }
