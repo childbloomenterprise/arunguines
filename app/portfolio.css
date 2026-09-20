@@ -1392,3 +1392,116 @@ html.has-scrolled .site-header { background: #fffdf9ed; box-shadow: 0 8px 28px #
   .music-note { display: none; }
 }
 @media print { .music-atmosphere { display: none; } }
+
+/* Mobile quality pass: one calm rhythm, reliable touch targets and safe fixed actions. */
+@media (max-width: 999px) {
+  :is(.idea-choices a, .occasion-choices button, .portfolio-filters button, .show-suggestion button, .show-formats .program-cards a, .legacy-redirect a) { min-height: 44px; }
+  .legacy-redirect a { display: inline-flex; align-items: center; }
+}
+
+@media (max-width: 699px) {
+  html {
+    scroll-padding-top: 82px;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body { overscroll-behavior-y: none; }
+  :root { --shell: calc(100% - 28px); }
+
+  :is(a, button, input, select, textarea, summary) { touch-action: manipulation; }
+  :is(.button, .text-link, .call-link, .page-highlights span, .idea-choices a, .occasion-choices button, .show-suggestion button, .portfolio-filters button, .show-formats .program-cards a) { min-height: 44px; }
+
+  .site-header {
+    height: 68px;
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+  }
+  .brand { min-width: 0; gap: 9px; }
+  .brand-disc { width: 42px; height: 42px; flex: none; }
+  .brand-copy { min-width: 0; }
+  .brand-copy strong { overflow: hidden; font-size: 21px; line-height: 1; text-overflow: ellipsis; white-space: nowrap; }
+  .brand-copy small { margin-top: 4px; font-size: 10px; }
+  .menu-toggle { width: 44px; height: 44px; flex: none; }
+  .mobile-menu {
+    top: 68px;
+    height: calc(100dvh - 68px);
+    padding: clamp(18px, 4vh, 34px) max(14px, env(safe-area-inset-right)) max(22px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+  }
+  .mobile-menu nav a { min-height: clamp(52px, 8.4vh, 66px); font-size: clamp(29px, 9vw, 42px); }
+
+  .page-hero {
+    padding-top: 102px;
+    padding-bottom: 44px;
+    gap: 24px;
+  }
+  .page-hero h1 { margin-block: 14px; font-size: clamp(42px, 14.3vw, 62px); line-height: .96; overflow-wrap: anywhere; }
+  .page-hero p { font-size: 15px; line-height: 1.65; }
+  .page-highlights { margin-top: 18px; gap: 7px; }
+  .page-highlights span { padding-inline: 11px; }
+
+  .home-section { padding-block: clamp(62px, 17vw, 76px); }
+  .inner-section { padding-block: clamp(52px, 15vw, 72px); }
+  .act-heading { gap: 15px; }
+  .act-heading h2 { font-size: clamp(41px, 13vw, 58px); overflow-wrap: anywhere; }
+  .act-heading > p { font-size: 15px; line-height: 1.65; }
+  .simple-section-heading { margin-bottom: 26px; }
+  .simple-section-heading h2 { font-size: clamp(42px, 13vw, 58px); }
+
+  .embedded-video, .photo-card-media, .program-card, .booking-form, .contact-panel, .campus-stage-selector, .campus-feature { border-radius: 16px; }
+  .video-badge, .video-category, .video-index { top: 10px; min-height: 30px; padding-inline: 9px; font-size: 10px; }
+  .video-badge { left: 10px; }
+  .video-category, .video-index { right: 10px; }
+  .video-caption { left: 12px; right: 12px; bottom: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .filter-row { margin-inline: calc(var(--shell) / -2 + 50%); padding-inline: 14px; scroll-padding-inline: 14px; }
+  .filter-row button { min-height: 46px; }
+  .portfolio-gallery .portfolio-filters { gap: 8px; }
+  .portfolio-gallery .portfolio-filters button { min-height: 46px; padding-inline: 10px; }
+
+  .booking-form { padding: 24px 18px; }
+  .form-head h2 { font-size: clamp(34px, 11vw, 44px); }
+  .occasion-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .occasion-choices button { width: 100%; padding-inline: 8px; }
+  .booking-form :is(input, select, textarea) { border-radius: 9px; }
+  .show-suggestion { padding: 14px; }
+  .show-suggestion button { width: 100%; }
+  .form-actions { align-items: stretch; }
+  .form-actions .copy-action { min-height: 44px; }
+  .booking-summary pre { max-height: 280px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+  .footer-simple { gap: 18px; }
+  .footer-simple nav, .footer-social { gap: 4px 10px; }
+  .footer-simple nav a, .footer-social a { min-width: 44px; padding-inline: 7px; justify-content: center; }
+  .footer-base { gap: 2px; }
+
+  .mobile-booking {
+    left: max(8px, env(safe-area-inset-left));
+    right: max(8px, env(safe-area-inset-right));
+    bottom: max(8px, env(safe-area-inset-bottom));
+    min-height: 68px;
+  }
+  .mobile-booking a,
+  .mobile-booking a + a { min-height: 58px; }
+  .social-dock { right: max(12px, env(safe-area-inset-right)); bottom: calc(88px + max(8px, env(safe-area-inset-bottom))); }
+  body:has(.booking-layout) .social-dock { bottom: max(12px, env(safe-area-inset-bottom)); }
+}
+
+@media (max-width: 359px) {
+  :root { --shell: calc(100% - 24px); }
+  .site-header { padding-inline: 12px; }
+  .brand-copy strong { font-size: 19px; }
+  .brand-copy small { display: none; }
+  .page-hero h1 { font-size: clamp(40px, 14vw, 48px); }
+  .stage-hero { padding-inline: 12px; }
+  .stage-hero .hero-copy h1, .moments-heading h2 { font-size: clamp(43px, 14vw, 52px); }
+  .booking-form { padding-inline: 14px; }
+  .mobile-booking a,
+  .mobile-booking a + a { padding-inline: 7px; gap: 6px; }
+  .mobile-booking a > i { width: 30px; height: 30px; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  :is(.button, .program-card, .moment-card, .photo-card-media, .event-experience, .social-dock-toggle):hover { transform: none; }
+  :is(.button, .menu-toggle, .social-dock-toggle, .mobile-booking a, .portfolio-filters button):active { transform: scale(.975); }
+}
