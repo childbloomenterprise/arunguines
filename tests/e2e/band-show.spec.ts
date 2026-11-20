@@ -24,7 +24,7 @@ test("Manthrikam plays on the homepage and preserves the band enquiry", async ({
   await page.getByLabel("Event type", { exact: true }).fill("Community celebration");
   await page.getByLabel("Event country", { exact: true }).fill("India");
   await page.getByLabel("Event city", { exact: true }).fill("Kochi");
-  await page.getByRole("button", { name: "Continue on WhatsApp" }).click();
+  await page.getByRole("button", { name: "Prepare my WhatsApp note" }).click();
   const handoff = await page.locator("html").getAttribute("data-handoff");
   const message = new URL(handoff!).searchParams.get("text");
   expect(message).toContain("Manthrikam — Band Show");
