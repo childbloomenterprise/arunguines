@@ -610,3 +610,48 @@ svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; s
 .band-show-section .button-brass { color: #19130b; background: var(--brass); }
 .band-show-section .button-brass:hover { background: #ffd395; }
 
+/* Band-stage lighting and rhythm: transform-only motion, paused offscreen. */
+.band-show-section { position: relative; isolation: isolate; overflow: clip; scroll-margin-top: 92px; }
+.band-show-section::before { content: ""; position: absolute; z-index: -1; inset: -55% -15% -25%; pointer-events: none; background: conic-gradient(from 145deg at 24% 0%,transparent 0deg,#ffc36a18 9deg,transparent 19deg 360deg),conic-gradient(from 190deg at 77% 0%,transparent 0deg,#ad8af427 12deg,transparent 26deg 360deg); transform-origin: 50% 0; animation: band-lights 12s ease-in-out infinite alternate; }
+.band-show-grid { row-gap: 0; }
+.band-show-media { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+.band-show-cta { grid-column: 1; padding-top: 8px; }
+.band-show-copy { min-width: 0; }
+.band-show-tags { margin-bottom: 18px; }
+.band-rhythm { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 12px; margin-bottom: 14px; border-bottom: 1px solid #ffffff1f; }
+.band-equalizer { height: 32px; display: flex; align-items: center; gap: 4px; }
+.band-equalizer i { display: block; width: 4px; height: var(--level); min-height: 8px; border-radius: 4px; background: linear-gradient(var(--brass),var(--plum)); transform-origin: center; animation: band-beat 950ms ease-in-out var(--beat) infinite alternate; }
+.band-animation-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 12px; border: 1px solid #ffffff30; border-radius: 24px; background: #10111680; color: var(--ink); font-size: 12px; cursor: pointer; touch-action: manipulation; }
+.band-animation-toggle svg { flex: 0 0 16px; stroke-width: 2; }
+.band-animation-toggle:hover { border-color: var(--brass); }
+.band-show-section :focus-visible { outline: 3px solid var(--brass); outline-offset: 4px; }
+.band-rhythm[data-active="false"] .band-equalizer i,.band-show-section:has(.band-rhythm[data-active="false"])::before,.motion-paused .band-equalizer i,.motion-paused .band-show-section::before { animation-play-state: paused; }
+@keyframes band-beat { from { transform: scaleY(.3); opacity: .6; } to { transform: scaleY(1); opacity: 1; } }
+@keyframes band-lights { from { transform: rotate(-9deg) translateX(-3%); opacity: .5; } to { transform: rotate(9deg) translateX(3%); opacity: 1; } }
+@media (max-width: 800px) {
+  .band-show-section { padding-block: 44px; }
+  .band-show-grid { gap: 24px; }
+  .band-show-media,.band-show-cta { grid-column: 1; grid-row: auto; }
+  .band-show-copy h2 { margin-block: 16px; font-size: clamp(44px,9vw,64px); }
+  .band-show-copy > p { line-height: 1.65; }
+  .band-show-copy > .band-show-lead { font-size: 20px; margin-bottom: 12px; }
+  .band-show-tags { margin: 18px 0 0; gap: 6px; }
+  .band-show-tags span { padding: 6px 10px; }
+  .band-show-cta { padding-top: 0; }
+  .band-show-cta .button { width: 100%; min-height: 52px; padding-inline: 14px; justify-content: center; font-size: 13px; }
+  .band-show-media-footer { gap: 4px 12px; }
+  .band-show-media-footer > span { font-size: 12px; }
+  .band-show-section::before { animation-duration: 16s; opacity: .6; }
+}
+@media (max-width: 380px) {
+  .band-show-media-label { flex-direction: column; align-items: flex-start; gap: 5px; }
+  .band-rhythm { gap: 8px; }
+  .band-equalizer { gap: 3px; }
+  .band-equalizer i { width: 3px; }
+  .band-animation-toggle { padding-inline: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .band-show-section::before,.band-equalizer i { animation: none !important; transform: none; }
+  .band-animation-toggle { display: none; }
+}
+@media (forced-colors: active) { .band-show-section::before { display: none; } .band-equalizer i { background: CanvasText; } .band-animation-toggle { border-color: ButtonText; color: ButtonText; background: Canvas; } }

@@ -31,3 +31,31 @@ test("Manthrikam plays on the homepage and preserves the band enquiry", async ({
   expect(message).toContain("Website · /");
   expect(errors).toEqual([]);
 });
+
+
+test("band motion pauses, respects reduced motion and fits touch screens", async ({ page }) => {
+  await page.goto("/#band-show");
+  const section = page.locator("#band-show");
+  await section.scrollIntoViewIfNeeded();
+  const rhythm = section.locator(".band-rhythm");
+  const bar = section.locator(".band-equalizer i").first();
+  await expect(rhythm).toHaveAttribute("data-active", "true");
+  await expect(bar).toHaveCSS("animation-play-state", "running");
+  const toggle = section.getByRole("button", { name: "Pause band animations" });
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  await expect(bar).toHaveCSS("animation-play-state", "paused");
+  await toggle.click();
+  await expect(bar).toHaveCSS("animation-play-state", "running");
+  await page.locator(".site-footer").scrollIntoViewIfNeeded();
+  await expect(rhythm).toHaveAttribute("data-active", "false");
+  await section.scrollIntoViewIfNeeded();
+  const cta = section.getByRole("link", { name: "Enquire about the band show" });
+  const box = await cta.boundingBox();
+  expect(box!.height).toBeGreaterThanOrEqual(44);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(bar).toHaveCSS("animation-name", "none");
+  await expect(toggle).not.toBeVisible();
+  await expect(cta).toBeVisible();
+});
