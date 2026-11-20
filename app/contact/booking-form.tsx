@@ -21,7 +21,7 @@ export function BookingForm({ initialShow = "", initialEvent = "", initialLocati
   const formRef = useRef<HTMLFormElement>(null);
   const [dateUndecided, setDateUndecided] = useState(true);
   const [eventChoice, setEventChoice] = useState(initialEvent);
-  const [selectedShow, setSelectedShow] = useState(programs.some((program) => program.title === initialShow) ? initialShow : "");
+  const [selectedShow, setSelectedShow] = useState(initialShow === "Manthrikam — Band Show" || programs.some((program) => program.title === initialShow) ? initialShow : "");
   const [errors, setErrors] = useState<BookingErrors>({});
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
@@ -99,7 +99,7 @@ export function BookingForm({ initialShow = "", initialEvent = "", initialLocati
       <label htmlFor={`location-${suffix}`}>Event city<input id={`location-${suffix}`} name="location" defaultValue={initialLocation} required maxLength={160} {...accessibility("location")} placeholder="City" />{error("location")}</label>
     </div>
     <div className="date-choice"><span>Event date</span><label className="checkbox-label"><input type="checkbox" checked={dateUndecided} onChange={(event) => setDateUndecided(event.target.checked)} />Date not decided</label>{!dateUndecided ? <label htmlFor={`date-${suffix}`}>Choose your event date<input id={`date-${suffix}`} name="date" type="date" min={minDate} {...accessibility("date")} />{error("date")}</label> : null}</div>
-    <label htmlFor={`show-${suffix}`}>Show preference<select id={`show-${suffix}`} name="show" value={selectedShow} onChange={(event) => setSelectedShow(event.target.value)}><option value="">Help me choose</option>{programs.map((program) => <option key={program.slug} value={program.title}>{program.title}</option>)}</select></label>
+    <label htmlFor={`show-${suffix}`}>Show preference<select id={`show-${suffix}`} name="show" value={selectedShow} onChange={(event) => setSelectedShow(event.target.value)}><option value="">Help me choose</option><option value="Manthrikam — Band Show">Manthrikam — Band Show</option>{programs.map((program) => <option key={program.slug} value={program.title}>{program.title}</option>)}</select></label>
     <div className="booking-section-note"><span>03</span><strong>Who should we reply to?</strong></div>
     <label htmlFor={`name-${suffix}`}>Your name<input id={`name-${suffix}`} name="name" autoComplete="name" required maxLength={120} {...accessibility("name")} placeholder="Your full name" />{error("name")}</label>
     <details className="optional-details"><summary>Add more details <span>Optional</span></summary><div className="optional-fields"><div className="form-row"><label htmlFor={`phone-${suffix}`}>Phone number<input id={`phone-${suffix}`} name="phone" type="tel" autoComplete="tel" maxLength={30} {...accessibility("phone")} placeholder="Include your country code" />{error("phone")}</label><label htmlFor={`audience-${suffix}`}>Expected audience<input id={`audience-${suffix}`} name="audience" inputMode="numeric" maxLength={40} placeholder="Approximate number of guests" /></label></div><label htmlFor={`notes-${suffix}`}>Anything else we should know?<textarea id={`notes-${suffix}`} name="notes" rows={3} maxLength={1500} placeholder="Favourite songs, language mix, venue or running time…" /></label></div></details>

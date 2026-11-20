@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageSchema } from "./page-schema";
 import { ArrowRight, ArrowUpRight } from "./icons";
 import { BookingLink } from "./booking-link";
-import { PageFrame } from "./site-components";
+import { Eyebrow, PageFrame } from "./site-components";
 import { contact, homepageVideos, profileVideo, stagePortfolio, videos } from "./site-data";
 import { VideoPlayer } from "./video-player";
 
@@ -34,6 +34,24 @@ export default function Home() {
         <div className="hero-photo-note">
           <i aria-hidden="true" />
           <span><small>One performer</small><strong>An entire live show</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <section className="band-show-section" id="band-show" aria-labelledby="band-show-title">
+      <div className="band-show-grid section-shell">
+        <div className="band-show-copy">
+          <Eyebrow light>Introducing a new live experience</Eyebrow>
+          <h2 id="band-show-title">Manthrikam.<br /><span>The band show.</span></h2>
+          <p className="band-show-lead">Arun&apos;s voices. A live band.<br />A whole new energy.</p>
+          <p>Meet Manthrikam, Arun Guinness&apos;s band show. Live music and his signature voice artistry come together for an evening made to be shared.</p>
+          <div className="band-show-tags" aria-label="Show highlights"><span>Live band</span><span>Signature voices</span><span>Shared celebration</span></div>
+          <BookingLink className="button button-brass" href="/book?show=Manthrikam%20%E2%80%94%20Band%20Show">Enquire about the band show <ArrowUpRight /></BookingLink>
+        </div>
+        <div className="band-show-media">
+          <div className="band-show-media-label"><span>MEET MANTHRIKAM</span><span>Arun Guinness + band</span></div>
+          <VideoPlayer id="NHA7R_KQ2G8" title="Manthrikam — Arun Guinness band show" alt="Manthrikam band-show video from Arun Guinness's official YouTube channel" sizes="(max-width: 800px) calc(100vw - 72px), (max-width: 1288px) 48vw, 620px" ratio="16:9" poster={{ quality: "hqdefault", fallbackQuality: "maxresdefault" }} />
+          <div className="band-show-media-footer"><span>Watch the band-show preview</span><a href="https://www.youtube.com/shorts/NHA7R_KQ2G8" target="_blank" rel="noreferrer">Watch on YouTube <ArrowUpRight /></a></div>
         </div>
       </div>
     </section>

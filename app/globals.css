@@ -585,3 +585,28 @@ svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; s
   .button, .site-header, .mobile-booking, .booking-form, .show-builder, .page-highlights span, .embedded-video { border: 1px solid ButtonText; forced-color-adjust: auto; }
   .button-brass, .filter-row button[aria-pressed="true"] { background: Highlight; color: HighlightText; }
 }
+
+/* Manthrikam band-show feature. */
+.band-show-section { --ink: #f7f5f0; --muted: #b4b5c1; --brass: #ffc36a; --plum: #c5afe7; --line: #ffffff26; color: var(--ink); padding-block: clamp(56px,7vw,96px); border-block: 1px solid var(--line); background: radial-gradient(ellipse at 95% 0%,#73539826,transparent 60%),linear-gradient(115deg,#201a18,#171820 65%); }
+.band-show-grid { display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr); align-items: center; gap: clamp(32px,5vw,72px); }
+.band-show-copy h2 { margin: 22px 0; font: 600 clamp(44px,5vw,72px)/1 var(--font-display); letter-spacing: -.015em; }
+.band-show-copy h2 span { color: var(--brass); }
+.band-show-copy > p { max-width: 460px; color: var(--muted); font-size: 16px; line-height: 1.8; }
+.band-show-copy > .band-show-lead { margin-bottom: 16px; color: var(--ink); font-size: clamp(20px,2vw,25px); line-height: 1.5; }
+.band-show-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 30px; }
+.band-show-tags span { padding: 7px 11px; border: 1px solid #ffffff26; border-radius: 30px; color: var(--plum); font-size: 12px; }
+.band-show-copy > .button { max-width: 100%; }
+.band-show-media { min-width: 0; padding: 16px; border: 1px solid #ffffff26; border-radius: 18px; background: #10111680; box-shadow: 0 20px 65px #0003; }
+.band-show-media-label,.band-show-media-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 16px; color: var(--muted); font-size: 12px; }
+.band-show-media-label { padding: 2px 0 16px; }
+.band-show-media-label > span:first-child { color: var(--brass); font-weight: 700; letter-spacing: .1em; }
+.band-show-media-footer { padding-top: 12px; }
+.band-show-media-footer a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--brass); }
+.band-show-media-footer svg { width: 16px; height: 16px; }
+@media (max-width: 800px) { .band-show-grid { grid-template-columns: 1fr; gap: 32px; } .band-show-copy > p { max-width: 580px; } .band-show-media { padding: 12px; } }
+@media (forced-colors: active) { .band-show-section,.band-show-media { background: Canvas; color: CanvasText; } .band-show-media,.band-show-tags span { border: 1px solid CanvasText; } }
+
+.band-show-section .eyebrow.is-light { color: var(--brass); }
+.band-show-section .button-brass { color: #19130b; background: var(--brass); }
+.band-show-section .button-brass:hover { background: #ffd395; }
+
